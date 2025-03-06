@@ -25,7 +25,7 @@ export default async function Dashboard() {
             Painel da Campanha
           </h1>
           <p className="text-gold-light/80 mt-2">
-            Bem-vindo ao seu Rastreador de Campanha D&D. Gerencie seus itens, NPCs, monstros e relatórios de sessão.
+          Bem-vindo ao Grimório Eterno – uma biblioteca definitiva para uma campanha de RPG
           </p>
         </div>
         <div className="sm:self-center">
