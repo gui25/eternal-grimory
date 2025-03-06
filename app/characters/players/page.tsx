@@ -1,24 +1,34 @@
-import { getCharacters } from "@/lib/mdx"
+"use client"
+
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Search } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
-export default async function PlayersPage() {
-  // Get all player characters from MD files
-  const players = await getCharacters("player")
-
-  return <PlayersClient initialPlayers={players} />
-}
-// Client component for interactivity
-;("use client")
-function PlayersClient({ initialPlayers }) {
-  const [players] = useState(initialPlayers)
+export default function PlayersPage() {
+  const [players, setPlayers] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [classFilter, setClassFilter] = useState("")
   const [raceFilter, setRaceFilter] = useState("")
+
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        const response = await fetch("/api/characters/players")
+        const data = await response.json()
+        setPlayers(data)
+      } catch (error) {
+        console.error("Erro ao buscar personagens:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchPlayers()
+  }, [])
 
   const filteredPlayers = players.filter((player) => {
     const matchesSearch =
@@ -42,6 +52,10 @@ function PlayersClient({ initialPlayers }) {
 
   const allClasses = Array.from(new Set(players.filter((p) => p.class).map((player) => player.class)))
   const allRaces = Array.from(new Set(players.filter((p) => p.race).map((player) => player.race)))
+
+  if (isLoading) {
+    return <div className="text-center py-12">Carregando personagens...</div>
+  }
 
   return (
     <div className="space-y-6">

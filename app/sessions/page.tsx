@@ -1,23 +1,33 @@
-import { getSessions } from "@/lib/mdx"
+"use client"
+
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Search, Calendar } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
-export default async function SessionsPage() {
-  // Get all sessions from MDX files
-  const sessions = await getSessions()
-
-  return <SessionsClient initialSessions={sessions} />
-}
-// Client component for interactivity
-;("use client")
-function SessionsClient({ initialSessions }) {
-  const [sessions] = useState(initialSessions)
+export default function SessionsPage() {
+  const [sessions, setSessions] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [playerFilter, setPlayerFilter] = useState("")
+
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const response = await fetch("/api/sessions")
+        const data = await response.json()
+        setSessions(data)
+      } catch (error) {
+        console.error("Erro ao buscar sessões:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchSessions()
+  }, [])
 
   const filteredSessions = sessions.filter((session) => {
     // Extract title from session_number (this would be in the MDX content)
@@ -37,6 +47,10 @@ function SessionsClient({ initialSessions }) {
   }
 
   const allPlayers = Array.from(new Set(sessions.flatMap((session) => session.players)))
+
+  if (isLoading) {
+    return <div className="text-center py-12">Carregando sessões...</div>
+  }
 
   return (
     <div className="space-y-6">

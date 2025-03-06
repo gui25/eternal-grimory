@@ -1,4 +1,4 @@
-import { getItems } from "@/lib/mdx"
+"use client"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Search, Grid3X3, List, Filter } from "lucide-react"
@@ -6,20 +6,32 @@ import { useState } from "react"
 import ItemGrid from "@/components/item-grid"
 import ItemList from "@/components/item-list"
 
-export default async function ItemsPage() {
-  // Get all items from MDX files
-  const items = await getItems()
-
-  return <ItemsClient initialItems={items} />
-}
-// Client component for interactivity
-;("use client")
-function ItemsClient({ initialItems }) {
-  const [items] = useState(initialItems)
+export default function ItemsPage() {
+  // Componente cliente que busca dados no servidor
+  const [items, setItems] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [rarityFilter, setRarityFilter] = useState("")
   const [typeFilter, setTypeFilter] = useState("")
   const [isGridView, setIsGridView] = useState(true)
+
+  // Buscar dados quando o componente montar
+  useState(() => {
+    const fetchItems = async () => {
+      try {
+        // Buscar itens da API
+        const response = await fetch("/api/items")
+        const data = await response.json()
+        setItems(data)
+      } catch (error) {
+        console.error("Erro ao buscar itens:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchItems()
+  }, [])
 
   // Filter items based on search and filters
   const filteredItems = items.filter((item) => {
@@ -67,6 +79,10 @@ function ItemsClient({ initialItems }) {
       // Add other types as needed
     }
     return translations[type] || type
+  }
+
+  if (isLoading) {
+    return <div className="text-center py-12">Carregando itens...</div>
   }
 
   return (

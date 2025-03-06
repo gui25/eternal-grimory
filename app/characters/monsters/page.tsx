@@ -1,24 +1,34 @@
-import { getCharacters } from "@/lib/mdx"
+"use client"
+
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Search } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
-export default async function MonstersPage() {
-  // Get all monsters from MDX files
-  const monsters = await getCharacters("monster")
-
-  return <MonstersClient initialMonsters={monsters} />
-}
-// Client component for interactivity
-;("use client")
-function MonstersClient({ initialMonsters }) {
-  const [monsters] = useState(initialMonsters)
+export default function MonstersPage() {
+  const [monsters, setMonsters] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [challengeFilter, setChallengeFilter] = useState("")
   const [tagFilter, setTagFilter] = useState("")
+
+  useEffect(() => {
+    const fetchMonsters = async () => {
+      try {
+        const response = await fetch("/api/characters/monsters")
+        const data = await response.json()
+        setMonsters(data)
+      } catch (error) {
+        console.error("Erro ao buscar monstros:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchMonsters()
+  }, [])
 
   const filteredMonsters = monsters.filter((monster) => {
     const matchesSearch =
@@ -41,6 +51,10 @@ function MonstersClient({ initialMonsters }) {
 
   const allChallenges = Array.from(new Set(monsters.map((monster) => monster.challenge)))
   const allTags = Array.from(new Set(monsters.flatMap((monster) => monster.tags)))
+
+  if (isLoading) {
+    return <div className="text-center py-12">Carregando monstros...</div>
+  }
 
   return (
     <div className="space-y-6">

@@ -1,24 +1,34 @@
-import { getCharacters } from "@/lib/mdx"
+"use client"
+
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Search } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
-export default async function NPCsPage() {
-  // Get all NPCs from MDX files
-  const npcs = await getCharacters("npc")
-
-  return <NPCsClient initialNPCs={npcs} />
-}
-// Client component for interactivity
-;("use client")
-function NPCsClient({ initialNPCs }) {
-  const [npcs] = useState(initialNPCs)
+export default function NPCsPage() {
+  const [npcs, setNPCs] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [affiliationFilter, setAffiliationFilter] = useState("")
   const [tagFilter, setTagFilter] = useState("")
+
+  useEffect(() => {
+    const fetchNPCs = async () => {
+      try {
+        const response = await fetch("/api/characters/npcs")
+        const data = await response.json()
+        setNPCs(data)
+      } catch (error) {
+        console.error("Erro ao buscar NPCs:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchNPCs()
+  }, [])
 
   const filteredNPCs = npcs.filter((npc) => {
     const matchesSearch =
@@ -42,6 +52,10 @@ function NPCsClient({ initialNPCs }) {
 
   const allAffiliations = Array.from(new Set(npcs.map((npc) => npc.affiliation)))
   const allTags = Array.from(new Set(npcs.flatMap((npc) => npc.tags)))
+
+  if (isLoading) {
+    return <div className="text-center py-12">Carregando NPCs...</div>
+  }
 
   return (
     <div className="space-y-6">
