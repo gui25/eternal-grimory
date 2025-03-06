@@ -7,8 +7,15 @@ import { Search, Calendar } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 
+interface Session {
+  session_number: number;
+  players: string[];
+  slug: string;
+  date: string;
+}
+
 export default function SessionsPage() {
-  const [sessions, setSessions] = useState([])
+  const [sessions, setSessions] = useState<Session[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [playerFilter, setPlayerFilter] = useState("")
@@ -25,10 +32,10 @@ export default function SessionsPage() {
         setIsLoading(false)
       }
     }
-
+    
     fetchSessions()
   }, [])
-
+  
   const filteredSessions = sessions.filter((session) => {
     // Extract title from session_number (this would be in the MDX content)
     const title = `Session ${session.session_number}`
@@ -36,17 +43,17 @@ export default function SessionsPage() {
     const matchesSearch = search === "" || title.toLowerCase().includes(search.toLowerCase())
 
     const matchesPlayer =
-      playerFilter === "" || session.players.some((player) => player.toLowerCase() === playerFilter.toLowerCase())
+      playerFilter === "" || session.players.some((player: string) => player.toLowerCase() === playerFilter.toLowerCase())
 
     return matchesSearch && matchesPlayer
   })
+
+  const allPlayers = Array.from(new Set(sessions.flatMap((session: Session) => session.players)))
 
   const clearFilters = () => {
     setSearch("")
     setPlayerFilter("")
   }
-
-  const allPlayers = Array.from(new Set(sessions.flatMap((session) => session.players)))
 
   if (isLoading) {
     return <div className="text-center py-12">Carregando sessões...</div>
@@ -92,14 +99,14 @@ export default function SessionsPage() {
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                   <div>
-                    <h3 className="font-bold text-lg">{`Session ${session.session_number}`}</h3>
-                    <div className="flex items-center text-muted-foreground mt-1">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      <span className="text-sm">{session.date}</span>
+                    <h2 className="text-lg font-semibold">Session {session.session_number}</h2>
+                    <div className="text-sm text-muted-foreground flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {session.date}
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {session.players.map((player) => (
+                    {session.players.map((player: string) => (
                       <span key={player} className="bg-secondary px-3 py-1 rounded-full text-xs">
                         {player}
                       </span>

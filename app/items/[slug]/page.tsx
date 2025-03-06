@@ -3,32 +3,16 @@ import Link from "next/link"
 import Image from "next/image"
 import { getItem } from "@/lib/mdx"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Sparkles } from "lucide-react"
 import TrackView from "@/components/track-view"
-
-function getRarityBadgeClass(rarity: string) {
-  switch (rarity.toLowerCase()) {
-    case "common":
-      return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
-    case "uncommon":
-      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-    case "rare":
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-    case "epic":
-      return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
-    case "legendary":
-      return "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
-    default:
-      return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
-  }
-}
+import { ItemMeta } from "@/types/content"
 
 export default async function ItemPage({ params }: { params: { slug: string } }) {
   // Get the actual content
   const item = await getItem(params.slug)
   if (!item) notFound()
 
-  const { contentHtml, meta } = item
+  const { contentHtml, meta } = item as { contentHtml: string, meta: ItemMeta }
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -36,10 +20,12 @@ export default async function ItemPage({ params }: { params: { slug: string } })
       <TrackView
         item={{
           slug: meta.slug,
-          name: meta.name,
+          name: meta.name, 
           type: meta.type,
           rarity: meta.rarity,
-          category: "item",
+          tags: meta.tags,
+          image: meta.image,
+          description: meta.description
         }}
       />
 
@@ -55,32 +41,44 @@ export default async function ItemPage({ params }: { params: { slug: string } })
       {/* Item header with optional image */}
       <div className="mb-8 fantasy-card p-6">
         <div className="flex flex-col md:flex-row gap-6">
-          {meta.image && (
+          {meta.image ? (
             <div className="w-full md:w-1/3 flex-shrink-0">
               <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-gold-dark">
                 <Image src={meta.image || "/placeholder.svg"} alt={meta.name} fill className="object-cover" />
               </div>
             </div>
+          ) : (
+            <div className="w-full md:w-1/3 flex-shrink-0">
+              <div className="aspect-square rounded-lg overflow-hidden border-2 border-gold-dark bg-wine-darker flex items-center justify-center">
+                <Sparkles className="h-24 w-24 text-gold-light/50" />
+              </div>
+            </div>
           )}
 
           <div className="flex-1">
-            <h1 className="fantasy-heading mb-4">{meta.name}</h1>
+            <h1 className="fantasy-heading mb-2">{meta.name}</h1>
 
-            <div className="flex flex-wrap gap-2 mb-4">
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getRarityBadgeClass(meta.rarity)}`}>
-                {meta.rarity}
-              </span>
-              <span className="px-3 py-1 rounded-full bg-secondary text-sm font-medium">{meta.type}</span>
+            <div className={`text-sm inline-block px-2 py-0.5 rounded mb-3 ${meta.rarity ? `rarity-${meta.rarity.toLowerCase()}` : ''}`}>
+              {meta.rarity || 'Comum'}
+            </div>
+
+            <div className="text-lg mb-3 text-gold-light">
+              {meta.type}
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
               {meta.tags.map((tag: string) => (
-                <span key={tag} className="px-3 py-1 rounded-full bg-secondary text-sm font-medium">
+                <span key={tag} className="bg-secondary px-3 py-1 rounded-full text-xs">
                   {tag}
                 </span>
               ))}
             </div>
-
-            {meta.description && <p className="text-gold-light italic">{meta.description}</p>}
           </div>
         </div>
+
+        {meta.description && (
+          <div className="mt-4 italic text-gray-300">"{meta.description}"</div>
+        )}
       </div>
 
       <article

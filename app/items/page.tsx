@@ -2,87 +2,88 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Search, Grid3X3, List, Filter } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import ItemGrid from "@/components/item-grid"
 import ItemList from "@/components/item-list"
 
-export default function ItemsPage() {
-  // Componente cliente que busca dados no servidor
-  const [items, setItems] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [search, setSearch] = useState("")
-  const [rarityFilter, setRarityFilter] = useState("")
-  const [typeFilter, setTypeFilter] = useState("")
-  const [isGridView, setIsGridView] = useState(true)
+interface Item {
+  name: string;
+  tags: string[];
+  rarity: "Common" | "Uncommon" | "Rare" | "Epic" | "Legendary";
+  type: string;
+  slug: string;
+  image?: string;
+  description?: string;
+}
 
-  // Buscar dados quando o componente montar
-  useState(() => {
+export default function ItemsPage() {
+  const [items, setItems] = useState<Item[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [rarityFilter, setRarityFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [isGridView, setIsGridView] = useState(true);
+
+  useEffect(() => {
     const fetchItems = async () => {
       try {
-        // Buscar itens da API
-        const response = await fetch("/api/items")
-        const data = await response.json()
-        setItems(data)
+        const response = await fetch("/api/items");
+        const data = await response.json();
+        setItems(data);
       } catch (error) {
-        console.error("Erro ao buscar itens:", error)
+        console.error("Erro ao buscar itens:", error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchItems()
-  }, [])
+    fetchItems();
+  }, []);
 
-  // Filter items based on search and filters
   const filteredItems = items.filter((item) => {
     const matchesSearch =
       search === "" ||
       item.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.tags.some((tag) => tag.toLowerCase().includes(search.toLowerCase()))
+      item.tags.some((tag: string) => tag.toLowerCase().includes(search.toLowerCase()));
 
-    const matchesRarity = rarityFilter === "" || item.rarity.toLowerCase() === rarityFilter.toLowerCase()
+    const matchesRarity = rarityFilter === "" || item.rarity.toLowerCase() === rarityFilter.toLowerCase();
 
-    const matchesType = typeFilter === "" || item.type.toLowerCase() === typeFilter.toLowerCase()
+    const matchesType = typeFilter === "" || item.type.toLowerCase() === typeFilter.toLowerCase();
 
-    return matchesSearch && matchesRarity && matchesType
-  })
+    return matchesSearch && matchesRarity && matchesType;
+  });
 
   const clearFilters = () => {
-    setSearch("")
-    setRarityFilter("")
-    setTypeFilter("")
-  }
+    setSearch("");
+    setRarityFilter("");
+    setTypeFilter("");
+  };
 
-  // Get unique types for filter dropdown
-  const types = Array.from(new Set(items.map((item) => item.type)))
+  const types = Array.from(new Set(items.map((item) => item.type)));
+  const predefinedTypes = ["Weapon", "Armor", "Potion", "Artifact"];
 
-  // Predefined item types we want to highlight
-  const predefinedTypes = ["Weapon", "Armor", "Potion", "Artifact"]
-
-  // Sort types to put predefined ones first
   const sortedTypes = types.sort((a, b) => {
-    const aIndex = predefinedTypes.indexOf(a)
-    const bIndex = predefinedTypes.indexOf(b)
+    const aIndex = predefinedTypes.indexOf(a);
+    const bIndex = predefinedTypes.indexOf(b);
 
-    if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex
-    if (aIndex !== -1) return -1
-    if (bIndex !== -1) return 1
-    return a.localeCompare(b)
-  })
+    if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+    if (aIndex !== -1) return -1;
+    if (bIndex !== -1) return 1;
+    return a.localeCompare(b);
+  });
 
-  const translateItemType = (type) => {
-    const translations = {
+  const translateItemType = (type: string) => {
+    const translations: Record<string, string> = {
       Weapon: "Arma",
       Armor: "Armadura",
       Potion: "Poção",
       Artifact: "Artefato",
-      // Add other types as needed
-    }
-    return translations[type] || type
-  }
+    };
+    return translations[type] || type;
+  };
 
   if (isLoading) {
-    return <div className="text-center py-12">Carregando itens...</div>
+    return <div className="text-center py-12">Carregando itens...</div>;
   }
 
   return (
@@ -163,29 +164,6 @@ export default function ItemsPage() {
         </div>
       </div>
 
-      {/* Item type quick filters */}
-      <div className="flex flex-wrap gap-2">
-        <Button
-          variant={typeFilter === "" ? "default" : "outline"}
-          size="sm"
-          onClick={() => setTypeFilter("")}
-          className={typeFilter === "" ? "bg-gold-primary text-wine-darker" : "border-gold-dark"}
-        >
-          Todos
-        </Button>
-        {predefinedTypes.map((type) => (
-          <Button
-            key={type}
-            variant={typeFilter === type ? "default" : "outline"}
-            size="sm"
-            onClick={() => setTypeFilter(type)}
-            className={typeFilter === type ? "bg-gold-primary text-wine-darker" : "border-gold-dark"}
-          >
-            {translateItemType(type)}
-          </Button>
-        ))}
-      </div>
-
       {filteredItems.length > 0 ? (
         isGridView ? (
           <ItemGrid items={filteredItems} />
@@ -205,6 +183,5 @@ export default function ItemsPage() {
         </div>
       )}
     </div>
-  )
+  );
 }
-

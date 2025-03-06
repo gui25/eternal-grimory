@@ -7,8 +7,16 @@ import { Search } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 
+interface Monster {
+  name: string;
+  type: string;
+  challenge: string;
+  tags: string[];
+  slug: string;
+}
+
 export default function MonstersPage() {
-  const [monsters, setMonsters] = useState([])
+  const [monsters, setMonsters] = useState<Monster[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [challengeFilter, setChallengeFilter] = useState("")
@@ -29,7 +37,7 @@ export default function MonstersPage() {
 
     fetchMonsters()
   }, [])
-
+  
   const filteredMonsters = monsters.filter((monster) => {
     const matchesSearch =
       search === "" ||
@@ -38,7 +46,7 @@ export default function MonstersPage() {
 
     const matchesChallenge = challengeFilter === "" || monster.challenge.toLowerCase() === challengeFilter.toLowerCase()
 
-    const matchesTag = tagFilter === "" || monster.tags.some((tag) => tag.toLowerCase() === tagFilter.toLowerCase())
+    const matchesTag = tagFilter === "" || monster.tags.some((tag: string) => tag.toLowerCase() === tagFilter.toLowerCase())
 
     return matchesSearch && matchesChallenge && matchesTag
   })
@@ -105,7 +113,7 @@ export default function MonstersPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {filteredMonsters.map((monster) => (
           <Link key={monster.slug} href={`/characters/monsters/${monster.slug}`}>
-            <Card className="h-full cursor-pointer hover:shadow-md transition-shadow">
+            <Card>
               <CardContent className="p-6">
                 <h3 className="font-bold text-lg mb-1">{monster.name}</h3>
                 <div className="text-sm text-muted-foreground mb-2">{monster.type}</div>

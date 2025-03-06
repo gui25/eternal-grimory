@@ -1,43 +1,50 @@
 "use client"
 
 import { useEffect } from "react"
+import { ViewedItem } from "@/types/content"
 
-type ViewedItem = {
-  slug: string
-  name: string
-  type: string
-  category: string
-  date?: string
-  rarity?: string
-  timestamp?: number
+interface TrackViewProps {
+  item: ViewedItem;
 }
 
-export default function TrackView({ item }: { item: ViewedItem }) {
+export default function TrackView({ item }: TrackViewProps) {
   useEffect(() => {
-    // Track this view in localStorage
-    if (typeof window !== "undefined") {
-      const storageKey = "recentActivity"
-      const existingItems = JSON.parse(localStorage.getItem(storageKey) || "[]")
-
-      // Add timestamp to the item
-      const itemWithTimestamp = {
-        ...item,
-        timestamp: Date.now(),
+    // Implementação do track view
+    const storeView = () => {
+      try {
+        // Obter itens visualizados do localStorage
+        const viewedItemsString = localStorage.getItem("viewedItems") || "[]"
+        const viewedItems = JSON.parse(viewedItemsString)
+        
+        // Verificar se o item já está na lista
+        const existingIndex = viewedItems.findIndex(
+          (i: ViewedItem) => i.slug === item.slug
+        )
+        
+        if (existingIndex !== -1) {
+          // Remover o item existente
+          viewedItems.splice(existingIndex, 1)
+        }
+        
+        // Adicionar o novo item no início
+        viewedItems.unshift(item)
+        
+        // Manter apenas os últimos 10 itens
+        const updatedItems = viewedItems.slice(0, 10)
+        
+        // Salvar de volta no localStorage
+        localStorage.setItem("viewedItems", JSON.stringify(updatedItems))
+      } catch (error) {
+        console.error("Erro ao salvar item visualizado:", error)
       }
-
-      // Remove this item if it already exists
-      const filteredItems = existingItems.filter(
-        (i: ViewedItem) => !(i.slug === item.slug && i.category === item.category),
-      )
-
-      // Add this item to the beginning
-      const updatedItems = [itemWithTimestamp, ...filteredItems].slice(0, 10) // Keep only the 10 most recent
-
-      localStorage.setItem(storageKey, JSON.stringify(updatedItems))
     }
+
+    storeView()
   }, [item])
 
-  // This component doesn't render anything
+  // Componente não renderiza nada visível
   return null
 }
+
+export type { ViewedItem }
 

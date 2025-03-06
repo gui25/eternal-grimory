@@ -7,8 +7,18 @@ import { Search } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 
+interface Player {
+  name: string
+  player?: string
+  class?: string
+  race?: string
+  level: number
+  slug: string
+  tags: string[]
+}
+
 export default function PlayersPage() {
-  const [players, setPlayers] = useState([])
+  const [players, setPlayers] = useState<Player[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [classFilter, setClassFilter] = useState("")

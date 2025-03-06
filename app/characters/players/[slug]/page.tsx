@@ -5,13 +5,14 @@ import { getCharacter } from "@/lib/mdx"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, User } from "lucide-react"
 import TrackView from "@/components/track-view"
+import { PlayerMeta } from "@/types/content"
 
 export default async function PlayerPage({ params }: { params: { slug: string } }) {
   // Get the actual content
   const character = await getCharacter(params.slug, "player")
   if (!character) notFound()
 
-  const { contentHtml, meta } = character
+  const { contentHtml, meta } = character as { contentHtml: string, meta: PlayerMeta }
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -19,9 +20,14 @@ export default async function PlayerPage({ params }: { params: { slug: string } 
       <TrackView
         item={{
           slug: meta.slug,
+          category: meta.category,
           name: meta.name,
-          type: `${meta.race} ${meta.class}`,
-          category: "player",
+          race: meta.race,
+          class: meta.class,
+          tags: meta.tags,
+          image: meta.image,
+          player: meta.player,
+          level: meta.level
         }}
       />
 
@@ -29,12 +35,12 @@ export default async function PlayerPage({ params }: { params: { slug: string } 
         <Button variant="rpg" size="lg" asChild className="back-button">
           <Link href="/characters/players" className="flex items-center">
             <ArrowLeft className="mr-2 h-5 w-5" />
-            <span>Voltar para Jogadores</span>
+            <span>Voltar para Personagens</span>
           </Link>
         </Button>
       </div>
 
-      {/* Character header with optional image */}
+      {/* Player header with optional image */}
       <div className="mb-8 fantasy-card p-6">
         <div className="flex flex-col md:flex-row gap-6">
           {meta.image ? (
@@ -54,12 +60,12 @@ export default async function PlayerPage({ params }: { params: { slug: string } 
           <div className="flex-1">
             <h1 className="fantasy-heading mb-2">{meta.name}</h1>
 
-            <div className="text-lg mb-3 text-gold-light">
-              Nível {meta.level} {meta.race} {meta.class}
+            <div className="text-lg mb-2">
+              Nível {meta.level} • {meta.race} • {meta.class}
             </div>
 
             {meta.player && (
-              <div className="text-sm mb-4 px-3 py-1 bg-wine-light inline-block rounded-full">
+              <div className="text-sm mb-4">
                 <span className="font-medium text-gold">Jogador:</span> {meta.player}
               </div>
             )}

@@ -7,8 +7,16 @@ import { Search } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 
+interface NPC {
+  name: string
+  type: string
+  affiliation: string
+  tags: string[]
+  slug: string
+}
+
 export default function NPCsPage() {
-  const [npcs, setNPCs] = useState([])
+  const [npcs, setNPCs] = useState<NPC[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [affiliationFilter, setAffiliationFilter] = useState("")
@@ -106,14 +114,14 @@ export default function NPCsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {filteredNPCs.map((npc) => (
           <Link key={npc.slug} href={`/characters/npcs/${npc.slug}`}>
-            <Card className="h-full cursor-pointer hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <h3 className="font-bold text-lg mb-1">{npc.name}</h3>
-                <div className="text-sm text-muted-foreground mb-3">{npc.type}</div>
-                <div className="text-sm mb-3">
+            <Card>
+              <CardContent className="pt-4">
+                <h3 className="text-lg font-bold">{npc.name}</h3>
+                <p className="text-sm text-gray-500">{npc.type}</p>
+                <div className="mt-2">
                   <span className="font-medium">Afiliação:</span> {npc.affiliation}
                 </div>
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1 mt-2">
                   {npc.tags.map((tag) => (
                     <span key={tag} className="bg-secondary px-2 py-1 rounded-md text-xs">
                       {tag}

@@ -3,15 +3,16 @@ import Link from "next/link"
 import Image from "next/image"
 import { getSession } from "@/lib/mdx"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Calendar, Users } from "lucide-react"
+import { ArrowLeft, BookOpen } from "lucide-react"
 import TrackView from "@/components/track-view"
+import { SessionMeta } from "@/types/content"
 
 export default async function SessionPage({ params }: { params: { slug: string } }) {
   // Get the actual content
   const session = await getSession(params.slug)
   if (!session) notFound()
 
-  const { contentHtml, meta } = session
+  const { contentHtml, meta } = session as { contentHtml: string, meta: SessionMeta }
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -19,10 +20,11 @@ export default async function SessionPage({ params }: { params: { slug: string }
       <TrackView
         item={{
           slug: meta.slug,
-          name: `Session ${meta.session_number}`,
-          type: "Session Report",
+          session_number: meta.session_number,
           date: meta.date,
-          category: "session",
+          players: meta.players,
+          image: meta.image,
+          description: meta.description
         }}
       />
 
@@ -38,41 +40,38 @@ export default async function SessionPage({ params }: { params: { slug: string }
       {/* Session header with optional image */}
       <div className="mb-8 fantasy-card p-6">
         <div className="flex flex-col md:flex-row gap-6">
-          {meta.image && (
+          {meta.image ? (
             <div className="w-full md:w-1/3 flex-shrink-0">
-              <div className="relative aspect-video rounded-lg overflow-hidden border-2 border-gold-dark">
-                <Image
-                  src={meta.image || "/placeholder.svg"}
-                  alt={`Session ${meta.session_number}`}
-                  fill
-                  className="object-cover"
-                />
+              <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-gold-dark">
+                <Image src={meta.image} alt={`Sessão ${meta.session_number}`} fill className="object-cover" />
+              </div>
+            </div>
+          ) : (
+            <div className="w-full md:w-1/3 flex-shrink-0">
+              <div className="aspect-square rounded-lg overflow-hidden border-2 border-gold-dark bg-wine-darker flex items-center justify-center">
+                <BookOpen className="h-24 w-24 text-gold-light/50" />
               </div>
             </div>
           )}
 
           <div className="flex-1">
-            <h1 className="fantasy-heading mb-4">Sessão {meta.session_number}</h1>
+            <h1 className="fantasy-heading mb-2">Sessão {meta.session_number}</h1>
 
-            <div className="flex items-center text-gold-light mb-3">
-              <Calendar className="h-5 w-5 mr-2" />
-              <span>{meta.date}</span>
+            <div className="text-lg mb-3">
+              {meta.date}
             </div>
 
-            <div className="flex items-start gap-2 mb-4">
-              <Users className="h-5 w-5 text-gold-light mt-1" />
-              <div className="flex flex-wrap gap-2">
-                {meta.players.map((player: string) => (
-                  <span key={player} className="bg-secondary px-3 py-1 rounded-full text-xs">
-                    {player}
-                  </span>
-                ))}
+            {meta.players && meta.players.length > 0 && (
+              <div className="text-sm mb-4">
+                <span className="font-medium text-gold">Jogadores:</span> {meta.players.join(', ')}
               </div>
-            </div>
-
-            {meta.description && <p className="text-gold-light italic">{meta.description}</p>}
+            )}
           </div>
         </div>
+
+        {meta.description && (
+          <div className="mt-4 italic text-gray-300">"{meta.description}"</div>
+        )}
       </div>
 
       <article

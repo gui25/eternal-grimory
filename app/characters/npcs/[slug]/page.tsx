@@ -5,13 +5,14 @@ import { getCharacter } from "@/lib/mdx"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, User } from "lucide-react"
 import TrackView from "@/components/track-view"
+import { NpcMeta } from "@/types/content"
 
-export default async function NPCPage({ params }: { params: { slug: string } }) {
+export default async function NpcPage({ params }: { params: { slug: string } }) {
   // Get the actual content
   const character = await getCharacter(params.slug, "npc")
   if (!character) notFound()
 
-  const { contentHtml, meta } = character
+  const { contentHtml, meta } = character as { contentHtml: string, meta: NpcMeta }
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -19,9 +20,12 @@ export default async function NPCPage({ params }: { params: { slug: string } }) 
       <TrackView
         item={{
           slug: meta.slug,
+          category: meta.category,
           name: meta.name,
           type: meta.type,
-          category: "npc",
+          tags: meta.tags,
+          image: meta.image,
+          affiliation: meta.affiliation
         }}
       />
 
@@ -56,9 +60,11 @@ export default async function NPCPage({ params }: { params: { slug: string } }) 
 
             <div className="text-lg mb-3 text-gold-light">{meta.type}</div>
 
-            <div className="text-sm mb-4">
-              <span className="font-medium text-gold">Afiliação:</span> {meta.affiliation}
-            </div>
+            {meta.affiliation && (
+              <div className="text-sm mb-4">
+                <span className="font-medium text-gold">Afiliação:</span> {meta.affiliation}
+              </div>
+            )}
 
             <div className="flex flex-wrap gap-2 mt-3">
               {meta.tags.map((tag: string) => (

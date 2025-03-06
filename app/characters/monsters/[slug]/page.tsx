@@ -4,14 +4,25 @@ import Image from "next/image"
 import { getCharacter } from "@/lib/mdx"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Shield } from "lucide-react"
-import TrackView from "@/components/track-view"
+import TrackView, { ViewedItem } from "@/components/track-view"
+
+// Interface para o objeto meta retornado do getCharacter
+interface CharacterMeta {
+  slug: string;
+  name: string;
+  type: string;
+  challenge: string;
+  tags: string[];
+  image?: string;
+  category: "npc" | "monster" | "player";
+}
 
 export default async function MonsterPage({ params }: { params: { slug: string } }) {
   // Get the actual content
   const character = await getCharacter(params.slug, "monster")
   if (!character) notFound()
 
-  const { contentHtml, meta } = character
+  const { contentHtml, meta } = character as { contentHtml: string, meta: CharacterMeta }
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -19,9 +30,12 @@ export default async function MonsterPage({ params }: { params: { slug: string }
       <TrackView
         item={{
           slug: meta.slug,
+          category: meta.category,
           name: meta.name,
           type: meta.type,
-          category: "monster",
+          challenge: meta.challenge,
+          tags: meta.tags,
+          image: meta.image
         }}
       />
 
