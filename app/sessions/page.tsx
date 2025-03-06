@@ -3,9 +3,10 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Search, Calendar } from "lucide-react"
+import { Search, Calendar, Filter } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import LoadingSpinner from "@/components/loading-spinner"
 
 interface Session {
   session_number: number;
@@ -56,7 +57,7 @@ export default function SessionsPage() {
   }
 
   if (isLoading) {
-    return <div className="text-center py-12">Carregando sessões...</div>
+    return <LoadingSpinner />;
   }
 
   return (
@@ -74,18 +75,21 @@ export default function SessionsPage() {
           />
         </div>
 
-        <select
-          className="border rounded-md py-2 px-3 bg-background"
-          value={playerFilter}
-          onChange={(e) => setPlayerFilter(e.target.value)}
-        >
-          <option value="">Todos os Jogadores</option>
-          {allPlayers.map((player) => (
-            <option key={player} value={player}>
-              {player}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            className="border border-gold-dark rounded-md py-2 px-3 bg-wine-darker text-gold-light appearance-none pr-8 w-full"
+            value={playerFilter}
+            onChange={(e) => setPlayerFilter(e.target.value)}
+          >
+            <option value="">Todos os Jogadores</option>
+            {allPlayers.map((player) => (
+              <option key={player} value={player}>
+                {player}
+              </option>
+            ))}
+          </select>
+          <Filter className="absolute right-2 top-2.5 h-4 w-4 text-gold-light pointer-events-none" />
+        </ div>
 
         <Button variant="outline" onClick={clearFilters}>
           Limpar Filtros

@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Search } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import LoadingSpinner from "@/components/loading-spinner"
 
 interface Player {
   name: string
@@ -64,7 +65,7 @@ export default function PlayersPage() {
   const allRaces = Array.from(new Set(players.filter((p) => p.race).map((player) => player.race)))
 
   if (isLoading) {
-    return <div className="text-center py-12">Carregando personagens...</div>
+    return <LoadingSpinner />
   }
 
   return (

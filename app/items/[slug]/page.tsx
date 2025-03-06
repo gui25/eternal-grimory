@@ -25,7 +25,6 @@ export default async function ItemPage({ params }: { params: { slug: string } })
           rarity: meta.rarity,
           tags: meta.tags,
           image: meta.image,
-          description: meta.description
         }}
       />
 

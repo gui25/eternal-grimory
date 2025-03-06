@@ -5,6 +5,7 @@ import { Search, Grid3X3, List, Filter } from "lucide-react"
 import { useState, useEffect } from "react"
 import ItemGrid from "@/components/item-grid"
 import ItemList from "@/components/item-list"
+import LoadingSpinner from "@/components/loading-spinner"
 
 interface Item {
   name: string;
@@ -83,7 +84,7 @@ export default function ItemsPage() {
   };
 
   if (isLoading) {
-    return <div className="text-center py-12">Carregando itens...</div>;
+    return <LoadingSpinner />;
   }
 
   return (

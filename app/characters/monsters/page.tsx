@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Search } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import LoadingSpinner from "@/components/loading-spinner"
 
 interface Monster {
   name: string;
@@ -61,7 +62,7 @@ export default function MonstersPage() {
   const allTags = Array.from(new Set(monsters.flatMap((monster) => monster.tags)))
 
   if (isLoading) {
-    return <div className="text-center py-12">Carregando monstros...</div>
+    return <LoadingSpinner />
   }
 
   return (

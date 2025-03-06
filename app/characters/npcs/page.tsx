@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Search } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import LoadingSpinner from "@/components/loading-spinner"
 
 interface NPC {
   name: string
@@ -62,7 +63,7 @@ export default function NPCsPage() {
   const allTags = Array.from(new Set(npcs.flatMap((npc) => npc.tags)))
 
   if (isLoading) {
-    return <div className="text-center py-12">Carregando NPCs...</div>
+    return <LoadingSpinner />
   }
 
   return (
