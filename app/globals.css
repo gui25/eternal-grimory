@@ -1,0 +1,479 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Adventure & Power Theme Colors */
+    --wine-dark: 345 50% 15%;
+    --wine-darker: 345 50% 10%;
+    --wine-light: 345 30% 25%;
+    --gold-primary: 40 80% 50%;
+    --gold-light: 40 80% 65%;
+    --gold-dark: 40 70% 40%;
+    --red-accent: 0 70% 45%;
+    --red-light: 0 70% 55%;
+    --parchment-dark: 30 25% 15%;
+    --parchment-light: 30 25% 90%;
+
+    /* UI Colors */
+    --background: var(--wine-dark);
+    --foreground: var(--parchment-light);
+    --card: var(--wine-darker);
+    --card-foreground: var(--parchment-light);
+    --popover: var(--wine-darker);
+    --popover-foreground: var(--parchment-light);
+    --primary: var(--gold-primary);
+    --primary-foreground: var(--wine-darker);
+    --secondary: var(--red-accent);
+    --secondary-foreground: var(--parchment-light);
+    --muted: var(--wine-light);
+    --muted-foreground: var(--gold-light);
+    --accent: var(--red-accent);
+    --accent-foreground: var(--parchment-light);
+    --destructive: 0 60% 45%;
+    --destructive-foreground: var(--parchment-light);
+    --border: var(--gold-dark);
+    --input: var(--wine-light);
+    --ring: var(--gold-primary);
+    --radius: 0.5rem;
+  }
+}
+
+@layer components {
+  /* Fantasy UI Components */
+  .fantasy-card {
+    @apply relative overflow-hidden rounded-lg border border-gold-dark bg-card p-6;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='currentColor' fill-opacity='0.05'/%3E%3C/svg%3E");
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .fantasy-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(45deg, hsl(var(--gold-primary)), hsl(var(--red-accent)));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  .fantasy-heading {
+    @apply font-heading text-3xl font-bold tracking-tight;
+    background: linear-gradient(135deg, hsl(var(--gold-primary)), hsl(var(--gold-light)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .fantasy-subheading {
+    @apply font-heading text-xl font-semibold;
+    color: hsl(var(--gold-primary));
+  }
+
+  .stat-card {
+    @apply fantasy-card transition-all duration-300 hover:scale-[1.02];
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid hsl(var(--gold-dark));
+    height: 100%; /* Garante que todos os cards tenham a mesma altura */
+  }
+
+  .stat-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    border-color: hsl(var(--gold-primary));
+  }
+
+  .stat-value {
+    @apply text-4xl font-bold;
+    background: linear-gradient(135deg, hsl(var(--gold-primary)), hsl(var(--gold-light)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .character-card {
+    @apply fantasy-card p-4 transition-all duration-300;
+    background: linear-gradient(135deg, hsl(var(--wine-dark)), hsl(var(--wine-darker)));
+    border: 1px solid hsl(var(--gold-dark));
+    height: 100%; /* Garante que todos os cards tenham a mesma altura */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .character-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    border-color: hsl(var(--gold-primary));
+  }
+
+  .character-name {
+    @apply font-heading text-xl font-bold;
+    background: linear-gradient(135deg, hsl(var(--gold-primary)), hsl(var(--gold-light)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    white-space: normal; /* Permite quebra de linha */
+    word-wrap: break-word; /* Quebra palavras longas */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limita a 2 linhas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .character-info {
+    @apply text-sm mt-1;
+    color: hsl(var(--foreground) / 0.8);
+  }
+
+  .player-name {
+    @apply text-xs font-medium mt-2 inline-block px-2 py-1 rounded-full;
+    background: linear-gradient(135deg, hsl(var(--red-accent) / 0.2), hsl(var(--red-accent) / 0.1));
+    border: 1px solid hsl(var(--red-accent) / 0.5);
+    color: hsl(var(--gold-light));
+  }
+
+  /* Modificando a classe section-title para ser responsiva */
+  .section-title {
+    @apply flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 mb-4;
+  }
+
+  .section-title-icon {
+    @apply h-6 w-6;
+    color: hsl(var(--gold-primary));
+  }
+
+  .activity-item {
+    @apply fantasy-card p-4 flex items-center gap-4;
+    background: linear-gradient(135deg, hsl(var(--wine-dark)), hsl(var(--wine-darker)));
+    border: 1px solid hsl(var(--gold-dark));
+  }
+
+  .activity-icon {
+    @apply h-8 w-8 p-1.5 rounded-full;
+    background: linear-gradient(135deg, hsl(var(--red-accent) / 0.2), hsl(var(--red-accent) / 0.1));
+    color: hsl(var(--gold-primary));
+  }
+
+  /* Adventure Button */
+  .adventure-button {
+    @apply relative inline-flex items-center justify-center px-4 py-2 rounded-md font-medium transition-all duration-200;
+    background: linear-gradient(to bottom, hsl(var(--gold-primary)), hsl(var(--gold-dark)));
+    color: hsl(var(--wine-darker));
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 0 1px hsl(var(--gold-dark)), inset 0 1px 0 hsl(var(--gold-light));
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+
+  .adventure-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4), 0 0 0 1px hsl(var(--gold-primary)), inset 0 1px 0 hsl(var(--gold-light));
+  }
+
+  .adventure-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px hsl(var(--gold-dark)), inset 0 1px 1px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Gold border decorations */
+  .gold-border {
+    position: relative;
+  }
+
+  .gold-border::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(var(--gold-primary)), transparent);
+  }
+
+  .gold-border::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(var(--gold-primary)), transparent);
+  }
+
+  /* Item rarity styles */
+  .rarity-common {
+    border-color: hsl(0, 0%, 70%);
+  }
+
+  .rarity-uncommon {
+    border-color: hsl(120, 63%, 31%);
+  }
+
+  .rarity-uncommon::before {
+    background: linear-gradient(45deg, hsl(120, 63%, 31%), hsl(120, 73%, 75%));
+  }
+
+  .rarity-rare {
+    border-color: hsl(210, 100%, 50%);
+  }
+
+  .rarity-rare::before {
+    background: linear-gradient(45deg, hsl(210, 100%, 50%), hsl(210, 100%, 70%));
+  }
+
+  .rarity-epic {
+    border-color: hsl(270, 50%, 40%);
+  }
+
+  .rarity-epic::before {
+    background: linear-gradient(45deg, hsl(270, 50%, 40%), hsl(270, 80%, 70%));
+  }
+
+  .rarity-legendary {
+    border-color: hsl(45, 100%, 47%);
+  }
+
+  .rarity-legendary::before {
+    background: linear-gradient(45deg, hsl(45, 100%, 47%), hsl(45, 100%, 70%));
+  }
+
+  /* Estilos para conteúdo MDX */
+  .mdx-content {
+    color: hsl(40, 80%, 65%, 0.9); /* Texto base mais claro e legível */
+  }
+
+  .mdx-content h1 {
+    @apply text-4xl font-heading font-bold mb-6 mt-8;
+    background: linear-gradient(135deg, hsl(var(--gold-primary)), hsl(var(--gold-light)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .mdx-content h2 {
+    @apply text-2xl font-heading font-bold mb-4 mt-6;
+    background: linear-gradient(135deg, hsl(var(--gold-primary)), hsl(var(--gold-light)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .mdx-content h3 {
+    @apply text-xl font-heading font-bold mb-3 mt-5;
+    color: hsl(var(--gold-primary));
+  }
+
+  .mdx-content p {
+    @apply mb-4 leading-relaxed;
+  }
+
+  .mdx-content ul {
+    @apply space-y-2 mb-6 ml-6 list-none;
+  }
+
+  .mdx-content li {
+    @apply relative pl-6;
+    color: hsl(40, 80%, 65%, 0.9);
+  }
+
+  .mdx-content li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: hsl(var(--gold-primary));
+  }
+
+  .mdx-content a {
+    @apply underline transition-colors;
+    color: hsl(var(--gold-primary));
+  }
+
+  .mdx-content a:hover {
+    color: hsl(var(--gold-light));
+  }
+
+  .mdx-content strong {
+    @apply font-bold;
+    color: hsl(var(--gold-primary));
+  }
+
+  /* Estilização específica para status e recompensas */
+  .mdx-content dt {
+    @apply font-bold mb-1;
+    color: hsl(var(--gold-primary));
+  }
+
+  .mdx-content dd {
+    @apply mb-4;
+    color: hsl(40, 80%, 65%, 0.9);
+  }
+
+  /* Adiciona uma borda sutil para separar seções */
+  .mdx-content hr {
+    @apply my-8;
+    border-color: hsla(var(--gold-dark), 0.3);
+  }
+
+  /* Estilização para blocos de código ou citações */
+  .mdx-content blockquote {
+    @apply pl-4 my-4 italic;
+    border-left: 4px solid hsla(var(--gold-dark), 0.5);
+    color: hsla(40, 80%, 65%, 0.8);
+  }
+
+  /* Estilização para tabelas */
+  .mdx-content table {
+    @apply w-full my-6 border-collapse;
+  }
+
+  .mdx-content th {
+    @apply font-bold p-2 border;
+    color: hsl(var(--gold-primary));
+    border-color: hsla(var(--gold-dark), 0.3);
+    background-color: hsl(var(--wine-darker));
+  }
+
+  .mdx-content td {
+    @apply p-2 border;
+    color: hsl(40, 80%, 65%, 0.9);
+    border-color: hsla(var(--gold-dark), 0.3);
+  }
+
+  /* Adiciona um fundo sutil para elementos de destaque */
+  .mdx-content pre {
+    @apply p-4 rounded-lg my-4 overflow-x-auto;
+    background-color: hsl(var(--wine-darker));
+  }
+
+  .mdx-content code {
+    @apply px-1.5 py-0.5 rounded;
+    background-color: hsl(var(--wine-darker));
+    color: hsl(40, 80%, 65%, 0.9);
+  }
+
+  /* Adicione este estilo dentro da seção @layer components */
+
+  .back-button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, hsl(var(--gold-primary)), hsl(var(--gold-dark)));
+    border: 2px solid hsl(var(--gold-dark));
+    color: hsl(var(--wine-darker));
+    font-family: var(--font-heading);
+    font-weight: bold;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 5px rgba(255, 215, 0, 0.3);
+  }
+
+  .back-button:before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    z-index: -1;
+    background: linear-gradient(
+      45deg,
+      hsl(var(--gold-primary)),
+      hsl(var(--gold-dark)),
+      hsl(var(--gold-primary)),
+      hsl(var(--gold-dark))
+    );
+    background-size: 400%;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .back-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 8px rgba(255, 215, 0, 0.5);
+  }
+
+  .back-button:hover:before {
+    opacity: 1;
+    animation: animate 4s linear infinite;
+  }
+
+  .back-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  @keyframes animate {
+    0% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 100% 0;
+    }
+    100% {
+      background-position: 0 0;
+    }
+  }
+
+  /* Estilos para os confetes */
+  .confetti {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--wine-darker));
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full;
+  background: linear-gradient(to bottom, hsl(var(--gold-primary)), hsl(var(--gold-dark)));
+  border: 2px solid hsl(var(--wine-darker));
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--gold-primary));
+}
+
+/* Custom color classes */
+.bg-wine-dark {
+  background-color: hsl(345, 50%, 15%);
+}
+
+.bg-wine-darker {
+  background-color: hsl(345, 50%, 10%);
+}
+
+.bg-wine-light {
+  background-color: hsl(345, 30%, 25%);
+}
+
+.text-gold {
+  color: hsl(40, 80%, 50%);
+}
+
+.text-gold-light {
+  color: hsl(40, 80%, 65%);
+}
+
+.border-gold {
+  border-color: hsl(40, 80%, 50%);
+}
+
+.border-gold-dark {
+  border-color: hsl(40, 70%, 40%);
+}
+
+.border-gold-primary {
+  border-color: hsl(40, 80%, 50%);
+}
+
+.text-red-accent {
+  color: hsl(0, 70%, 45%);
+}
+
