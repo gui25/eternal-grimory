@@ -20,10 +20,10 @@ export default async function Dashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center items-center sm:justify-between gold-border p-4 gap-4">
         <div className="flex flex-col items-center w-full">
           <div className="flex gap-2">
-            <h1 className="fantasy-heading flex items-center">Painel da Campanha</h1>
+            <h1 className="fantasy-heading flex items-center lg:w-full md:w-full w-min">Painel da Campanha</h1>
           </div>
           <p className="text-gold-light/80 mt-2">
-          Bem-vindo ao Grimório Eterno – uma biblioteca definitiva para uma campanha de RPG
+          Bem-vindo ao Grimório Eterno, uma biblioteca definitiva para uma campanha de RPG
           </p>
         </div>
         <div className="sm:self-center">
