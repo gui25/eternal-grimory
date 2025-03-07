@@ -155,29 +155,6 @@ export default function ItemsPage() {
         </div>
       </div>
 
-      {/* Item type quick filters */}
-      <div className="flex flex-wrap gap-2">
-        <Button
-          variant={typeFilter === "" ? "default" : "outline"}
-          size="sm"
-          onClick={() => setTypeFilter("")}
-          className={typeFilter === "" ? "bg-gold-primary text-wine-darker" : "border-gold-dark"}
-        >
-          Todos
-        </Button>
-        {predefinedTypes.map((type) => (
-          <Button
-            key={type}
-            variant={typeFilter === type ? "default" : "outline"}
-            size="sm"
-            onClick={() => setTypeFilter(type)}
-            className={typeFilter === type ? "bg-gold-primary text-wine-darker" : "border-gold-dark"}
-          >
-            {translateItemType(type)}
-          </Button>
-        ))}
-      </div>
-
       {filteredItems.length > 0 ? (
         isGridView ? (
           <ItemGrid items={filteredItems} />
