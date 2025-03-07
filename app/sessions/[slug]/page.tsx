@@ -8,7 +8,7 @@ import TrackView from "@/components/track-view"
 import { SessionMeta } from "@/types/content"
 
 export default async function SessionPage({ params }: { params: { slug: string } }) {
-  // Get the actual content
+
   const session = await getSession(params.slug)
   if (!session) notFound()
 
@@ -16,15 +16,14 @@ export default async function SessionPage({ params }: { params: { slug: string }
 
   return (
     <div className="max-w-3xl mx-auto">
-      {/* Track this view */}
+
       <TrackView
         item={{
           slug: meta.slug,
-          session_number: meta.session_number,
+          name: `Session ${meta.session_number}`,
+          type: "Session Report",
           date: meta.date,
-          players: meta.players,
-          image: meta.image,
-          description: meta.description
+          category: "session",
         }}
       />
 

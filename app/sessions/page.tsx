@@ -6,7 +6,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Search, Calendar, Filter } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import LoadingSpinner from "@/components/loading-spinner"
 
 interface Session {
   session_number: number;
@@ -17,7 +16,6 @@ interface Session {
 
 export default function SessionsPage() {
   const [sessions, setSessions] = useState<Session[]>([])
-  const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [playerFilter, setPlayerFilter] = useState("")
 
@@ -29,8 +27,6 @@ export default function SessionsPage() {
         setSessions(data)
       } catch (error) {
         console.error("Erro ao buscar sessões:", error)
-      } finally {
-        setIsLoading(false)
       }
     }
     
@@ -54,10 +50,6 @@ export default function SessionsPage() {
   const clearFilters = () => {
     setSearch("")
     setPlayerFilter("")
-  }
-
-  if (isLoading) {
-    return <LoadingSpinner />;
   }
 
   return (

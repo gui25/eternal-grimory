@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Search } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import LoadingSpinner from "@/components/loading-spinner"
+import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
 
 interface NPC {
   name: string
@@ -18,7 +18,6 @@ interface NPC {
 
 export default function NPCsPage() {
   const [npcs, setNPCs] = useState<NPC[]>([])
-  const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [affiliationFilter, setAffiliationFilter] = useState("")
   const [tagFilter, setTagFilter] = useState("")
@@ -31,8 +30,6 @@ export default function NPCsPage() {
         setNPCs(data)
       } catch (error) {
         console.error("Erro ao buscar NPCs:", error)
-      } finally {
-        setIsLoading(false)
       }
     }
 
@@ -48,7 +45,7 @@ export default function NPCsPage() {
     const matchesAffiliation =
       affiliationFilter === "" || npc.affiliation.toLowerCase() === affiliationFilter.toLowerCase()
 
-    const matchesTag = tagFilter === "" || npc.tags.some((tag) => tag.toLowerCase() === tagFilter.toLowerCase())
+    const matchesTag = tagFilter === "" || npc.tags.some((tag: string) => tag.toLowerCase() === tagFilter.toLowerCase())
 
     return matchesSearch && matchesAffiliation && matchesTag
   })
@@ -62,9 +59,15 @@ export default function NPCsPage() {
   const allAffiliations = Array.from(new Set(npcs.map((npc) => npc.affiliation)))
   const allTags = Array.from(new Set(npcs.flatMap((npc) => npc.tags)))
 
-  if (isLoading) {
-    return <LoadingSpinner />
-  }
+  const affiliationOptions: FilterOption[] = allAffiliations.map((affiliation) => ({
+    value: affiliation,
+    label: affiliation,
+  }))
+
+  const tagOptions: FilterOption[] = allTags.map((tag) => ({
+    value: tag,
+    label: tag,
+  }))
 
   return (
     <div className="space-y-6">
@@ -81,31 +84,21 @@ export default function NPCsPage() {
           />
         </div>
 
-        <select
-          className="border rounded-md py-2 px-3 bg-background"
+        <FilterSelect
+          options={affiliationOptions}
           value={affiliationFilter}
           onChange={(e) => setAffiliationFilter(e.target.value)}
-        >
-          <option value="">Todas as Afiliações</option>
-          {allAffiliations.map((affiliation) => (
-            <option key={affiliation} value={affiliation}>
-              {affiliation}
-            </option>
-          ))}
-        </select>
+          placeholder="Todas as Afiliações"
+          className="min-w-[180px]"
+        />
 
-        <select
-          className="border rounded-md py-2 px-3 bg-background"
+        <FilterSelect
+          options={tagOptions}
           value={tagFilter}
           onChange={(e) => setTagFilter(e.target.value)}
-        >
-          <option value="">Todas as Tags</option>
-          {allTags.map((tag) => (
-            <option key={tag} value={tag}>
-              {tag}
-            </option>
-          ))}
-        </select>
+          placeholder="Todas as Tags"
+          className="min-w-[180px]"
+        />
 
         <Button variant="outline" onClick={clearFilters}>
           Limpar Filtros
@@ -137,4 +130,3 @@ export default function NPCsPage() {
     </div>
   )
 }
-

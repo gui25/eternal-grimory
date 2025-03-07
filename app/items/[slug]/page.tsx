@@ -20,11 +20,10 @@ export default async function ItemPage({ params }: { params: { slug: string } })
       <TrackView
         item={{
           slug: meta.slug,
-          name: meta.name, 
+          name: meta.name,
           type: meta.type,
           rarity: meta.rarity,
-          tags: meta.tags,
-          image: meta.image,
+          category: "item",
         }}
       />
 

@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Search } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import LoadingSpinner from "@/components/loading-spinner"
+import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
 
 interface Monster {
   name: string;
@@ -18,7 +18,6 @@ interface Monster {
 
 export default function MonstersPage() {
   const [monsters, setMonsters] = useState<Monster[]>([])
-  const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [challengeFilter, setChallengeFilter] = useState("")
   const [tagFilter, setTagFilter] = useState("")
@@ -31,8 +30,6 @@ export default function MonstersPage() {
         setMonsters(data)
       } catch (error) {
         console.error("Erro ao buscar monstros:", error)
-      } finally {
-        setIsLoading(false)
       }
     }
 
@@ -61,9 +58,15 @@ export default function MonstersPage() {
   const allChallenges = Array.from(new Set(monsters.map((monster) => monster.challenge)))
   const allTags = Array.from(new Set(monsters.flatMap((monster) => monster.tags)))
 
-  if (isLoading) {
-    return <LoadingSpinner />
-  }
+  const challengeOptions: FilterOption[] = allChallenges.map((challenge) => ({
+    value: challenge,
+    label: challenge,
+  }))
+
+  const tagOptions: FilterOption[] = allTags.map((tag) => ({
+    value: tag,
+    label: tag,
+  }))
 
   return (
     <div className="space-y-6">
@@ -80,31 +83,21 @@ export default function MonstersPage() {
           />
         </div>
 
-        <select
-          className="border rounded-md py-2 px-3 bg-background"
+        <FilterSelect
+          options={challengeOptions}
           value={challengeFilter}
           onChange={(e) => setChallengeFilter(e.target.value)}
-        >
-          <option value="">Todos os Desafios</option>
-          {allChallenges.map((challenge) => (
-            <option key={challenge} value={challenge}>
-              {challenge}
-            </option>
-          ))}
-        </select>
+          placeholder="Todos os Desafios"
+          className="min-w-[180px]"
+        />
 
-        <select
-          className="border rounded-md py-2 px-3 bg-background"
+        <FilterSelect
+          options={tagOptions}
           value={tagFilter}
           onChange={(e) => setTagFilter(e.target.value)}
-        >
-          <option value="">Todas as Tags</option>
-          {allTags.map((tag) => (
-            <option key={tag} value={tag}>
-              {tag}
-            </option>
-          ))}
-        </select>
+          placeholder="Todas as Tags"
+          className="min-w-[180px]"
+        />
 
         <Button variant="outline" onClick={clearFilters}>
           Limpar Filtros

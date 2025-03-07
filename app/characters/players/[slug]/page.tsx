@@ -20,14 +20,9 @@ export default async function PlayerPage({ params }: { params: { slug: string } 
       <TrackView
         item={{
           slug: meta.slug,
-          category: meta.category,
           name: meta.name,
-          race: meta.race,
-          class: meta.class,
-          tags: meta.tags,
-          image: meta.image,
-          player: meta.player,
-          level: meta.level
+          type: `${meta.race} ${meta.class}`,
+          category: "player",
         }}
       />
 

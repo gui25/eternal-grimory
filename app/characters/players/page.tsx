@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Search } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import LoadingSpinner from "@/components/loading-spinner"
+import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
 
 interface Player {
   name: string
@@ -64,9 +64,16 @@ export default function PlayersPage() {
   const allClasses = Array.from(new Set(players.filter((p) => p.class).map((player) => player.class)))
   const allRaces = Array.from(new Set(players.filter((p) => p.race).map((player) => player.race)))
 
-  if (isLoading) {
-    return <LoadingSpinner />
-  }
+  // Converter para o formato de opções do FilterSelect
+  const classOptions: FilterOption[] = allClasses.map((className) => ({
+    value: className || "",
+    label: className || "",
+  }))
+
+  const raceOptions: FilterOption[] = allRaces.map((race) => ({
+    value: race || "",
+    label: race || "",
+  }))
 
   return (
     <div className="space-y-6">
@@ -83,31 +90,21 @@ export default function PlayersPage() {
           />
         </div>
 
-        <select
-          className="border rounded-md py-2 px-3 bg-background"
+        <FilterSelect
+          options={classOptions}
           value={classFilter}
           onChange={(e) => setClassFilter(e.target.value)}
-        >
-          <option value="">Todas as Classes</option>
-          {allClasses.map((className) => (
-            <option key={className} value={className}>
-              {className}
-            </option>
-          ))}
-        </select>
+          placeholder="Todas as Classes"
+          className="min-w-[180px]"
+        />
 
-        <select
-          className="border rounded-md py-2 px-3 bg-background"
+        <FilterSelect
+          options={raceOptions}
           value={raceFilter}
           onChange={(e) => setRaceFilter(e.target.value)}
-        >
-          <option value="">Todas as Raças</option>
-          {allRaces.map((race) => (
-            <option key={race} value={race}>
-              {race}
-            </option>
-          ))}
-        </select>
+          placeholder="Todas as Raças"
+          className="min-w-[180px]"
+        />
 
         <Button variant="outline" onClick={clearFilters}>
           Limpar Filtros
@@ -116,7 +113,7 @@ export default function PlayersPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {filteredPlayers.map((player) => (
-          <Link key={player.slug} href={`/characters/players/${player.slug}`} className="h-full">
+          <Link key={player.slug} href={`/characters/players/${player.slug}`} className="h-full" prefetch={true}>
             <Card className="h-full cursor-pointer hover:shadow-md transition-shadow">
               <CardContent className="p-6 h-full flex flex-col">
                 <h3 className="font-bold text-lg mb-1">{player.name}</h3>

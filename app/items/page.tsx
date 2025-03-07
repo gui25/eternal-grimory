@@ -5,7 +5,7 @@ import { Search, Grid3X3, List, Filter } from "lucide-react"
 import { useState, useEffect } from "react"
 import ItemGrid from "@/components/item-grid"
 import ItemList from "@/components/item-list"
-import LoadingSpinner from "@/components/loading-spinner"
+import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
 
 interface Item {
   name: string;
@@ -19,7 +19,6 @@ interface Item {
 
 export default function ItemsPage() {
   const [items, setItems] = useState<Item[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [rarityFilter, setRarityFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
@@ -33,8 +32,6 @@ export default function ItemsPage() {
         setItems(data);
       } catch (error) {
         console.error("Erro ao buscar itens:", error);
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -63,6 +60,14 @@ export default function ItemsPage() {
   const types = Array.from(new Set(items.map((item) => item.type)));
   const predefinedTypes = ["Weapon", "Armor", "Potion", "Artifact"];
 
+  const rarityOptions: FilterOption[] = [
+    { value: "Common", label: "Comum" },
+    { value: "Uncommon", label: "Incomum" },
+    { value: "Rare", label: "Raro" },
+    { value: "Epic", label: "Épico" },
+    { value: "Legendary", label: "Lendário" },
+  ]
+
   const sortedTypes = types.sort((a, b) => {
     const aIndex = predefinedTypes.indexOf(a);
     const bIndex = predefinedTypes.indexOf(b);
@@ -83,9 +88,10 @@ export default function ItemsPage() {
     return translations[type] || type;
   };
 
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
+  const typeOptions: FilterOption[] = sortedTypes.map((type) => ({
+    value: type,
+    label: translateItemType(type),
+  }))
 
   return (
     <div className="space-y-6">
@@ -123,37 +129,21 @@ export default function ItemsPage() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2">
-          <div className="relative">
-            <select
-              className="border border-gold-dark rounded-md py-2 px-3 bg-wine-darker text-gold-light appearance-none pr-8 w-full"
-              value={rarityFilter}
-              onChange={(e) => setRarityFilter(e.target.value)}
-            >
-              <option value="">Todas as Raridades</option>
-              <option value="Common">Comum</option>
-              <option value="Uncommon">Incomum</option>
-              <option value="Rare">Raro</option>
-              <option value="Epic">Épico</option>
-              <option value="Legendary">Lendário</option>
-            </select>
-            <Filter className="absolute right-2 top-2.5 h-4 w-4 text-gold-light pointer-events-none" />
-          </div>
+          <FilterSelect
+            options={rarityOptions}
+            value={rarityFilter}
+            onChange={(e) => setRarityFilter(e.target.value)}
+            placeholder="Todas as Raridades"
+            className="min-w-[180px]"
+          />
 
-          <div className="relative">
-            <select
-              className="border border-gold-dark rounded-md py-2 px-3 bg-wine-darker text-gold-light appearance-none pr-8 w-full"
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-            >
-              <option value="">Todos os Tipos</option>
-              {sortedTypes.map((type) => (
-                <option key={type} value={type}>
-                  {translateItemType(type)}
-                </option>
-              ))}
-            </select>
-            <Filter className="absolute right-2 top-2.5 h-4 w-4 text-gold-light pointer-events-none" />
-          </div>
+          <FilterSelect
+            options={typeOptions}
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            placeholder="Todos os Tipos"
+            className="min-w-[180px]"
+          />
 
           <Button
             variant="outline"
@@ -163,6 +153,29 @@ export default function ItemsPage() {
             Limpar Filtros
           </Button>
         </div>
+      </div>
+
+      {/* Item type quick filters */}
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant={typeFilter === "" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setTypeFilter("")}
+          className={typeFilter === "" ? "bg-gold-primary text-wine-darker" : "border-gold-dark"}
+        >
+          Todos
+        </Button>
+        {predefinedTypes.map((type) => (
+          <Button
+            key={type}
+            variant={typeFilter === type ? "default" : "outline"}
+            size="sm"
+            onClick={() => setTypeFilter(type)}
+            className={typeFilter === type ? "bg-gold-primary text-wine-darker" : "border-gold-dark"}
+          >
+            {translateItemType(type)}
+          </Button>
+        ))}
       </div>
 
       {filteredItems.length > 0 ? (
@@ -184,5 +197,6 @@ export default function ItemsPage() {
         </div>
       )}
     </div>
-  );
+  )
 }
+

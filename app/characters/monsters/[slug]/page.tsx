@@ -4,7 +4,7 @@ import Image from "next/image"
 import { getCharacter } from "@/lib/mdx"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Shield } from "lucide-react"
-import TrackView, { ViewedItem } from "@/components/track-view"
+import TrackView from "@/components/track-view"
 
 // Interface para o objeto meta retornado do getCharacter
 interface CharacterMeta {
@@ -30,12 +30,9 @@ export default async function MonsterPage({ params }: { params: { slug: string }
       <TrackView
         item={{
           slug: meta.slug,
-          category: meta.category,
           name: meta.name,
           type: meta.type,
-          challenge: meta.challenge,
-          tags: meta.tags,
-          image: meta.image
+          category: "monster",
         }}
       />
 

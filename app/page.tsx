@@ -15,9 +15,7 @@ export default async function Dashboard() {
 
   return (
     <div className="space-y-8 p-6 md:pt-6 pt-16">
-      {" "}
-      {/* Adicionado pt-16 para mobile e pt-6 para desktop */}
-      {/* Header */}
+  
       <div className="flex flex-col sm:flex-row sm:items-center items-center sm:justify-between gold-border p-4 gap-4">
         <div>
           <h1 className="fantasy-heading flex items-center gap-2">
@@ -32,7 +30,7 @@ export default async function Dashboard() {
           <ConfettiButton className="w-full sm:w-auto">A Aventura Aguarda!</ConfettiButton>
         </div>
       </div>
-      {/* Player Characters */}
+
       <section>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 mb-4">
           <div className="flex items-center gap-2">
@@ -75,7 +73,7 @@ export default async function Dashboard() {
           </div>
         )}
       </section>
-      {/* Stats Grid */}
+
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Link href="/items" className="h-full">
           <Card className="stat-card h-full">

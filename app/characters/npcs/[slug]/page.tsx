@@ -20,12 +20,9 @@ export default async function NpcPage({ params }: { params: { slug: string } }) 
       <TrackView
         item={{
           slug: meta.slug,
-          category: meta.category,
           name: meta.name,
           type: meta.type,
-          tags: meta.tags,
-          image: meta.image,
-          affiliation: meta.affiliation
+          category: "npc",
         }}
       />
 
