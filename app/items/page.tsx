@@ -76,24 +76,6 @@ export default function ItemsPage() {
     <PageContainer>
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <h1 className="fantasy-heading">Biblioteca de Itens</h1>
-        <div className="flex items-center gap-2">
-          <Button
-            variant={isGridView ? "default" : "outline"}
-            size="icon"
-            onClick={() => setIsGridView(true)}
-            className={isGridView ? "bg-gold-primary text-wine-darker" : ""}
-          >
-            <Grid3X3 className="h-5 w-5" />
-          </Button>
-          <Button
-            variant={!isGridView ? "default" : "outline"}
-            size="icon"
-            onClick={() => setIsGridView(false)}
-            className={!isGridView ? "bg-gold-primary text-wine-darker" : ""}
-          >
-            <List className="h-5 w-5" />
-          </Button>
-        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
