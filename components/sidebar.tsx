@@ -1,82 +1,163 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { BookOpen, Sword, Users, Scroll, Menu, BirdIcon as Dragon } from "lucide-react"
+import {
+  BookMarked,
+  Menu,
+  X,
+  Scroll,
+  Sword,
+  Users,
+  Shield,
+  User,
+  Home,
+} from "lucide-react"
 
 export default function Sidebar() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
 
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsMobileMenuOpen(false)
-  }, [pathname])
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen)
+  }
 
-  const navigation = [
-    { name: "Painel", href: "/", icon: BookOpen },
-    { name: "Itens", href: "/items", icon: Sword },
-    { name: "Sessões", href: "/sessions", icon: Scroll },
-    { name: "Personagens", href: "/characters", icon: Users },
-  ]
+  const isActive = (path: string) => {
+    return pathname === path || pathname?.startsWith(path + "/")
+  }
 
   return (
     <>
-      {/* Mobile menu button - only visible when sidebar is closed */}
-      {!isMobileMenuOpen && (
-        <button
-          className="fixed z-50 top-4 left-4 p-2 rounded-md bg-wine-darker border border-gold-dark text-gold md:hidden hover:bg-wine-dark hover:border-gold transition-colors"
-          onClick={() => setIsMobileMenuOpen(true)}
-          aria-label="Open menu"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
-      )}
-
-      {/* Sidebar - different styles for mobile and desktop */}
-      <div
-        className={cn(
-          "fixed inset-y-0 left-0 z-40 w-64 bg-wine-darker border-r border-gold-dark shadow-lg transition-transform duration-300 ease-in-out",
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0", // Hide by default on mobile, always show on desktop
-        )}
+      <button
+        className="md:hidden fixed top-4 left-4 z-50 bg-wine-darker p-2 rounded-md"
+        onClick={toggleSidebar}
       >
-        <div className="flex items-center justify-center p-4 border-b border-gold-dark">
-          <Dragon className="h-8 w-8 text-gold mr-2" />
-          <h1 className="text-2xl font-heading font-bold text-gold">Grimório Eterno</h1>
-        </div>
+        {sidebarOpen ? <X /> : <Menu />}
+      </button>
 
-        <div className="flex-1 flex flex-col pt-8 pb-4 overflow-y-auto">
-          <nav className="px-4 space-y-2">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  "flex items-center px-4 py-3 text-base font-medium rounded-md group transition-colors",
-                  pathname === item.href
-                    ? "bg-wine-dark text-gold border-l-2 border-gold"
-                    : "text-gold-light hover:bg-wine-dark hover:text-gold",
-                )}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </div>
-
-      {/* Mobile backdrop - only visible when sidebar is open */}
-      {isMobileMenuOpen && (
+      {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black bg-opacity-50 md:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-          aria-hidden="true"
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={toggleSidebar}
         />
       )}
+
+      <aside
+        className={cn(
+          "fixed top-0 left-0 h-full w-64 bg-wine-darker border-r border-gold/20 z-40 transition-transform",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        )}
+      >
+        <div className="p-6">
+          <Link href="/" prefetch={true} className="flex items-center gap-2">
+            <BookMarked className="h-6 w-6 text-gold" />
+            <span className="font-heading text-xl font-bold text-gold">
+              Grimório Eterno
+            </span>
+          </Link>
+        </div>
+
+        <nav className="px-4 py-2">
+          <ul className="space-y-1">
+            <li>
+              <Link
+                href="/"
+                prefetch={true}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-wine-dark transition-colors",
+                  isActive("/") ? "bg-wine-dark text-gold" : "text-gold-light/80"
+                )}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Home className="h-5 w-5" />
+                <span>Início</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/characters/players"
+                prefetch={true}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-wine-dark transition-colors",
+                  isActive("/characters/players")
+                    ? "bg-wine-dark text-gold"
+                    : "text-gold-light/80"
+                )}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <User className="h-5 w-5" />
+                <span>Personagens</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/characters/npcs"
+                prefetch={true}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-wine-dark transition-colors",
+                  isActive("/characters/npcs")
+                    ? "bg-wine-dark text-gold"
+                    : "text-gold-light/80"
+                )}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Users className="h-5 w-5" />
+                <span>NPCs</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/characters/monsters"
+                prefetch={true}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-wine-dark transition-colors",
+                  isActive("/characters/monsters")
+                    ? "bg-wine-dark text-gold"
+                    : "text-gold-light/80"
+                )}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Shield className="h-5 w-5" />
+                <span>Monstros</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/items"
+                prefetch={true}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-wine-dark transition-colors",
+                  isActive("/items")
+                    ? "bg-wine-dark text-gold"
+                    : "text-gold-light/80"
+                )}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Sword className="h-5 w-5" />
+                <span>Itens</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/sessions"
+                prefetch={true}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-wine-dark transition-colors",
+                  isActive("/sessions")
+                    ? "bg-wine-dark text-gold"
+                    : "text-gold-light/80"
+                )}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Scroll className="h-5 w-5" />
+                <span>Sessões</span>
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </aside>
     </>
   )
 }

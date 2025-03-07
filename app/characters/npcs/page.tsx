@@ -108,7 +108,7 @@ export default function NPCsPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {filteredNPCs.map((npc) => (
-          <Link key={npc.slug} href={`/characters/npcs/${npc.slug}`}>
+          <Link key={npc.slug} href={`/characters/npcs/${npc.slug}`} prefetch={true}>
             <Card>
               <CardContent className="pt-4">
                 <h3 className="text-lg font-bold">{npc.name}</h3>

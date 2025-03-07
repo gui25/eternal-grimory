@@ -65,7 +65,7 @@ export default async function Dashboard() {
 
         {players.length > 3 && (
           <div className="flex justify-center mt-6">
-            <Link href="/characters/players">
+            <Link href="/characters/players" prefetch={true}>
               <ConfettiButton className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 Ver Todos os Personagens
@@ -76,7 +76,7 @@ export default async function Dashboard() {
       </section>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Link href="/items" className="h-full">
+        <Link href="/items" prefetch={true} className="h-full">
           <Card className="stat-card h-full">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">

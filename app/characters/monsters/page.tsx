@@ -107,7 +107,7 @@ export default function MonstersPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {filteredMonsters.map((monster) => (
-          <Link key={monster.slug} href={`/characters/monsters/${monster.slug}`}>
+          <Link key={monster.slug} href={`/characters/monsters/${monster.slug}`} prefetch={true}>
             <Card>
               <CardContent className="p-6">
                 <h3 className="font-bold text-lg mb-1">{monster.name}</h3>

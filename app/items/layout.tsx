@@ -5,10 +5,6 @@ export const metadata: Metadata = {
   description: "Explore a coleção de itens mágicos, armas, armaduras e artefatos da campanha."
 }
 
-export default function ItemsLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function ItemsLayout({ children }: { children: React.ReactNode }) {
   return children
 }
