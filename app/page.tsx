@@ -18,7 +18,7 @@ export default async function Dashboard() {
     <PageContainer>
   
       <div className="flex flex-col sm:flex-row sm:items-center items-center sm:justify-between gold-border p-4 gap-4">
-        <div className="flex flex-col container items-center">
+        <div className="flex flex-col items-center w-full">
           <div className="flex gap-2">
             <h1 className="fantasy-heading flex items-center">Painel da Campanha</h1>
           </div>
