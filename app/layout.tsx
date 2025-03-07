@@ -1,7 +1,8 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Cinzel, Lora } from "next/font/google"
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
 import Sidebar from "@/components/sidebar"
 
@@ -33,6 +34,7 @@ export default function RootLayout({
       <body className="font-body bg-wine-dark text-foreground">
         <div className="flex min-h-screen">
           <Analytics />
+          <SpeedInsights />
           <Sidebar />
           <main className="flex-1 p-4 md:p-8 md:ml-64">{children}</main>
         </div>
