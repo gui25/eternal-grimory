@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -16,149 +16,141 @@ import {
   Home,
 } from "lucide-react"
 
+// Tipos para melhorar a documentação e prevenir erros
+type NavItem = {
+  href: string
+  label: string
+  icon: React.ReactNode
+}
+
 export default function Sidebar() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen)
-  }
+  // Usando useCallback para evitar recriação da função em cada renderização
+  const toggleSidebar = useCallback(() => {
+    setIsOpen(prev => !prev)
+  }, [])
 
-  const isActive = (path: string) => {
+  // Verificar se um link está ativo
+  const isActive = useCallback((path: string) => {
     return pathname === path || pathname?.startsWith(path + "/")
-  }
+  }, [pathname])
+
+  // Lista de itens de navegação para fácil manutenção
+  const navItems: NavItem[] = [
+    { href: "/", label: "Início", icon: <Home className="h-5 w-5" /> },
+    { href: "/characters/players", label: "Personagens", icon: <User className="h-5 w-5" /> },
+    { href: "/characters/npcs", label: "NPCs", icon: <Users className="h-5 w-5" /> },
+    { href: "/characters/monsters", label: "Monstros", icon: <Shield className="h-5 w-5" /> },
+    { href: "/items", label: "Itens", icon: <Sword className="h-5 w-5" /> },
+    { href: "/sessions", label: "Sessões", icon: <Scroll className="h-5 w-5" /> },
+  ]
 
   return (
     <>
-      <button
-        className="md:hidden fixed top-4 left-4 z-50 bg-wine-darker p-2 rounded-md"
-        onClick={toggleSidebar}
-      >
-        {sidebarOpen ? <X /> : <Menu />}
-      </button>
+      {/* Toggle button - visível apenas quando fechado e em telas menores */}
+      {!isOpen && (
+        <button
+          className="md:hidden fixed top-4 left-4 z-50 bg-wine-darker p-2 rounded-md"
+          onClick={toggleSidebar}
+          aria-label="Abrir menu lateral"
+          aria-expanded={isOpen}
+          aria-controls="sidebar"
+        >
+          <Menu aria-hidden="true" />
+        </button>
+      )}
 
-      {sidebarOpen && (
+      {/* Overlay para fechar a sidebar em dispositivos móveis */}
+      {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 md:hidden"
           onClick={toggleSidebar}
+          aria-hidden="true"
+          role="presentation"
         />
       )}
 
+      {/* Sidebar principal */}
       <aside
+        id="sidebar"
         className={cn(
-          "fixed top-0 left-0 h-full w-64 bg-wine-darker border-r border-gold/20 z-40 transition-transform",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          "fixed top-0 left-0 h-full w-64 bg-wine-darker border-r border-gold/20 z-40",
+          "transition-transform duration-300 ease-in-out",
+          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
+        aria-label="Navegação principal"
       >
-        <div className="p-6">
+        {/* Header da Sidebar */}
+        <div className="p-6 flex items-center justify-between">
           <Link href="/" prefetch={true} className="flex items-center gap-2">
-            <BookMarked className="h-6 w-6 text-gold" />
+            <BookMarked className="h-6 w-6 text-gold" aria-hidden="true" />
             <span className="font-heading text-xl font-bold text-gold">
               Grimório Eterno
             </span>
           </Link>
+
+          {/* Botão para fechar em dispositivos móveis */}
+          <button
+            className="md:hidden text-gold-light/80 hover:text-gold transition-colors"
+            onClick={toggleSidebar}
+            aria-label="Fechar menu lateral"
+          >
+            <X size={20} aria-hidden="true" />
+          </button>
         </div>
 
-        <nav className="px-4 py-2">
+        {/* Menu de navegação */}
+        <nav className="px-4 py-2" aria-label="Menu principal">
           <ul className="space-y-1">
-            <li>
-              <Link
-                href="/"
-                prefetch={true}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-wine-dark transition-colors",
-                  isActive("/") ? "bg-wine-dark text-gold" : "text-gold-light/80"
-                )}
-                onClick={() => setSidebarOpen(false)}
-              >
-                <Home className="h-5 w-5" />
-                <span>Início</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/characters/players"
-                prefetch={true}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-wine-dark transition-colors",
-                  isActive("/characters/players")
-                    ? "bg-wine-dark text-gold"
-                    : "text-gold-light/80"
-                )}
-                onClick={() => setSidebarOpen(false)}
-              >
-                <User className="h-5 w-5" />
-                <span>Personagens</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/characters/npcs"
-                prefetch={true}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-wine-dark transition-colors",
-                  isActive("/characters/npcs")
-                    ? "bg-wine-dark text-gold"
-                    : "text-gold-light/80"
-                )}
-                onClick={() => setSidebarOpen(false)}
-              >
-                <Users className="h-5 w-5" />
-                <span>NPCs</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/characters/monsters"
-                prefetch={true}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-wine-dark transition-colors",
-                  isActive("/characters/monsters")
-                    ? "bg-wine-dark text-gold"
-                    : "text-gold-light/80"
-                )}
-                onClick={() => setSidebarOpen(false)}
-              >
-                <Shield className="h-5 w-5" />
-                <span>Monstros</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/items"
-                prefetch={true}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-wine-dark transition-colors",
-                  isActive("/items")
-                    ? "bg-wine-dark text-gold"
-                    : "text-gold-light/80"
-                )}
-                onClick={() => setSidebarOpen(false)}
-              >
-                <Sword className="h-5 w-5" />
-                <span>Itens</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/sessions"
-                prefetch={true}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-wine-dark transition-colors",
-                  isActive("/sessions")
-                    ? "bg-wine-dark text-gold"
-                    : "text-gold-light/80"
-                )}
-                onClick={() => setSidebarOpen(false)}
-              >
-                <Scroll className="h-5 w-5" />
-                <span>Sessões</span>
-              </Link>
-            </li>
+            {navItems.map((item) => (
+              <li key={item.href}>
+                <NavLink
+                  href={item.href}
+                  active={isActive(item.href)}
+                  onClick={toggleSidebar}
+                  icon={item.icon}
+                >
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </nav>
       </aside>
     </>
+  )
+}
+
+// Componente extraído para reutilização e limpeza do código
+function NavLink({
+  href,
+  active,
+  onClick,
+  icon,
+  children,
+}: {
+  href: string
+  active: boolean
+  onClick: () => void
+  icon: React.ReactNode
+  children: React.ReactNode
+}) {
+  return (
+    <Link
+      href={href}
+      prefetch={true}
+      className={cn(
+        "flex items-center gap-3 px-3 py-2 rounded-md transition-colors",
+        "hover:bg-wine-dark focus:bg-wine-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-gold",
+        active ? "bg-wine-dark text-gold" : "text-gold-light/80"
+      )}
+      onClick={onClick}
+    >
+      {icon}
+      <span>{children}</span>
+    </Link>
   )
 }
 
