@@ -5,6 +5,7 @@ import { getCharacter } from "@/lib/mdx"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Shield } from "lucide-react"
 import TrackView from "@/components/track-view"
+import { PageContainer } from "@/components/ui/page-container"
 
 // Interface para o objeto meta retornado do getCharacter
 interface CharacterMeta {
@@ -25,7 +26,7 @@ export default async function MonsterPage({ params }: { params: { slug: string }
   const { contentHtml, meta } = character as { contentHtml: string, meta: CharacterMeta }
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <PageContainer className="max-w-3xl mx-auto">
       {/* Track this view */}
       <TrackView
         item={{
@@ -86,7 +87,7 @@ export default async function MonsterPage({ params }: { params: { slug: string }
         className="prose prose-slate dark:prose-invert max-w-none mdx-content"
         dangerouslySetInnerHTML={{ __html: contentHtml }}
       />
-    </div>
+    </PageContainer>
   )
 }
 

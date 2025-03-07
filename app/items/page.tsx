@@ -11,6 +11,7 @@ import { ErrorMessage } from "@/components/ui/error-message"
 import { translateItemType, translateRarity } from "@/utils/translations"
 import { Item } from "@/types"
 import { PREDEFINED_ITEM_TYPES } from "@/constants/items"
+import { PageContainer } from "@/components/ui/page-container"
 
 export default function ItemsPage() {
   const [isGridView, setIsGridView] = useState(true);
@@ -72,8 +73,8 @@ export default function ItemsPage() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 md:pt-6 pt-16">
+    <PageContainer>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <h1 className="fantasy-heading">Biblioteca de Itens</h1>
         <div className="flex items-center gap-2">
           <Button
@@ -151,7 +152,7 @@ export default function ItemsPage() {
           </Button>
         </div>
       )}
-    </div>
+    </PageContainer>
   )
 }
 

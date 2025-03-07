@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, BookOpen } from "lucide-react"
 import TrackView from "@/components/track-view"
 import { SessionMeta } from "@/types/content"
+import { PageContainer } from "@/components/ui/page-container"
 
 export default async function SessionPage({ params }: { params: { slug: string } }) {
 
@@ -15,7 +16,7 @@ export default async function SessionPage({ params }: { params: { slug: string }
   const { contentHtml, meta } = session as { contentHtml: string, meta: SessionMeta }
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <PageContainer className="max-w-3xl mx-auto">
 
       <TrackView
         item={{
@@ -77,7 +78,7 @@ export default async function SessionPage({ params }: { params: { slug: string }
         className="prose prose-slate dark:prose-invert max-w-none mdx-content"
         dangerouslySetInnerHTML={{ __html: contentHtml }}
       />
-    </div>
+    </PageContainer>
   )
 }
 

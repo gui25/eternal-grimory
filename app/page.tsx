@@ -4,6 +4,7 @@ import { Shield, Sword, Scroll, Users, BirdIcon as Dragon, Sparkles } from "luci
 import { getItems, getSessions, getCharacters } from "@/lib/mdx"
 import RecentActivity from "@/components/recent-activity"
 import ConfettiButton from "@/components/confetti-button"
+import { PageContainer } from "@/components/ui/page-container"
 
 export default async function Dashboard() {
   // Get actual counts from MDX content
@@ -14,7 +15,7 @@ export default async function Dashboard() {
   const monsters = await getCharacters("monster")
 
   return (
-    <div className="space-y-8 p-6 md:pt-6 pt-16">
+    <PageContainer>
   
       <div className="flex flex-col sm:flex-row sm:items-center items-center sm:justify-between gold-border p-4 gap-4">
         <div>
@@ -129,7 +130,7 @@ export default async function Dashboard() {
       </div>
       {/* Recent Activity - Client Component that only renders when there's activity */}
       <RecentActivity />
-    </div>
+    </PageContainer>
   )
 }
 

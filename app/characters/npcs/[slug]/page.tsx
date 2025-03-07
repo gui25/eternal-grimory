@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, User } from "lucide-react"
 import TrackView from "@/components/track-view"
 import { NpcMeta } from "@/types/content"
+import { PageContainer } from "@/components/ui/page-container"
 
 export default async function NpcPage({ params }: { params: { slug: string } }) {
   // Get the actual content
@@ -15,7 +16,7 @@ export default async function NpcPage({ params }: { params: { slug: string } }) 
   const { contentHtml, meta } = character as { contentHtml: string, meta: NpcMeta }
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <PageContainer className="max-w-3xl mx-auto">
       {/* Track this view */}
       <TrackView
         item={{
@@ -78,7 +79,7 @@ export default async function NpcPage({ params }: { params: { slug: string } }) 
         className="prose prose-slate dark:prose-invert max-w-none mdx-content"
         dangerouslySetInnerHTML={{ __html: contentHtml }}
       />
-    </div>
+    </PageContainer>
   )
 }
 

@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Search, Calendar, Filter } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import { PageContainer } from "@/components/ui/page-container"
 
 interface Session {
   session_number: number;
@@ -53,7 +54,7 @@ export default function SessionsPage() {
   }
 
   return (
-    <div className="space-y-6 md:pt-6 pt-16">
+    <PageContainer>
       <h1 className="fantasy-heading">Relatórios de Sessão</h1>
 
       <div className="flex flex-col sm:flex-row gap-4">
@@ -114,7 +115,7 @@ export default function SessionsPage() {
           </Link>
         ))}
       </div>
-    </div>
+    </PageContainer>
   )
 }
 

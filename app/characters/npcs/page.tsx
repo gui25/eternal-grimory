@@ -7,6 +7,7 @@ import { Search } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
+import { PageContainer } from "@/components/ui/page-container"
 
 interface NPC {
   name: string
@@ -70,7 +71,7 @@ export default function NPCsPage() {
   }))
 
   return (
-    <div className="space-y-6">
+    <PageContainer>
       <h1 className="fantasy-heading">NPCs</h1>
 
       <div className="flex flex-col sm:flex-row gap-4">
@@ -127,6 +128,6 @@ export default function NPCsPage() {
           </Link>
         ))}
       </div>
-    </div>
+    </PageContainer>
   )
 }

@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, Shield, User } from "lucide-react"
 import { getCharacters } from "@/lib/mdx"
+import { PageContainer } from "@/components/ui/page-container"
 
 export default async function CharactersPage() {
   const npcs = await getCharacters("npc")
@@ -9,7 +10,7 @@ export default async function CharactersPage() {
   const players = await getCharacters("player")
 
   return (
-    <div className="space-y-6 md:pt-6 pt-16">
+    <PageContainer>
       <h1 className="fantasy-heading">Personagens</h1>
       <p className="text-muted-foreground">Navegue pelos personagens dos jogadores, NPCs e monstros da sua campanha.</p>
 
@@ -53,7 +54,7 @@ export default async function CharactersPage() {
           </Card>
         </Link>
       </div>
-    </div>
+    </PageContainer>
   )
 }
 
