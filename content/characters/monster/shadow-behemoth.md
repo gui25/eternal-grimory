@@ -1,43 +1,43 @@
 ---
-name: "Shadow Behemoth"
+name: "Behemoth das Sombras"
 type: "Elemental"
 challenge: "Epic"
 tags: ["Elemental", "Shadow", "Summoned"]
 ---
 
-# Shadow Behemoth
+# Behemoth das Sombras
 
-A massive creature formed from pure shadow energy, summoned from the Plane of Shadow.
+Uma criatura massiva formada de pura energia das sombras, invocada do Plano das Sombras.
 
-## Statistics
+## Estatísticas
 
-- **Armor Class:** 17 (Natural Armor)
-- **Hit Points:** 230 (15d12 + 135)
-- **Speed:** 50 ft., climb 50 ft.
-- **Challenge Rating:** 18
+- **Classe de Armadura:** 17 (Armadura Natural)
+- **Pontos de Vida:** 230 (15d12 + 135)
+- **Deslocamento:** 15m, escalada 15m
+- **Nível de Desafio:** 18
 
-## Abilities
+## Habilidades
 
-- **Shadow Absorption:** Heals when hit by necrotic damage.
-- **Umbral Strike:** Melee attack deals 3d10 + 8 necrotic damage and reduces target's maximum HP.
-- **Shadow Step:** Can teleport between areas of darkness as a bonus action.
-- **Engulfing Darkness:** Creates a 30-foot sphere of magical darkness that moves with it.
+- **Absorção de Sombras:** Cura-se quando atingido por dano necrótico.
+- **Golpe Umbral:** Ataque corpo a corpo causa 3d10 + 8 de dano necrótico e reduz o máximo de PV do alvo.
+- **Passo das Sombras:** Pode se teletransportar entre áreas de escuridão como uma ação bônus.
+- **Escuridão Envolvente:** Cria uma esfera de 9m de escuridão mágica que se move com ele.
 
-## Notable Encounters
+## Encontros Notáveis
 
-- **Session 15:** Summoned by Eldrin during the ritual at the Shadow Gate.
-- **Session 16:** Pursued the party through the Shadowfell Forest.
-- **Session 17:** Finally defeated when the party used the Sunstone Amulet to create a burst of radiant light.
+- **Sessão 15:** Invocado por Eldrin durante o ritual no Portão das Sombras.
+- **Sessão 16:** Perseguiu o grupo através da Floresta Umbral.
+- **Sessão 17:** Finalmente derrotado quando o grupo usou o Amuleto da Pedra Solar para criar uma explosão de luz radiante.
 
-## Lore
+## História
 
-Shadow Behemoths are not natural creatures but rather manifestations of shadow energy given form by powerful spellcasters. They exist only to consume light and life, returning all to the primordial darkness from which they were summoned.
+Behemoths das Sombras não são criaturas naturais, mas manifestações de energia das sombras que ganham forma através de poderosos conjuradores. Eles existem apenas para consumir luz e vida, devolvendo tudo à escuridão primordial da qual foram invocados.
 
-The one encountered by the party was particularly powerful, having been strengthened by the ambient energy of the Shadow Gate. Its defeat was only possible due to the Sunstone Amulet, an artifact specifically created to combat creatures of pure shadow.
+O encontrado pelo grupo era particularmente poderoso, tendo sido fortalecido pela energia ambiente do Portão das Sombras. Sua derrota só foi possível devido ao Amuleto da Pedra Solar, um artefato especificamente criado para combater criaturas de pura sombra.
 
-## Weaknesses
+## Fraquezas
 
-- Vulnerable to radiant damage
-- Cannot enter areas of bright magical light
-- Becomes disoriented if its Engulfing Darkness is dispelled
+- Vulnerável a dano radiante
+- Não pode entrar em áreas de luz mágica brilhante
+- Fica desorientado se sua Escuridão Envolvente for dissipada
 
