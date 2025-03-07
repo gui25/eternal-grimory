@@ -5,7 +5,6 @@ import { Analytics } from "@vercel/analytics/react"
 import "./globals.css"
 import Sidebar from "@/components/sidebar"
 
-// Fonts for RPG theme
 const headingFont = Cinzel({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
@@ -33,6 +32,7 @@ export default function RootLayout({
     <html lang="en" className={`${headingFont.variable} ${bodyFont.variable} dark`}>
       <body className="font-body bg-wine-dark text-foreground">
         <div className="flex min-h-screen">
+          <Analytics />
           <Sidebar />
           <main className="flex-1 p-4 md:p-8 md:ml-64">{children}</main>
         </div>
@@ -43,4 +43,3 @@ export default function RootLayout({
 
 
 
-import './globals.css'
