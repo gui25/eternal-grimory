@@ -7,7 +7,6 @@ import ItemGrid from "@/components/item-grid"
 import ItemList from "@/components/item-list"
 import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
 import { useFilteredData } from "@/hooks/useFilteredData"
-import { LoadingState } from "@/components/ui/loading-state"
 import { ErrorMessage } from "@/components/ui/error-message"
 import { translateItemType, translateRarity } from "@/utils/translations"
 import { Item } from "@/types"
@@ -19,7 +18,6 @@ export default function ItemsPage() {
   const {
     data: items,
     filteredData: filteredItems,
-    loading,
     error,
     search,
     setSearch,
@@ -65,8 +63,6 @@ export default function ItemsPage() {
     value: type,
     label: translateItemType(type),
   }));
-
-  if (loading) return <LoadingState message="Carregando itens..." />;
   
   if (error) return (
     <ErrorMessage 
