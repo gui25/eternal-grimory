@@ -1,76 +1,59 @@
 "use client"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, Grid3X3, List, Filter } from "lucide-react"
-import { useState, useEffect } from "react"
+import { Search, Grid3X3, List } from "lucide-react"
+import { useState } from "react"
 import ItemGrid from "@/components/item-grid"
 import ItemList from "@/components/item-list"
 import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
-
-interface Item {
-  name: string;
-  tags: string[];
-  rarity: "Common" | "Uncommon" | "Rare" | "Epic" | "Legendary";
-  type: string;
-  slug: string;
-  image?: string;
-  description?: string;
-}
+import { useFilteredData } from "@/hooks/useFilteredData"
+import { LoadingState } from "@/components/ui/loading-state"
+import { ErrorMessage } from "@/components/ui/error-message"
+import { translateItemType, translateRarity } from "@/utils/translations"
+import { Item } from "@/types"
+import { PREDEFINED_ITEM_TYPES } from "@/constants/items"
 
 export default function ItemsPage() {
-  const [items, setItems] = useState<Item[]>([]);
-  const [search, setSearch] = useState("");
-  const [rarityFilter, setRarityFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
   const [isGridView, setIsGridView] = useState(true);
+  
+  const {
+    data: items,
+    filteredData: filteredItems,
+    loading,
+    error,
+    search,
+    setSearch,
+    filters,
+    setFilter,
+    clearFilters,
+  } = useFilteredData<Item>(
+    "/api/items",
+    (item, { search, filters }) => {
+      const matchesSearch =
+        search === "" ||
+        item.name.toLowerCase().includes(search.toLowerCase()) ||
+        item.tags.some((tag) => tag.toLowerCase().includes(search.toLowerCase()));
 
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const response = await fetch("/api/items");
-        const data = await response.json();
-        setItems(data);
-      } catch (error) {
-        console.error("Erro ao buscar itens:", error);
-      }
-    };
+      const matchesRarity = !filters.rarity || item.rarity.toLowerCase() === filters.rarity.toLowerCase();
+      const matchesType = !filters.type || item.type.toLowerCase() === filters.type.toLowerCase();
 
-    fetchItems();
-  }, []);
-
-  const filteredItems = items.filter((item) => {
-    const matchesSearch =
-      search === "" ||
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.tags.some((tag: string) => tag.toLowerCase().includes(search.toLowerCase()));
-
-    const matchesRarity = rarityFilter === "" || item.rarity.toLowerCase() === rarityFilter.toLowerCase();
-
-    const matchesType = typeFilter === "" || item.type.toLowerCase() === typeFilter.toLowerCase();
-
-    return matchesSearch && matchesRarity && matchesType;
-  });
-
-  const clearFilters = () => {
-    setSearch("");
-    setRarityFilter("");
-    setTypeFilter("");
-  };
+      return matchesSearch && matchesRarity && matchesType;
+    }
+  );
 
   const types = Array.from(new Set(items.map((item) => item.type)));
-  const predefinedTypes = ["Weapon", "Armor", "Potion", "Artifact"];
-
+  
   const rarityOptions: FilterOption[] = [
-    { value: "Common", label: "Comum" },
-    { value: "Uncommon", label: "Incomum" },
-    { value: "Rare", label: "Raro" },
-    { value: "Epic", label: "Épico" },
-    { value: "Legendary", label: "Lendário" },
-  ]
+    { value: "Common", label: translateRarity("Common") },
+    { value: "Uncommon", label: translateRarity("Uncommon") },
+    { value: "Rare", label: translateRarity("Rare") },
+    { value: "Epic", label: translateRarity("Epic") },
+    { value: "Legendary", label: translateRarity("Legendary") },
+  ];
 
   const sortedTypes = types.sort((a, b) => {
-    const aIndex = predefinedTypes.indexOf(a);
-    const bIndex = predefinedTypes.indexOf(b);
+    const aIndex = PREDEFINED_ITEM_TYPES.indexOf(a);
+    const bIndex = PREDEFINED_ITEM_TYPES.indexOf(b);
 
     if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
     if (aIndex !== -1) return -1;
@@ -78,20 +61,19 @@ export default function ItemsPage() {
     return a.localeCompare(b);
   });
 
-  const translateItemType = (type: string) => {
-    const translations: Record<string, string> = {
-      Weapon: "Arma",
-      Armor: "Armadura",
-      Potion: "Poção",
-      Artifact: "Artefato",
-    };
-    return translations[type] || type;
-  };
-
   const typeOptions: FilterOption[] = sortedTypes.map((type) => ({
     value: type,
     label: translateItemType(type),
-  }))
+  }));
+
+  if (loading) return <LoadingState message="Carregando itens..." />;
+  
+  if (error) return (
+    <ErrorMessage 
+      message="Não foi possível carregar os itens. Tente novamente mais tarde." 
+      onRetry={() => window.location.reload()}
+    />
+  );
 
   return (
     <div className="space-y-6">
@@ -131,16 +113,16 @@ export default function ItemsPage() {
         <div className="flex flex-col sm:flex-row gap-2">
           <FilterSelect
             options={rarityOptions}
-            value={rarityFilter}
-            onChange={(e) => setRarityFilter(e.target.value)}
+            value={filters.rarity || ""}
+            onChange={(e) => setFilter("rarity", e.target.value)}
             placeholder="Todas as Raridades"
             className="min-w-[180px]"
           />
 
           <FilterSelect
             options={typeOptions}
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
+            value={filters.type || ""}
+            onChange={(e) => setFilter("type", e.target.value)}
             placeholder="Todos os Tipos"
             className="min-w-[180px]"
           />
