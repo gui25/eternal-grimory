@@ -128,7 +128,6 @@ export default async function Dashboard() {
           </Card>
         </Link>
       </div>
-      {/* Recent Activity - Client Component that only renders when there's activity */}
       <RecentActivity />
     </PageContainer>
   )

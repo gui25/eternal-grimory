@@ -19,7 +19,6 @@ export default function RecentActivity() {
   const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
-    // Load from localStorage
     const storedItems = localStorage.getItem("recentActivity")
 
     if (storedItems) {
@@ -33,10 +32,8 @@ export default function RecentActivity() {
     setIsLoaded(true)
   }, [])
 
-  // Don't render anything until we've loaded from localStorage
   if (!isLoaded || recentItems.length === 0) return null
 
-  // Get the 5 most recent items
   const recentActivity = recentItems.slice(0, 5)
 
   const getCategoryIcon = (category: string) => {
@@ -105,9 +102,9 @@ export default function RecentActivity() {
   return (
     <section>
       <div className="section-title">
-        <Dice className="section-title-icon" />
-        <h2 className="fantasy-subheading">Recent Activity</h2>
-        <div className="text-xs text-gold-light/70 ml-2">Latest updates in your campaign</div>
+          
+          <h2 className="fantasy-subheading"><Dice className="section-title-icon" />Atividade Recente</h2>
+        <div className="text-xs text-gold-light/70 ml-2">Encontre seus ultimos acessos por aqui</div>
       </div>
       <div className="flex flex-col gap-6">
         {recentActivity.map((item, index) => (

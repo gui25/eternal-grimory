@@ -69,7 +69,7 @@
   }
 
   .fantasy-subheading {
-    @apply font-heading text-xl font-semibold;
+    @apply font-heading text-xl font-semibold flex flex-row gap-2 items-center;
     color: hsl(var(--gold-primary));
   }
 
