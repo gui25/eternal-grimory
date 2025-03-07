@@ -53,7 +53,7 @@ export default function SessionsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 md:pt-6 pt-16">
       <h1 className="fantasy-heading">Relatórios de Sessão</h1>
 
       <div className="flex flex-col sm:flex-row gap-4">

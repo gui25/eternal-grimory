@@ -4,13 +4,12 @@ import { Users, Shield, User } from "lucide-react"
 import { getCharacters } from "@/lib/mdx"
 
 export default async function CharactersPage() {
-  // Get counts for each character type
   const npcs = await getCharacters("npc")
   const monsters = await getCharacters("monster")
   const players = await getCharacters("player")
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 md:pt-6 pt-16">
       <h1 className="fantasy-heading">Personagens</h1>
       <p className="text-muted-foreground">Navegue pelos personagens dos jogadores, NPCs e monstros da sua campanha.</p>
 
