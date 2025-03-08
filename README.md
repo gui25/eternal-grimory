@@ -9,7 +9,7 @@
 
 **Grimório Eterno** é uma aplicação web moderna para gerenciamento de campanhas de RPG, construída com Next.js 13, TypeScript e Tailwind CSS.
 
-[Demo](https://grimorio-eterno.vercel.app) · [Reportar Bug](https://github.com/seu-usuario/eternal-grimory/issues) · [Solicitar Feature](https://github.com/seu-usuario/eternal-grimory/issues)
+[Demo](https://eternal-grimory.vercel.app/) · [Reportar Bug](https://github.com/gui25/eternal-grimory/issues) · [Solicitar Feature](https://github.com/gui25/eternal-grimory/issues)
 
 ---
 
