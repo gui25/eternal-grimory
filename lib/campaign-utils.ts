@@ -34,26 +34,56 @@ export function getCurrentCampaignIdFromCookies(): string | undefined {
  */
 export function getCampaignIdFromHttpCookies(cookieHeader: string | null): string | undefined {
   try {
-    if (!cookieHeader) return undefined;
+    if (!cookieHeader) {
+      console.log('getCampaignIdFromHttpCookies: Cookie header is null');
+      return undefined;
+    }
+    
+    // Debugging
+    console.log('getCampaignIdFromHttpCookies - Cookie Header:', cookieHeader);
     
     // Parsear os cookies
-    const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
-      const [key, value] = cookie.trim().split('=');
-      acc[key] = value;
-      return acc;
-    }, {} as Record<string, string>);
+    const cookies: Record<string, string> = {};
     
-    // Obter o valor do cookie da campanha
-    const campaignId = cookies[CAMPAIGN_COOKIE_NAME];
+    // Dividir a string de cookies e processá-los um por um
+    cookieHeader.split(';').forEach(cookie => {
+      const parts = cookie.trim().split('=');
+      if (parts.length >= 2) {
+        const key = parts[0].trim();
+        const value = parts.slice(1).join('=').trim();
+        cookies[key] = value;
+      }
+    });
+    
+    // Log dos cookies parseados para debug
+    console.log('getCampaignIdFromHttpCookies - Parsed Cookies:', cookies);
+    
+    // Tentar encontrar o cookie da campanha diretamente
+    let campaignId = cookies[CAMPAIGN_COOKIE_NAME];
+    
+    // Se não encontrar, tentar outra abordagem (alguns navegadores/frameworks podem ter formatos diferentes)
+    if (!campaignId) {
+      // Procurar o cookie usando regex
+      const regex = new RegExp(`${CAMPAIGN_COOKIE_NAME}=([^;]+)`);
+      const match = cookieHeader.match(regex);
+      if (match && match[1]) {
+        campaignId = match[1];
+        console.log('getCampaignIdFromHttpCookies - Found via regex:', campaignId);
+      }
+    }
     
     // Verificar se a campanha existe e está ativa
     if (campaignId) {
       const campaignExists = CAMPAIGNS.some(c => c.id === campaignId && c.active);
+      
+      console.log(`getCampaignIdFromHttpCookies - Campaign ${campaignId} exists: ${campaignExists}`);
+      
       if (campaignExists) {
         return campaignId;
       }
     }
     
+    console.log('getCampaignIdFromHttpCookies - No valid campaign found');
     return undefined;
   } catch (error) {
     console.error("Erro ao extrair ID da campanha dos cookies HTTP:", error);

@@ -60,9 +60,9 @@ export default function ItemList({ items }: { items: ItemMeta[] }) {
       {items.map((item) => (
         <Link key={item.slug} href={`/items/${item.slug}`}>
           <Card className={`cursor-pointer hover:shadow-md transition-shadow ${getRarityClass(item.rarity)}`}>
-            <CardContent className="p-4 flex justify-between items-center">
-              <div>
-                <h3 className="font-bold">{item.name}</h3>
+            <CardContent className="p-4 flex justify-between items-center h-[82px]">
+              <div className="w-1/2 pr-2">
+                <h3 className="font-bold line-clamp-1 overflow-hidden">{item.name}</h3>
                 <div className={`text-sm flex items-center ${getRarityTextClass(item.rarity)}`}>
                   {getTypeIcon(item.type)}
                   <span>
@@ -70,9 +70,9 @@ export default function ItemList({ items }: { items: ItemMeta[] }) {
                   </span>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-1 justify-end">
+              <div className="flex flex-wrap gap-1 justify-end w-1/2 overflow-hidden max-h-12">
                 {item.tags.map((tag) => (
-                  <span key={tag} className="bg-wine-dark px-2 py-1 rounded-md text-xs text-gold-light">
+                  <span key={tag} className="bg-wine-dark px-2 py-1 rounded-md text-xs text-gold-light whitespace-nowrap mb-1">
                     {tag}
                   </span>
                 ))}

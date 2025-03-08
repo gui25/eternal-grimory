@@ -119,18 +119,54 @@ export function setCurrentCampaign(id: string) {
     throw new Error(`Campanha inválida: ${id}`)
   }
   
+  console.log(`[CAMPANHA] Alterando para: ${id}, caminho: ${campaign.contentPath}`);
+  
   try {
     // Guarda no localStorage para persistência entre sessões
     if (typeof window !== 'undefined') {
-      localStorage.setItem(CAMPAIGN_LOCAL_STORAGE_KEY, id)
+      // Em vez de limpar todo o localStorage, vamos salvar as atividades recentes 
+      // e restaurá-las após a troca de campanha
+      const recentViewsKey = 'recently-viewed-items';
+      const recentActivityKey = 'recent-activity';
+      
+      // Salvar atividades recentes
+      const recentViews = localStorage.getItem(recentViewsKey);
+      const recentActivity = localStorage.getItem(recentActivityKey);
+      
+      // Limpar apenas as chaves relacionadas à campanha, não tudo
+      localStorage.removeItem(CAMPAIGN_LOCAL_STORAGE_KEY);
+      localStorage.removeItem(CAMPAIGN_COOKIE_NAME);
+      
+      // Definir o novo valor da campanha
+      localStorage.setItem(CAMPAIGN_LOCAL_STORAGE_KEY, id);
+      console.log(`[CAMPANHA] localStorage definido para: ${id}`);
+      
+      // Restaurar atividades recentes se existirem
+      if (recentViews) localStorage.setItem(recentViewsKey, recentViews);
+      if (recentActivity) localStorage.setItem(recentActivityKey, recentActivity);
       
       // Define o cookie (mesmo no cliente, para consistência)
-      document.cookie = `${CAMPAIGN_COOKIE_NAME}=${id}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax`
+      const host = window.location.hostname;
+      document.cookie = `${CAMPAIGN_COOKIE_NAME}=${id}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax`;
+      console.log(`[CAMPANHA] Cookie definido: ${CAMPAIGN_COOKIE_NAME}=${id}`);
+      
+      // Usar sessionStorage também
+      sessionStorage.setItem('campaign', id);
+      
+      // Adicionar uma flag à URL
+      const url = new URL(window.location.href);
+      url.searchParams.set('campaign', id);
+      
+      // Forçar um recarregamento completo com a URL atualizada
+      console.log(`[CAMPANHA] Redirecionando para: ${url.href}`);
+      window.location.href = url.href;
     }
-    
-    // Recarregar a página para aplicar a mudança
-    window.location.reload()
   } catch (error) {
-    // Ignora erros - apenas não vai persistir
+    console.error('[CAMPANHA] Erro ao definir campanha:', error);
+    
+    // Tentar recarregar mesmo em caso de erro para garantir a atualização
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
   }
 } 

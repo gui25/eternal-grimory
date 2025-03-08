@@ -1,9 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import useSWR from "swr";
+import { CAMPAIGN_COOKIE_NAME } from "@/lib/campaign-config";
+import { CAMPAIGN_CHANGE_EVENT } from "@/components/campaign-switcher";
 
 interface FilterState {
   search: string;
   filters: Record<string, string>;
+}
+
+// Função para obter o ID da campanha atual do cookie no navegador
+function getCurrentCampaignIdFromBrowser(): string | null {
+  if (typeof document === 'undefined') return null;
+  
+  const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
+    const [key, value] = cookie.split('=');
+    acc[key] = value;
+    return acc;
+  }, {} as Record<string, string>);
+  
+  return cookies[CAMPAIGN_COOKIE_NAME] || null;
 }
 
 export function useFilteredData<T>(
@@ -12,17 +27,98 @@ export function useFilteredData<T>(
 ) {
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<Record<string, string>>({});
+  const [currentCampaignId, setCurrentCampaignId] = useState<string | null>(null);
+  
+  // Função para obter o ID da campanha da URL
+  const getCampaignFromUrl = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('campaign');
+    }
+    return null;
+  }, []);
+  
+  // Efeito para verificar e atualizar o ID da campanha a partir da URL
+  useEffect(() => {
+    const campaignFromUrl = getCampaignFromUrl();
+    const campaignFromCookie = getCurrentCampaignIdFromBrowser();
+    
+    // Preferir o parâmetro da URL, se disponível
+    const effectiveCampaignId = campaignFromUrl || campaignFromCookie;
+    
+    console.log(`[useFilteredData] Campaign URL/Cookie: ${campaignFromUrl || 'none'}/${campaignFromCookie || 'none'}`);
+    
+    if (effectiveCampaignId !== currentCampaignId) {
+      setCurrentCampaignId(effectiveCampaignId);
+    }
+    
+    // Monitorar mudanças nos cookies
+    const checkCookie = () => {
+      const newCampaignId = getCurrentCampaignIdFromBrowser();
+      if (newCampaignId !== currentCampaignId) {
+        setCurrentCampaignId(newCampaignId);
+      }
+    };
+    
+    // Ouvir evento de mudança de campanha
+    const handleCampaignChange = () => {
+      // Forçar uma atualização imediata dos dados quando a campanha mudar
+      setTimeout(() => {
+        const newCampaignId = getCampaignFromUrl() || getCurrentCampaignIdFromBrowser();
+        setCurrentCampaignId(newCampaignId);
+        mutate();
+      }, 500); // Pequeno atraso para garantir que o cookie foi definido
+    };
+    
+    // Função para lidar com mudanças na URL (parâmetros de consulta)
+    const handleUrlChange = () => {
+      const newCampaignId = getCampaignFromUrl();
+      if (newCampaignId && newCampaignId !== currentCampaignId) {
+        setCurrentCampaignId(newCampaignId);
+        mutate();
+      }
+    };
+    
+    // Adicionar listener para o evento de mudança de campanha
+    window.addEventListener(CAMPAIGN_CHANGE_EVENT, handleCampaignChange);
+    window.addEventListener('popstate', handleUrlChange);
+    
+    // Verificar a cada 2 segundos (pode ser ajustado conforme necessário)
+    const interval = setInterval(checkCookie, 2000);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener(CAMPAIGN_CHANGE_EVENT, handleCampaignChange);
+      window.removeEventListener('popstate', handleUrlChange);
+    };
+  }, [currentCampaignId, getCampaignFromUrl]);
 
-  const { data, error, isLoading, mutate } = useSWR<T[]>(apiEndpoint, async (url: string) => {
-    const response = await fetch(url);
+  // Usar o ID da campanha como parte da chave do SWR
+  const cacheKey = currentCampaignId ? `${apiEndpoint}?campaign=${currentCampaignId}` : apiEndpoint;
+  
+  // Construir a URL da API com o ID da campanha
+  const apiUrl = currentCampaignId ? 
+    `${apiEndpoint}${apiEndpoint.includes('?') ? '&' : '?'}campaign=${currentCampaignId}` : 
+    apiEndpoint;
+  
+  console.log(`[useFilteredData] Fetch URL: ${apiUrl}, Campaign: ${currentCampaignId || 'none'}`);
+  
+  const { data, error, isLoading, mutate } = useSWR<T[]>(cacheKey, async () => {
+    console.log(`Iniciando fetch para ${apiUrl}`);
+    const response = await fetch(apiUrl);
+    
     if (!response.ok) {
+      console.error(`Erro na requisição para ${apiUrl}: ${response.status}`);
       throw new Error(`Erro na requisição: ${response.status}`);
     }
-    return response.json();
+    
+    const jsonData = await response.json();
+    console.log(`Dados recebidos: ${jsonData.length} itens`);
+    return jsonData;
   }, {
     revalidateOnFocus: false,
     revalidateIfStale: false,
-    dedupingInterval: 60000, // 1 minute
+    dedupingInterval: 5000, // Reduzido para 5 segundos para atualizar mais frequentemente
   });
 
   const filteredData = data 
@@ -39,7 +135,7 @@ export function useFilteredData<T>(
   };
 
   return {
-    data: data || [],
+    data,
     filteredData,
     error,
     isLoading,
@@ -48,6 +144,7 @@ export function useFilteredData<T>(
     filters,
     setFilter,
     clearFilters,
-    mutate,
+    refreshData: mutate,
+    currentCampaignId
   };
 }

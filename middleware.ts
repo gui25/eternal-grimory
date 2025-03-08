@@ -7,63 +7,68 @@ const CAMPAIGN_COOKIE_NAME = 'current-campaign'
 
 // Processa a requisição
 export function middleware(request: NextRequest) {
+  console.log("[MIDDLEWARE] Iniciando processamento para:", request.url);
+  
+  // Verificar se temos um parâmetro de campanha na URL
+  const url = request.nextUrl.clone()
+  const campaignParam = url.searchParams.get('campaign')
+  
   // Verificar o cookie de campanha atual
   const campaignCookie = request.cookies.get(CAMPAIGN_COOKIE_NAME)
-  const campaignId = campaignCookie?.value
-  
-  let response = NextResponse.next()
+  const campaignId = campaignParam || campaignCookie?.value
   
   // Obter a primeira campanha ativa (default)
   const defaultCampaign = CAMPAIGNS.find(c => c.active)?.id || CAMPAIGNS[0].id
   
-  // Se não houver cookie, definir o padrão
-  if (!campaignId) {
-    response = NextResponse.next()
-    
-    // Definir cookie
-    response.cookies.set({
-      name: CAMPAIGN_COOKIE_NAME,
-      value: defaultCampaign,
-      httpOnly: true,
-      maxAge: 60 * 60 * 24 * 30, // 30 dias
-      path: '/',
-      sameSite: 'lax'
-    })
-  } else {
-    // Verificar se a campanha é válida
-    const isValidCampaign = CAMPAIGNS.some(campaign => 
-      campaign.id === campaignId && campaign.active
-    )
-    
-    // Se a campanha não for válida, redefinir para o padrão
-    if (!isValidCampaign) {
-      response = NextResponse.next()
-      
-      response.cookies.set({
-        name: CAMPAIGN_COOKIE_NAME,
-        value: defaultCampaign,
-        httpOnly: true,
-        maxAge: 60 * 60 * 24 * 30, // 30 dias
-        path: '/',
-        sameSite: 'lax'
-      })
-    } else {
-      // Renovar o cookie para manter a sessão ativa
-      response.cookies.set({
-        name: CAMPAIGN_COOKIE_NAME,
-        value: campaignId,
-        httpOnly: true,
-        maxAge: 60 * 60 * 24 * 30, // 30 dias
-        path: '/',
-        sameSite: 'lax'
-      })
-    }
+  // Inicializar a resposta
+  let response = NextResponse.next()
+  
+  console.log(`[MIDDLEWARE] URL: ${url.pathname}, CampaignID (Param/Cookie): ${campaignParam || 'nenhum'}/${campaignCookie?.value || 'nenhum'}`);
+  
+  // Determinar qual ID de campanha usar
+  let effectiveCampaignId = campaignId || defaultCampaign
+  
+  // Verificar se o ID é válido (campanha existe e está ativa)
+  const isValidCampaign = CAMPAIGNS.some(campaign => 
+    campaign.id === effectiveCampaignId && campaign.active
+  )
+  
+  if (!isValidCampaign) {
+    console.log(`[MIDDLEWARE] Campanha inválida, usando padrão: ${defaultCampaign}`);
+    effectiveCampaignId = defaultCampaign
+  }
+  
+  // Sempre definir ou renovar o cookie com a campanha efetiva
+  response.cookies.set({
+    name: CAMPAIGN_COOKIE_NAME,
+    value: effectiveCampaignId,
+    httpOnly: true,
+    maxAge: 60 * 60 * 24 * 30, // 30 dias
+    path: '/',
+    sameSite: 'lax'
+  })
+  
+  console.log(`[MIDDLEWARE] Cookie definido: ${CAMPAIGN_COOKIE_NAME}=${effectiveCampaignId}`);
+  
+  // Se estamos na página raiz e não tem parâmetro de campanha, mas temos cookie,
+  // redirecione para a mesma URL com o parâmetro de campanha
+  if (url.pathname === '/' && !campaignParam && campaignCookie) {
+    url.searchParams.set('campaign', effectiveCampaignId)
+    return NextResponse.redirect(url)
   }
   
   return response
 }
 
+// Função auxiliar para verificar se um ID de campanha é válido
+function isValidCampaign(campaignId?: string | null): boolean {
+  if (!campaignId) return false
+  return CAMPAIGNS.some(campaign => 
+    campaign.id === campaignId && campaign.active
+  )
+}
+
 // Configuração do middleware para ser executado em todas as rotas
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 } 

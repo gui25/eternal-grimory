@@ -229,11 +229,76 @@
   }
 
   .rarity-legendary {
+    position: relative;
     border-color: hsl(45, 100%, 47%);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    overflow: hidden;
   }
 
   .rarity-legendary::before {
-    background: linear-gradient(45deg, hsl(45, 100%, 47%), hsl(45, 100%, 70%));
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      45deg, 
+      hsl(45, 100%, 47%), 
+      hsl(36, 100%, 55%), 
+      hsl(45, 100%, 60%), 
+      hsl(36, 100%, 55%), 
+      hsl(45, 100%, 47%)
+    );
+    opacity: 0.3;
+    z-index: -1;
+    background-size: 400% 400%;
+    animation: legendary-bg 3s ease infinite;
+  }
+
+  .rarity-legendary::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(
+      45deg,
+      hsl(45, 100%, 47%),
+      hsl(36, 100%, 55%),
+      hsl(45, 100%, 60%),
+      hsl(36, 100%, 55%),
+      hsl(45, 100%, 47%)
+    );
+    z-index: -2;
+    background-size: 400% 400%;
+    animation: legendary-bg 3s ease infinite, legendary-border 4s linear infinite;
+    filter: blur(5px);
+  }
+
+  @keyframes legendary-bg {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes legendary-border {
+    0% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.5;
+    }
   }
 
   /* Estilos para conteúdo MDX */
@@ -571,4 +636,47 @@
 .text-red-accent {
   color: hsl(0, 70%, 45%);
 }
+
+/* Animações para itens lendários */
+@keyframes legendary-pulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes legendary-sparkle-1 {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(-45deg); }
+  100% { transform: translateX(200%) translateY(200%) rotate(-45deg); }
+}
+
+@keyframes legendary-sparkle-2 {
+  0%, 30% { opacity: 0; transform: translateX(200%) translateY(200%) rotate(45deg); }
+  10%, 80% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+}
+
+@keyframes legendary-sparkle-3 {
+  0%, 50% { opacity: 0; transform: translateX(-100%) rotate(0); }
+  25%, 85% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(200%) rotate(0); }
+}
+
+/* Classe para aplicação das animações */
+.animate-legendary-pulse {
+  animation: legendary-pulse 3s ease-in-out infinite;
+}
+
+.animate-legendary-sparkle-1 {
+  animation: legendary-sparkle-1 4s linear infinite;
+}
+
+.animate-legendary-sparkle-2 {
+  animation: legendary-sparkle-2 5s linear infinite;
+  animation-delay: 0.5s;
+}
+
+.animate-legendary-sparkle-3 {
+  animation: legendary-sparkle-3 4.5s linear infinite;
+  animation-delay: 1s;
+}
+
 

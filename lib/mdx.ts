@@ -4,6 +4,7 @@ import matter from "gray-matter"
 import { remark } from "remark"
 import html from "remark-html"
 import { getCurrentCampaignId, getCampaignById, CAMPAIGNS } from "@/lib/campaign-config"
+import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { notFound } from 'next/navigation'
 
 // Atualize as interfaces para incluir o campo de imagem opcional
@@ -61,110 +62,231 @@ function ensureDirectoryExists(dirPath: string) {
 
 // Get campaign content directory path
 export function getCampaignContentPath(contentType: string, campaignId?: string) {
-  // Obtem o ID da campanha (se não for fornecido, usar o atual)
-  let currentCampaignId = campaignId
-
-  if (!currentCampaignId) {
-    try {
-      // Tenta obter do sistema de campanhas
-      currentCampaignId = getCurrentCampaignId()
-    } catch (error) {
-      // Em caso de erro, usa a campanha padrão
-      currentCampaignId = CAMPAIGNS.find((c) => c.active)?.id || CAMPAIGNS[0].id
+  // Se um ID específico foi passado, use-o diretamente
+  if (campaignId) {
+    // Encontre a campanha pelo ID
+    const campaign = CAMPAIGNS.find(c => c.id === campaignId);
+    
+    if (campaign && campaign.active) {
+      const campaignPath = campaign.contentPath;
+      const fullPath = path.join(process.cwd(), 'content', campaignPath, contentType);
+      
+      console.log(`[FORÇA] Usando campanha específica: ${campaignId}, path: ${campaignPath}`);
+      return fullPath;
     }
+    
+    console.log(`[AVISO] Campanha ${campaignId} não encontrada ou inativa`);
   }
-
-  // Obtém o objeto da campanha
-  const campaign = getCampaignById(currentCampaignId)
   
-  // Define o caminho da campanha
-  const campaignPath = campaign?.contentPath || 'penumbra-eterna'
+  // SOLUÇÃO TEMPORÁRIA: 
+  // Verificar se existe um arquivo de configuração que indica qual campanha usar
+  const configPath = path.join(process.cwd(), 'config', 'current-campaign.json');
+  try {
+    if (fs.existsSync(configPath)) {
+      const configData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      if (configData.currentCampaign) {
+        const configCampaign = CAMPAIGNS.find(c => c.id === configData.currentCampaign);
+        if (configCampaign && configCampaign.active) {
+          const campaignPath = configCampaign.contentPath;
+          const fullPath = path.join(process.cwd(), 'content', campaignPath, contentType);
+          
+          console.log(`[CONFIG] Usando campanha de config.json: ${configData.currentCampaign}, path: ${campaignPath}`);
+          return fullPath;
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao ler arquivo de configuração:', error);
+  }
   
-  // Caminho completo para o diretório dos arquivos
-  const fullPath = path.join(process.cwd(), 'content', campaignPath, contentType)
+  // Última tentativa: tentar obter dos cookies
+  try {
+    // No servidor, devemos usar getCurrentCampaignIdFromCookies
+    if (typeof window === 'undefined') {
+      const cookieCampaignId = getCurrentCampaignIdFromCookies();
+      if (cookieCampaignId) {
+        const cookieCampaign = CAMPAIGNS.find(c => c.id === cookieCampaignId);
+        if (cookieCampaign && cookieCampaign.active) {
+          const campaignPath = cookieCampaign.contentPath;
+          const fullPath = path.join(process.cwd(), 'content', campaignPath, contentType);
+          
+          console.log(`[COOKIE] Usando campanha de cookie: ${cookieCampaignId}, path: ${campaignPath}`);
+          return fullPath;
+        }
+      }
+    } else {
+      // No cliente, usamos localStorage
+      if (typeof localStorage !== 'undefined') {
+        const storageCampaignId = localStorage.getItem('current-campaign');
+        if (storageCampaignId) {
+          const storageCampaign = CAMPAIGNS.find(c => c.id === storageCampaignId);
+          if (storageCampaign && storageCampaign.active) {
+            const campaignPath = storageCampaign.contentPath;
+            const fullPath = path.join(process.cwd(), 'content', campaignPath, contentType);
+            
+            console.log(`[STORAGE] Usando campanha de localStorage: ${storageCampaignId}, path: ${campaignPath}`);
+            return fullPath;
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao obter campanha de cookies/localStorage:', error);
+  }
   
-  // Verifica se o diretório existe (para debug)
-  const directoryExists = fs.existsSync(fullPath)
+  // Se chegamos aqui, use a primeira campanha ativa como fallback
+  const defaultCampaign = CAMPAIGNS.find(c => c.active) || CAMPAIGNS[0];
+  const defaultPath = defaultCampaign.contentPath;
+  const fullPath = path.join(process.cwd(), 'content', defaultPath, contentType);
   
-  // Retorna o caminho para o diretório
-  return fullPath
+  console.log(`[PADRÃO] Usando campanha padrão: ${defaultCampaign.id}, path: ${defaultPath}`);
+  return fullPath;
 }
 
 // Get list of all items with their metadata
 export async function getItems(campaignId?: string): Promise<ItemMeta[]> {
-  const directory = getCampaignContentPath("items", campaignId)
-  ensureDirectoryExists(directory)
+  console.log(`[ITEMS] Obtendo itens para campanha: ${campaignId || 'não especificado'}`);
+  
+  // Se não foi especificado um ID de campanha, vamos verificar a query string
+  if (!campaignId && typeof window !== 'undefined') {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlCampaignId = urlParams.get('campaign');
+    if (urlCampaignId) {
+      console.log(`[ITEMS] Usando campanha da URL: ${urlCampaignId}`);
+      campaignId = urlCampaignId;
+    }
+  }
+  
+  // Obter o diretório de conteúdo
+  const directory = getCampaignContentPath("items", campaignId);
+  console.log(`[ITEMS] Buscando em: ${directory}`);
+  
+  ensureDirectoryExists(directory);
 
-  const files = fs.readdirSync(directory)
-  const mdFiles = files.filter((file) => file.endsWith(".md"))
+  const files = fs.readdirSync(directory);
+  const mdFiles = files.filter((file) => file.endsWith(".md"));
+  
+  console.log(`[ITEMS] Encontrados ${mdFiles.length} itens.`);
 
   const items = mdFiles.map((filename) => {
-    const filePath = path.join(directory, filename)
-    const fileContent = fs.readFileSync(filePath, "utf8")
+    const filePath = path.join(directory, filename);
+    const fileContent = fs.readFileSync(filePath, "utf8");
 
     // Use gray-matter to parse the frontmatter
-    const { data } = matter(fileContent)
+    const { data } = matter(fileContent);
+    const finalCampaignId = campaignId || CAMPAIGNS.find(c => c.contentPath === directory.split('/').slice(-2)[0])?.id || CAMPAIGNS[0].id;
 
+    // Usar `as unknown as ItemMeta` para evitar erros de tipo com propriedades adicionais
     return {
       ...data,
       slug: filename.replace(".md", ""),
-      campaignId: campaignId || getCurrentCampaignId(),
-    } as ItemMeta
-  })
+      campaignId: finalCampaignId,
+      _source: {
+        path: filePath,
+        campaignPath: directory.split('/').slice(-2)[0]
+      }
+    } as unknown as ItemMeta
+  });
 
-  return items
+  return items;
 }
 
 // Get specific item by slug
 export async function getItem(slug: string, campaignId?: string) {
-  const directory = getCampaignContentPath("items", campaignId)
-  const filePath = path.join(directory, `${slug}.md`)
+  console.log(`[ITEM] Obtendo item ${slug} para campanha: ${campaignId || 'não especificado'}`);
+  
+  // Se não foi especificado um ID de campanha, vamos verificar a query string
+  if (!campaignId && typeof window !== 'undefined') {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlCampaignId = urlParams.get('campaign');
+    if (urlCampaignId) {
+      console.log(`[ITEM] Usando campanha da URL: ${urlCampaignId}`);
+      campaignId = urlCampaignId;
+    }
+  }
+  
+  // Obter o diretório de conteúdo
+  const directory = getCampaignContentPath("items", campaignId);
+  console.log(`[ITEM] Buscando em: ${directory}`);
+  
+  const filePath = path.join(directory, `${slug}.md`);
+  console.log(`[ITEM] Caminho do arquivo: ${filePath}`);
 
   if (!fs.existsSync(filePath)) {
-    return null
+    console.log(`[ITEM] Arquivo não encontrado: ${filePath}`);
+    return null;
   }
 
-  const fileContent = fs.readFileSync(filePath, "utf8")
+  const fileContent = fs.readFileSync(filePath, "utf8");
 
   // Use gray-matter to parse the frontmatter
-  const { data, content } = matter(fileContent)
+  const { data, content } = matter(fileContent);
 
   // Convert markdown to HTML
-  const contentHtml = await markdownToHtml(content)
+  const contentHtml = await markdownToHtml(content);
+  
+  const finalCampaignId = campaignId || CAMPAIGNS.find(c => c.contentPath === directory.split('/').slice(-2)[0])?.id || CAMPAIGNS[0].id;
 
   return {
     contentHtml,
     meta: {
       ...data,
       slug,
-      campaignId: campaignId || getCurrentCampaignId(),
+      campaignId: finalCampaignId,
+      _source: {
+        path: filePath,
+        campaignPath: directory.split('/').slice(-2)[0]
+      }
     },
-  }
+  };
 }
 
 // Get list of all sessions with their metadata
 export async function getSessions(campaignId?: string): Promise<SessionMeta[]> {
-  const directory = getCampaignContentPath("sessions", campaignId)
-  ensureDirectoryExists(directory)
+  console.log(`[SESSIONS] Obtendo sessões para campanha: ${campaignId || 'não especificado'}`);
+  
+  // Se não foi especificado um ID de campanha, vamos verificar a query string
+  if (!campaignId && typeof window !== 'undefined') {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlCampaignId = urlParams.get('campaign');
+    if (urlCampaignId) {
+      console.log(`[SESSIONS] Usando campanha da URL: ${urlCampaignId}`);
+      campaignId = urlCampaignId;
+    }
+  }
+  
+  // Obter o diretório de conteúdo
+  const directory = getCampaignContentPath("sessions", campaignId);
+  console.log(`[SESSIONS] Buscando em: ${directory}`);
+  
+  ensureDirectoryExists(directory);
 
-  const files = fs.readdirSync(directory)
-  const mdFiles = files.filter((file) => file.endsWith(".md"))
+  const files = fs.readdirSync(directory);
+  const mdFiles = files.filter((file) => file.endsWith(".md"));
+  
+  console.log(`[SESSIONS] Encontradas ${mdFiles.length} sessões.`);
 
   const sessions = mdFiles.map((filename) => {
-    const filePath = path.join(directory, filename)
-    const fileContent = fs.readFileSync(filePath, "utf8")
+    const filePath = path.join(directory, filename);
+    const fileContent = fs.readFileSync(filePath, "utf8");
 
     // Use gray-matter to parse the frontmatter
-    const { data } = matter(fileContent)
+    const { data } = matter(fileContent);
+    const finalCampaignId = campaignId || CAMPAIGNS.find(c => c.contentPath === directory.split('/').slice(-2)[0])?.id || CAMPAIGNS[0].id;
 
+    // Usar `as unknown as SessionMeta` para evitar erros de tipo com propriedades adicionais
     return {
       ...data,
       slug: filename.replace(".md", ""),
-      campaignId: campaignId || getCurrentCampaignId(),
-    } as SessionMeta
-  })
+      campaignId: finalCampaignId,
+      _source: {
+        path: filePath,
+        campaignPath: directory.split('/').slice(-2)[0]
+      }
+    } as unknown as SessionMeta;
+  });
 
-  return sessions.sort((a, b) => b.session_number - a.session_number)
+  return sessions.sort((a, b) => b.session_number - a.session_number);
 }
 
 // Get specific session by slug

@@ -29,7 +29,7 @@ export default async function ItemPage({ params }: { params: { slug: string } })
   // Obter o ID da campanha atual do cookie
   const campaignId = getCurrentCampaignIdFromCookies()
   
-  // Get the actual content
+  // Obter o conteúdo do item, passando explicitamente o ID da campanha
   const item = await getItem(params.slug, campaignId)
   if (!item) notFound()
 
@@ -39,7 +39,7 @@ export default async function ItemPage({ params }: { params: { slug: string } })
   // Render item metadata
   const itemMetadata = (
     <>
-      <div className={`text-sm inline-block px-2 py-0.5 rounded mb-3 ${meta.rarity ? `rarity-${meta.rarity.toLowerCase()}` : ''}`}>
+      <div className={`text-sm inline-block px-2 py-0.5 rounded mb-3 ${meta.rarity ? `rarity-${meta.rarity.toLowerCase()}` : ''} ${meta.rarity?.toLowerCase() === 'legendary' ? 'legendary-badge' : ''}`}>
         {meta.rarity || 'Comum'}
       </div>
 
@@ -71,14 +71,12 @@ export default async function ItemPage({ params }: { params: { slug: string } })
         slug: meta.slug,
         name: meta.name,
         type: meta.type,
-        rarity: meta.rarity,
         category: "item",
+        rarity: meta.rarity
       }}
+      className={meta.rarity?.toLowerCase() === 'legendary' ? 'legendary-page-content' : ''}
     >
-      <article
-        className="prose prose-slate dark:prose-invert max-w-none mdx-content"
-        dangerouslySetInnerHTML={{ __html: contentHtml }}
-      />
+      <div className="mdx-content" dangerouslySetInnerHTML={{ __html: contentHtml }} />
     </DetailPageLayout>
   )
 }

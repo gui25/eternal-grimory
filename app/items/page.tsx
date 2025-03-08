@@ -12,6 +12,7 @@ import { PREDEFINED_ITEM_TYPES } from "@/constants/items"
 import { Button } from "@/components/ui/button"
 import { SectionLayout } from "@/components/layouts/section-layout"
 import { FilterBar } from "@/components/ui/filter-bar"
+import { CAMPAIGNS } from "@/lib/campaign-config"
 
 export default function ItemsPage() {
   const [isGridView, setIsGridView] = useState(true);
@@ -25,6 +26,9 @@ export default function ItemsPage() {
     filters,
     setFilter,
     clearFilters,
+    isLoading,
+    refreshData,
+    currentCampaignId,
   } = useFilteredData<Item>(
     "/api/items",
     (item, { search, filters }) => {
@@ -40,7 +44,7 @@ export default function ItemsPage() {
     }
   );
 
-  const types = Array.from(new Set(items.map((item) => item.type)));
+  const types = Array.from(new Set((items || []).map((item) => item.type)));
   
   const rarityOptions: FilterOption[] = [
     { value: "Common", label: translateRarity("Common") },
@@ -50,7 +54,7 @@ export default function ItemsPage() {
     { value: "Legendary", label: translateRarity("Legendary") },
   ];
 
-  const sortedTypes = types.sort((a, b) => {
+  const sortedTypes = types?.length > 0 ? types.sort((a, b) => {
     const aIndex = PREDEFINED_ITEM_TYPES.indexOf(a);
     const bIndex = PREDEFINED_ITEM_TYPES.indexOf(b);
 
@@ -58,7 +62,7 @@ export default function ItemsPage() {
     if (aIndex !== -1) return -1;
     if (bIndex !== -1) return 1;
     return a.localeCompare(b);
-  });
+  }) : [];
 
   const typeOptions: FilterOption[] = sortedTypes.map((type) => ({
     value: type,
@@ -103,7 +107,7 @@ export default function ItemsPage() {
 
   // Filter bar component
   const filterBar = (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-2">
       <FilterBar
         search={search}
         onSearchChange={setSearch}
@@ -112,9 +116,6 @@ export default function ItemsPage() {
         onFilterChange={setFilter}
         onClearFilters={clearFilters}
       />
-      <div className="flex justify-end">
-        {viewToggleButton}
-      </div>
     </div>
   );
 
@@ -122,10 +123,35 @@ export default function ItemsPage() {
     <SectionLayout
       title="Biblioteca de Itens"
       description="Explore todos os itens mágicos, armas e equipamentos da campanha"
-      headerContent={filterBar}
+      headerContent={
+        <>
+          {filterBar}
+        </>
+      }
       transitionMode="slide"
     >
-      {filteredItems.length > 0 ? (
+      {error ? (
+        <div className="text-center py-12">
+          <p className="text-red-500 text-lg">Erro ao carregar os itens. Por favor, tente novamente.</p>
+          <Button
+            variant="outline"
+            onClick={() => refreshData()}
+            className="mt-4 border-gold-dark text-gold-light hover:bg-wine-dark hover:text-gold"
+          >
+            Tentar Novamente
+          </Button>
+        </div>
+      ) : isLoading ? (
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin-slow text-gold">
+            <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          <span className="ml-3 text-gold-light">Carregando itens...</span>
+        </div>
+      ) : filteredItems.length > 0 ? (
         isGridView ? (
           <ItemGrid items={filteredItems} />
         ) : (

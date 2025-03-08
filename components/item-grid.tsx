@@ -84,20 +84,25 @@ export default function ItemGrid({ items }: { items: ItemMeta[] }) {
                 className="h-full"
               >
                 <Card className="h-full bg-wine-darker/80 border-0 shadow-none">
-                  <CardContent className="p-6">
-                    <h3 className="font-bold text-lg mb-2">{item.name}</h3>
+                  <CardContent className="p-6 min-h-[164px] flex flex-col">
+                    <h3 className="font-bold text-lg mb-2 line-clamp-2">{item.name}</h3>
                     <div className={`text-sm font-medium mb-2 flex items-center ${getRarityTextClass(item.rarity)}`}>
                       {getTypeIcon(item.type)}
                       <span>
                         {item.rarity} {item.type}
                       </span>
                     </div>
-                    <div className="flex flex-wrap gap-1">
-                      {item.tags.map((tag) => (
-                        <span key={tag} className="bg-wine-dark px-2 py-1 rounded-md text-xs text-gold-light">
+                    <div className="flex flex-wrap gap-1 mt-auto">
+                      {item.tags.slice(0, 3).map((tag) => (
+                        <span key={tag} className="bg-wine-dark px-2 py-1 rounded-md text-xs text-gold-light whitespace-nowrap mb-1">
                           {tag}
                         </span>
                       ))}
+                      {item.tags.length > 3 && (
+                        <span className="bg-wine-dark px-2 py-1 rounded-md text-xs text-gold-light whitespace-nowrap mb-1">
+                          +{item.tags.length - 3}
+                        </span>
+                      )}
                     </div>
                   </CardContent>
                 </Card>

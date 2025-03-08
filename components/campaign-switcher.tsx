@@ -5,6 +5,9 @@ import { CAMPAIGNS, getCurrentCampaignId, setCurrentCampaign } from '@/lib/campa
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+// Nome do evento para notificar mudanças de campanha
+export const CAMPAIGN_CHANGE_EVENT = 'campaign-changed'
+
 export default function CampaignSwitcher() {
   const [isOpen, setIsOpen] = useState(false)
   const [currentCampaignState, setCurrentCampaignState] = useState<string>('')
@@ -22,7 +25,25 @@ export default function CampaignSwitcher() {
   
   // Função para lidar com a mudança de campanha
   const handleCampaignChange = (campaignId: string) => {
+    if (campaignId === currentCampaignState) {
+      setIsOpen(false)
+      return
+    }
+    
     setIsOpen(false)
+    
+    // Emitir um evento para notificar que a campanha foi alterada
+    if (typeof window !== 'undefined') {
+      const event = new CustomEvent(CAMPAIGN_CHANGE_EVENT, { 
+        detail: { 
+          previousCampaign: currentCampaignState,
+          newCampaign: campaignId
+        } 
+      })
+      window.dispatchEvent(event)
+    }
+    
+    // Definir a nova campanha
     setCurrentCampaign(campaignId)
   }
   
