@@ -5,60 +5,61 @@ import { CAMPAIGNS } from './lib/campaign-config'
 // Nome do cookie que armazena a campanha atual
 const CAMPAIGN_COOKIE_NAME = 'current-campaign'
 
+// Processa a requisição
 export function middleware(request: NextRequest) {
-  // Debug - registrar a URL que está sendo processada
-  console.log(`Middleware processando: ${request.url}`)
+  // Verificar o cookie de campanha atual
+  const campaignCookie = request.cookies.get(CAMPAIGN_COOKIE_NAME)
+  const campaignId = campaignCookie?.value
   
-  // Obtém a resposta para passar adiante
-  const response = NextResponse.next()
-
-  // Tenta obter a campanha do cookie
-  const campaignId = request.cookies.get(CAMPAIGN_COOKIE_NAME)?.value
-  console.log(`Cookie de campanha encontrado: ${campaignId || 'nenhum'}`)
-
-  // Se não tiver o cookie de campanha, define a campanha padrão
+  let response = NextResponse.next()
+  
+  // Obter a primeira campanha ativa (default)
+  const defaultCampaign = CAMPAIGNS.find(c => c.active)?.id || CAMPAIGNS[0].id
+  
+  // Se não houver cookie, definir o padrão
   if (!campaignId) {
-    // Obtém a primeira campanha ativa
-    const defaultCampaign = CAMPAIGNS.find(c => c.active)?.id || CAMPAIGNS[0].id
-    console.log(`Definindo cookie para campanha padrão: ${defaultCampaign}`)
+    response = NextResponse.next()
     
-    // Define o cookie com a campanha padrão
+    // Definir cookie
     response.cookies.set({
       name: CAMPAIGN_COOKIE_NAME,
       value: defaultCampaign,
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 30, // 30 dias
       path: '/',
-      maxAge: 60 * 60 * 24 * 365, // 1 ano
-      sameSite: 'lax',
+      sameSite: 'lax'
     })
   } else {
-    // Verifica se a campanha ainda existe e está ativa
-    const campaignExists = CAMPAIGNS.some(c => c.id === campaignId && c.active)
+    // Verificar se a campanha é válida
+    const isValidCampaign = CAMPAIGNS.some(campaign => 
+      campaign.id === campaignId && campaign.active
+    )
     
-    // Se a campanha não existir mais ou estiver inativa, redefine para a padrão
-    if (!campaignExists) {
-      const defaultCampaign = CAMPAIGNS.find(c => c.active)?.id || CAMPAIGNS[0].id
-      console.log(`Campanha inválida, redefinindo para: ${defaultCampaign}`)
+    // Se a campanha não for válida, redefinir para o padrão
+    if (!isValidCampaign) {
+      response = NextResponse.next()
       
       response.cookies.set({
         name: CAMPAIGN_COOKIE_NAME,
         value: defaultCampaign,
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 30, // 30 dias
         path: '/',
-        maxAge: 60 * 60 * 24 * 365,
-        sameSite: 'lax',
+        sameSite: 'lax'
       })
     } else {
-      // Garantir que o cookie seja renovado a cada requisição
-      console.log(`Renovando cookie para campanha: ${campaignId}`)
+      // Renovar o cookie para manter a sessão ativa
       response.cookies.set({
         name: CAMPAIGN_COOKIE_NAME,
         value: campaignId,
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 30, // 30 dias
         path: '/',
-        maxAge: 60 * 60 * 24 * 365,
-        sameSite: 'lax',
+        sameSite: 'lax'
       })
     }
   }
-
+  
   return response
 }
 

@@ -29,8 +29,6 @@ export default async function ItemPage({ params }: { params: { slug: string } })
   // Obter o ID da campanha atual do cookie
   const campaignId = getCurrentCampaignIdFromCookies()
   
-  console.log(`Página de item: Carregando ${params.slug} da campanha: ${campaignId || 'padrão'}`)
-  
   // Get the actual content
   const item = await getItem(params.slug, campaignId)
   if (!item) notFound()

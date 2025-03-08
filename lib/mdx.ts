@@ -3,7 +3,8 @@ import path from "path"
 import matter from "gray-matter"
 import { remark } from "remark"
 import html from "remark-html"
-import { getCurrentCampaignId, getCampaignById } from "@/lib/campaign-config"
+import { getCurrentCampaignId, getCampaignById, CAMPAIGNS } from "@/lib/campaign-config"
+import { notFound } from 'next/navigation'
 
 // Atualize as interfaces para incluir o campo de imagem opcional
 
@@ -59,39 +60,33 @@ function ensureDirectoryExists(dirPath: string) {
 }
 
 // Get campaign content directory path
-function getCampaignContentPath(contentType: string, campaignId?: string): string {
-  // Log para depuração - qual campaignId foi passado para a função
-  console.log(`getCampaignContentPath chamado com campaignId: ${campaignId || 'não especificado'}`)
-  
-  // Se um campaignId específico for fornecido, priorize-o
-  let currentCampaignId: string
-  
-  if (campaignId) {
-    // Se um ID foi explicitamente passado, use-o
-    currentCampaignId = campaignId
-    console.log(`Usando campaignId passado explicitamente: ${currentCampaignId}`)
-  } else {
-    // Caso contrário, obtenha a campanha atual do sistema
-    currentCampaignId = getCurrentCampaignId()
-    console.log(`Obtido campaignId do sistema: ${currentCampaignId}`)
+export function getCampaignContentPath(contentType: string, campaignId?: string) {
+  // Obtem o ID da campanha (se não for fornecido, usar o atual)
+  let currentCampaignId = campaignId
+
+  if (!currentCampaignId) {
+    try {
+      // Tenta obter do sistema de campanhas
+      currentCampaignId = getCurrentCampaignId()
+    } catch (error) {
+      // Em caso de erro, usa a campanha padrão
+      currentCampaignId = CAMPAIGNS.find((c) => c.active)?.id || CAMPAIGNS[0].id
+    }
   }
-  
-  // Obtenha os detalhes da campanha
+
+  // Obtém o objeto da campanha
   const campaign = getCampaignById(currentCampaignId)
   
-  // Se a campanha existe, use seu caminho de conteúdo, caso contrário, use o padrão
-  const campaignPath = campaign?.contentPath || "penumbra-eterna"
+  // Define o caminho da campanha
+  const campaignPath = campaign?.contentPath || 'penumbra-eterna'
   
-  // Log detalhado para depuração
-  console.log(`Loading ${contentType} from campaign: ${campaignPath} (ID: ${currentCampaignId}, Exists: ${!!campaign})`)
+  // Caminho completo para o diretório dos arquivos
+  const fullPath = path.join(process.cwd(), 'content', campaignPath, contentType)
   
-  const fullPath = path.join(process.cwd(), "content", campaignPath, contentType)
-  console.log(`Caminho completo do diretório: ${fullPath}`)
-  
-  // Verifica se o diretório existe
+  // Verifica se o diretório existe (para debug)
   const directoryExists = fs.existsSync(fullPath)
-  console.log(`Diretório existe: ${directoryExists}`)
   
+  // Retorna o caminho para o diretório
   return fullPath
 }
 
