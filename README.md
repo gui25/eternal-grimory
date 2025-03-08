@@ -186,9 +186,6 @@ Todos os componentes são construídos com Tailwind CSS e são facilmente custom
 - [x] Sistema de busca e filtros
 - [ ] Internacionalização (pt-BR/en)
 - [ ] Modo offline
-- [ ] Sistema de combate
-- [ ] Integração com VTTs
-- [ ] App mobile
 
 ## 🤝 Contribuindo
 
