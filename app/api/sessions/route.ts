@@ -1,9 +1,17 @@
 import { getSessions } from "@/lib/mdx"
 import { NextResponse } from "next/server"
+import { getCampaignIdFromHttpCookies } from "@/lib/campaign-utils"
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const sessions = await getSessions()
+    // Obter o cookie da campanha atual
+    const cookieHeader = request.headers.get('cookie')
+    const campaignId = getCampaignIdFromHttpCookies(cookieHeader)
+    
+    console.log(`API: Buscando sessões da campanha: ${campaignId || 'padrão'}`)
+    
+    // Buscar as sessões da campanha específica
+    const sessions = await getSessions(campaignId)
     return NextResponse.json(sessions)
   } catch (error) {
     console.error("Erro ao buscar sessões:", error)

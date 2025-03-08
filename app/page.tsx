@@ -5,9 +5,9 @@ import { getItems, getSessions, getCharacters } from "@/lib/mdx"
 import RecentActivity from "@/components/recent-activity"
 import ConfettiButton from "@/components/confetti-button"
 import { PageContainer } from "@/components/ui/page-container"
+import { SectionHeader } from "@/components/section-header"
 
 export default async function Dashboard() {
-  // Get actual counts from MDX content
   const items = await getItems()
   const sessions = await getSessions()
   const players = await getCharacters("player")
@@ -18,12 +18,12 @@ export default async function Dashboard() {
     <PageContainer>
   
       <div className="flex flex-col sm:flex-row sm:items-center items-center sm:justify-between gold-border p-4 gap-4">
-        <div className="flex flex-col items-center w-full">
-          <div className="flex gap-2">
-            <h1 className="fantasy-heading flex items-center lg:w-full md:w-full w-min">Painel da Campanha</h1>
-          </div>
-          <p className="text-gold-light/80 mt-2">
-          Bem-vindo ao Grimório Eterno, uma biblioteca definitiva para uma campanha de RPG
+        <div className="text-center sm:text-left w-full sm:w-auto">
+          <h1 className="fantasy-heading flex items-center gap-2 justify-center sm:justify-start">
+            Painel da Campanha
+          </h1>
+          <p className="text-gold-light/80 mt-2 text-center sm:text-left">
+            Bem-vindo ao Grimório Eterno, uma biblioteca definitiva para uma campanha de RPG
           </p>
         </div>
         <div className="sm:self-center">
@@ -32,13 +32,12 @@ export default async function Dashboard() {
       </div>
 
       <section>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 mb-4">
-          <div className="flex items-center gap-2">
-            <Users className="h-6 w-6 text-gold" />
-            <h2 className="fantasy-subheading">Personagens dos Jogadores</h2>
-          </div>
-          <div className="text-xs text-gold-light/70 sm:ml-2">Os heróis da sua campanha</div>
-        </div>
+        <SectionHeader 
+          icon={Users} 
+          title="Personagens dos Jogadores"
+          description="Os heróis da sua campanha"
+        />
+        
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {players.length > 0 ? (
             players.slice(0, 3).map((player) => (

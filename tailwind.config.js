@@ -60,9 +60,42 @@ module.exports = {
       fontFamily: {
         heading: ["var(--font-heading)"],
         body: ["var(--font-body)"],
+        runes: ["Noto Sans Runic", "sans-serif"],
+      },
+      animation: {
+        "pulse-slow": "pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "float": "float 6s ease-in-out infinite",
+        "glow": "glow 2s ease-in-out infinite",
+        "spin-slow": "spin-slow 6s linear infinite",
+        "spin-reverse": "spin-reverse 8s linear infinite",
+        "orbit": "orbit 10s linear infinite",
+      },
+      keyframes: {
+        "pulse-slow": {
+          '0%, 100%': { opacity: 1 },
+          '50%': { opacity: 0.5 },
+        },
+        "float": {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        "glow": {
+          '0%, 100%': { filter: 'brightness(100%) blur(0px)' },
+          '50%': { filter: 'brightness(120%) blur(2px)' },
+        },
+        "spin-slow": {
+          'to': { transform: 'rotate(360deg)' },
+        },
+        "spin-reverse": {
+          'to': { transform: 'rotate(-360deg)' },
+        },
+        "orbit": {
+          '0%': { transform: 'rotate(0deg) translateX(6px) rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg) translateX(6px) rotate(-360deg)' },
+        },
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 }
 

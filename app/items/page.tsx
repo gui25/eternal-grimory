@@ -1,17 +1,17 @@
 "use client"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Search, Grid3X3, List } from "lucide-react"
+import { Grid3X3, List } from "lucide-react"
 import { useState } from "react"
 import ItemGrid from "@/components/item-grid"
 import ItemList from "@/components/item-list"
-import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
+import { type FilterOption } from "@/components/ui/filter-select"
 import { useFilteredData } from "@/hooks/useFilteredData"
 import { ErrorMessage } from "@/components/ui/error-message"
 import { translateItemType, translateRarity } from "@/utils/translations"
 import { Item } from "@/types"
 import { PREDEFINED_ITEM_TYPES } from "@/constants/items"
-import { PageContainer } from "@/components/ui/page-container"
+import { Button } from "@/components/ui/button"
+import { SectionLayout } from "@/components/layouts/section-layout"
+import { FilterBar } from "@/components/ui/filter-bar"
 
 export default function ItemsPage() {
   const [isGridView, setIsGridView] = useState(true);
@@ -72,50 +72,59 @@ export default function ItemsPage() {
     />
   );
 
+  // Filter configurations for the FilterBar component
+  const filterConfigs = [
+    {
+      key: "rarity",
+      value: filters.rarity || "",
+      options: rarityOptions,
+      placeholder: "Todas as Raridades"
+    },
+    {
+      key: "type",
+      value: filters.type || "",
+      options: typeOptions,
+      placeholder: "Todos os Tipos"
+    }
+  ];
+
+  // View toggle button for grid/list view
+  const viewToggleButton = (
+    <Button
+      variant="outline"
+      size="icon"
+      onClick={() => setIsGridView(!isGridView)}
+      title={isGridView ? "Visualizar em lista" : "Visualizar em grade"}
+      className="ml-2"
+    >
+      {isGridView ? <List className="h-4 w-4" /> : <Grid3X3 className="h-4 w-4" />}
+    </Button>
+  );
+
+  // Filter bar component
+  const filterBar = (
+    <div className="space-y-4">
+      <FilterBar
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Buscar itens..."
+        filters={filterConfigs}
+        onFilterChange={setFilter}
+        onClearFilters={clearFilters}
+      />
+      <div className="flex justify-end">
+        {viewToggleButton}
+      </div>
+    </div>
+  );
+
   return (
-    <PageContainer>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <h1 className="fantasy-heading">Biblioteca de Itens</h1>
-      </div>
-
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar itens..."
-            className="pl-8"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-2">
-          <FilterSelect
-            options={rarityOptions}
-            value={filters.rarity || ""}
-            onChange={(e) => setFilter("rarity", e.target.value)}
-            placeholder="Todas as Raridades"
-            className="min-w-[180px]"
-          />
-
-          <FilterSelect
-            options={typeOptions}
-            value={filters.type || ""}
-            onChange={(e) => setFilter("type", e.target.value)}
-            placeholder="Todos os Tipos"
-            className="min-w-[180px]"
-          />
-
-          <Button
-            variant="outline"
-            onClick={clearFilters}
-            className="border-gold-dark text-gold-light hover:bg-wine-dark hover:text-gold"
-          >
-            Limpar Filtros
-          </Button>
-        </div>
-      </div>
-
+    <SectionLayout
+      title="Biblioteca de Itens"
+      description="Explore todos os itens mágicos, armas e equipamentos da campanha"
+      headerContent={filterBar}
+      transitionMode="slide"
+    >
       {filteredItems.length > 0 ? (
         isGridView ? (
           <ItemGrid items={filteredItems} />
@@ -134,7 +143,7 @@ export default function ItemsPage() {
           </Button>
         </div>
       )}
-    </PageContainer>
-  )
+    </SectionLayout>
+  );
 }
 

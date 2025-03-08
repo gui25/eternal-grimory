@@ -1,33 +1,38 @@
 import { notFound } from "next/navigation"
-import Link from "next/link"
-import Image from "next/image"
 import { getCharacter } from "@/lib/mdx"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, User } from "lucide-react"
-import TrackView from "@/components/track-view"
-import { NpcMeta } from "@/types/content"
+import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { PageContainer } from "@/components/ui/page-container"
+import { User, ArrowLeft } from "lucide-react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import TrackView from "@/components/track-view"
 
 export default async function NpcPage({ params }: { params: { slug: string } }) {
-  // Get the actual content
-  const character = await getCharacter(params.slug, "npc")
+  // Obter o ID da campanha atual do cookie
+  const campaignId = getCurrentCampaignIdFromCookies()
+  
+  console.log(`Página de NPC: Carregando ${params.slug} da campanha: ${campaignId || 'padrão'}`)
+  
+  const character = await getCharacter(params.slug, "npc", campaignId)
   if (!character) notFound()
 
-  const { contentHtml, meta } = character as { contentHtml: string, meta: NpcMeta }
+  // Use type assertion para evitar erro de tipo
+  const { contentHtml, meta } = character as unknown as { 
+    contentHtml: string, 
+    meta: {
+      name: string;
+      type: string;
+      affiliation: string;
+      tags: string[];
+      slug: string;
+      image?: string;
+      category: "npc";
+    }
+  }
 
   return (
     <PageContainer className="max-w-3xl mx-auto">
-      {/* Track this view */}
-      <TrackView
-        item={{
-          slug: meta.slug,
-          name: meta.name,
-          type: meta.type,
-          category: "npc",
-        }}
-      />
-
-      <div className="mb-6">
+      <div className="mb-8">
         <Button variant="rpg" size="lg" asChild className="back-button">
           <Link href="/characters/npcs" className="flex items-center">
             <ArrowLeft className="mr-2 h-5 w-5" />
@@ -36,48 +41,64 @@ export default async function NpcPage({ params }: { params: { slug: string } }) 
         </Button>
       </div>
 
-      {/* NPC header with optional image */}
-      <div className="mb-8 fantasy-card p-6">
-        <div className="flex flex-col md:flex-row gap-6">
-          {meta.image ? (
-            <div className="w-full md:w-1/3 flex-shrink-0">
-              <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-gold-dark">
-                <Image src={meta.image || "/placeholder.svg"} alt={meta.name} fill className="object-cover" />
-              </div>
-            </div>
-          ) : (
-            <div className="w-full md:w-1/3 flex-shrink-0">
-              <div className="aspect-square rounded-lg overflow-hidden border-2 border-gold-dark bg-wine-darker flex items-center justify-center">
-                <User className="h-24 w-24 text-gold-light/50" />
-              </div>
-            </div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2 fantasy-heading">{meta.name}</h1>
+        
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4 text-gold-light">
+          <div className="flex items-center">
+            <span className="text-lg">{meta.type}</span>
+          </div>
+          {meta.affiliation && (
+            <>
+              <span className="hidden sm:inline">•</span>
+              <span>{meta.affiliation}</span>
+            </>
           )}
+        </div>
 
-          <div className="flex-1">
-            <h1 className="fantasy-heading mb-2">{meta.name}</h1>
+        <div className="flex flex-wrap gap-2 mb-6">
+          {meta.tags.map(tag => (
+            <span key={tag} className="bg-secondary px-3 py-1 rounded-full text-xs">
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
 
-            <div className="text-lg mb-3 text-gold-light">{meta.type}</div>
-
-            {meta.affiliation && (
-              <div className="text-sm mb-4">
-                <span className="font-medium text-gold">Afiliação:</span> {meta.affiliation}
+      <div className="fantasy-card p-6 rounded-lg mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-1 flex flex-col items-center">
+            {meta.image ? (
+              <div className="mb-4 w-full aspect-square overflow-hidden rounded-lg">
+                <img 
+                  src={meta.image}
+                  alt={meta.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="mb-4 w-full aspect-square flex items-center justify-center bg-wine-dark/30 rounded-lg">
+                <User className="h-24 w-24 text-gold-light/20" />
               </div>
             )}
-
-            <div className="flex flex-wrap gap-2 mt-3">
-              {meta.tags.map((tag: string) => (
-                <span key={tag} className="bg-secondary px-3 py-1 rounded-full text-xs">
-                  {tag}
-                </span>
-              ))}
-            </div>
+          </div>
+          
+          <div className="md:col-span-2">
+            <article
+              className="prose prose-slate dark:prose-invert max-w-none mdx-content" 
+              dangerouslySetInnerHTML={{ __html: contentHtml }}
+            />
           </div>
         </div>
       </div>
 
-      <article
-        className="prose prose-slate dark:prose-invert max-w-none mdx-content"
-        dangerouslySetInnerHTML={{ __html: contentHtml }}
+      <TrackView 
+        item={{
+          slug: meta.slug,
+          name: meta.name,
+          type: meta.type,
+          category: "npc"
+        }} 
       />
     </PageContainer>
   )

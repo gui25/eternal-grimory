@@ -1,84 +1,85 @@
 import { notFound } from "next/navigation"
-import Link from "next/link"
-import Image from "next/image"
-import { getSession } from "@/lib/mdx"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, BookOpen } from "lucide-react"
-import TrackView from "@/components/track-view"
-import { SessionMeta } from "@/types/content"
-import { PageContainer } from "@/components/ui/page-container"
+import { getSession, SessionMeta } from "@/lib/mdx"
+import { Calendar } from "lucide-react"
+import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
+import { createSessionMetadata } from "@/lib/metadata"
+import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
+
+// Generate metadata for this page
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  // Obter o ID da campanha atual do cookie
+  const campaignId = getCurrentCampaignIdFromCookies()
+  
+  const session = await getSession(params.slug, campaignId)
+  if (!session) return {}
+  
+  // Use type assertion para evitar erro de tipo
+  const { meta } = session as unknown as { contentHtml: string, meta: SessionMeta }
+  return createSessionMetadata({
+    session_number: meta.session_number,
+    date: meta.date,
+    slug: meta.slug,
+  })
+}
 
 export default async function SessionPage({ params }: { params: { slug: string } }) {
-
-  const session = await getSession(params.slug)
+  // Obter o ID da campanha atual do cookie
+  const campaignId = getCurrentCampaignIdFromCookies()
+  
+  console.log(`Página de sessão: Carregando ${params.slug} da campanha: ${campaignId || 'padrão'}`)
+  
+  const session = await getSession(params.slug, campaignId)
   if (!session) notFound()
 
-  const { contentHtml, meta } = session as { contentHtml: string, meta: SessionMeta }
+  // Use type assertion para evitar erro de tipo
+  const { contentHtml, meta } = session as unknown as { contentHtml: string, meta: SessionMeta }
 
-  return (
-    <PageContainer className="max-w-3xl mx-auto">
-
-      <TrackView
-        item={{
-          slug: meta.slug,
-          name: `Session ${meta.session_number}`,
-          type: "Session Report",
-          date: meta.date,
-          category: "session",
-        }}
-      />
-
-      <div className="mb-6">
-        <Button variant="rpg" size="lg" asChild className="back-button">
-          <Link href="/sessions" className="flex items-center">
-            <ArrowLeft className="mr-2 h-5 w-5" />
-            <span>Voltar para Sessões</span>
-          </Link>
-        </Button>
+  // Render session metadata
+  const sessionMetadata = (
+    <>
+      <div className="text-lg mb-4 text-gold-light">
+        <Calendar className="inline-block mr-2 h-5 w-5" />
+        {meta.date}
       </div>
 
-      {/* Session header with optional image */}
-      <div className="mb-8 fantasy-card p-6">
-        <div className="flex flex-col md:flex-row gap-6">
-          {meta.image ? (
-            <div className="w-full md:w-1/3 flex-shrink-0">
-              <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-gold-dark">
-                <Image src={meta.image} alt={`Sessão ${meta.session_number}`} fill className="object-cover" />
-              </div>
-            </div>
-          ) : (
-            <div className="w-full md:w-1/3 flex-shrink-0">
-              <div className="aspect-square rounded-lg overflow-hidden border-2 border-gold-dark bg-wine-darker flex items-center justify-center">
-                <BookOpen className="h-24 w-24 text-gold-light/50" />
-              </div>
-            </div>
-          )}
-
-          <div className="flex-1">
-            <h1 className="fantasy-heading mb-2">Sessão {meta.session_number}</h1>
-
-            <div className="text-lg mb-3">
-              {meta.date}
-            </div>
-
-            {meta.players && meta.players.length > 0 && (
-              <div className="text-sm mb-4">
-                <span className="font-medium text-gold">Jogadores:</span> {meta.players.join(', ')}
-              </div>
-            )}
+      {meta.players && meta.players.length > 0 && (
+        <div className="mb-3">
+          <div className="text-sm text-muted-foreground mb-1">Jogadores presentes:</div>
+          <div className="flex flex-wrap gap-2">
+            {meta.players.map((player: string) => (
+              <span key={player} className="bg-secondary px-3 py-1 rounded-full text-xs text-foreground">
+                {player}
+              </span>
+            ))}
           </div>
         </div>
+      )}
+    </>
+  )
 
-        {meta.description && (
-          <div className="mt-4 italic text-gray-300">"{meta.description}"</div>
-        )}
-      </div>
-
+  return (
+    <DetailPageLayout
+      title={`Sessão ${meta.session_number}`}
+      backLink="/sessions"
+      backLabel="Voltar para Sessões"
+      image={meta.image}
+      imageAlt={`Sessão ${meta.session_number}`}
+      imagePlaceholder={<Calendar className="h-24 w-24 text-gold-light/50" />}
+      metadata={sessionMetadata}
+      description={meta.description}
+      trackViewItem={{
+        slug: meta.slug,
+        name: `Sessão ${meta.session_number}`,
+        type: "Sessão",
+        date: meta.date,
+        category: "session",
+      }}
+    >
       <article
         className="prose prose-slate dark:prose-invert max-w-none mdx-content"
         dangerouslySetInnerHTML={{ __html: contentHtml }}
       />
-    </PageContainer>
+    </DetailPageLayout>
   )
 }
 

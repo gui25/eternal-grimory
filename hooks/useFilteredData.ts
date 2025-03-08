@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 
 interface FilterState {
   search: string;
@@ -9,33 +10,24 @@ export function useFilteredData<T>(
   apiEndpoint: string,
   filterFunction: (item: T, state: FilterState) => boolean
 ) {
-  const [data, setData] = useState<T[]>([]);
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<Record<string, string>>({});
-  const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(apiEndpoint);
-        if (!response.ok) {
-          throw new Error(`Erro na requisição: ${response.status}`);
-        }
-        const result = await response.json();
-        setData(result);
-        setError(null);
-      } catch (err) {
-        console.error(`Erro ao buscar dados de ${apiEndpoint}:`, err);
-        setError(err instanceof Error ? err : new Error(String(err)));
-      }
-    };
+  const { data, error, isLoading, mutate } = useSWR<T[]>(apiEndpoint, async (url: string) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Erro na requisição: ${response.status}`);
+    }
+    return response.json();
+  }, {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+    dedupingInterval: 60000, // 1 minute
+  });
 
-    fetchData();
-  }, [apiEndpoint]);
-
-  const filteredData = data.filter((item) =>
-    filterFunction(item, { search, filters })
-  );
+  const filteredData = data 
+    ? data.filter((item: T) => filterFunction(item, { search, filters }))
+    : [];
 
   const setFilter = (key: string, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -47,13 +39,15 @@ export function useFilteredData<T>(
   };
 
   return {
-    data,
+    data: data || [],
     filteredData,
     error,
+    isLoading,
     search,
     setSearch,
     filters,
     setFilter,
     clearFilters,
+    mutate,
   };
 }

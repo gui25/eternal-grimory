@@ -1,12 +1,34 @@
-import { forwardRef, type HTMLAttributes } from "react";
+import React from "react";
 import { cn } from "@/lib/utils";
 
-type PageContainerProps = HTMLAttributes<HTMLDivElement>;
+interface PageContainerProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  /** 
+   * Use padding of 3rem (p-12) in mobile view 
+   * @default true
+   */
+  mobilePadding?: boolean;
+}
 
-export const PageContainer = forwardRef<HTMLDivElement, PageContainerProps>(
-  ({ className, ...props }, ref) => {
-    return (
-      <div ref={ref} className={cn("space-y-8 p-6 md:pt-6 pt-16", className)} {...props} />
-    );
-  }
-);
+/**
+ * Standard container for page content with responsive padding
+ */
+export function PageContainer({ 
+  children, 
+  className, 
+  mobilePadding = true, 
+  ...props 
+}: PageContainerProps) {
+  return (
+    <div 
+      className={cn(
+        "container mx-auto space-y-8", 
+        mobilePadding ? "p-12 md:px-4 md:py-6" : "px-4 py-6", 
+        className
+      )} 
+      {...props}
+    >
+      {children}
+    </div>
+  );
+}
