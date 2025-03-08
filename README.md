@@ -1,7 +1,5 @@
 # Grimório Eterno
 
-<div align="center">
-
 ![Grimório Eterno](./public/preview.png)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-gold.svg)](https://opensource.org/licenses/MIT)
@@ -12,8 +10,6 @@
 **Grimório Eterno** é uma aplicação web moderna para gerenciamento de campanhas de RPG, construída com Next.js 13, TypeScript e Tailwind CSS.
 
 [Demo](https://grimorio-eterno.vercel.app) · [Reportar Bug](https://github.com/seu-usuario/eternal-grimory/issues) · [Solicitar Feature](https://github.com/seu-usuario/eternal-grimory/issues)
-
-</div>
 
 ---
 
