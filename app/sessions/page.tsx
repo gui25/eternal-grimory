@@ -7,6 +7,7 @@ import { Search, Calendar, Filter } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { PageContainer } from "@/components/ui/page-container"
+import { LoadingSpinner } from "@/components/ui/loading-spinner"
 
 interface Session {
   session_number: number;
@@ -17,6 +18,7 @@ interface Session {
 
 export default function SessionsPage() {
   const [sessions, setSessions] = useState<Session[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [playerFilter, setPlayerFilter] = useState("")
 
@@ -28,6 +30,8 @@ export default function SessionsPage() {
         setSessions(data)
       } catch (error) {
         console.error("Erro ao buscar sessões:", error)
+      } finally {
+        setIsLoading(false)
       }
     }
     
@@ -89,32 +93,47 @@ export default function SessionsPage() {
         </Button>
       </div>
 
-      <div className="flex flex-col gap-6">
-        {filteredSessions.map((session) => (
-          <Link key={session.slug} href={`/sessions/${session.slug}`}>
-            <Card className="cursor-pointer hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                  <div>
-                    <h2 className="text-lg font-semibold">Session {session.session_number}</h2>
-                    <div className="text-sm text-muted-foreground flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {session.date}
+      {isLoading ? (
+        <LoadingSpinner message="Carregando sessões..." />
+      ) : filteredSessions.length > 0 ? (
+        <div className="flex flex-col gap-6">
+          {filteredSessions.map((session) => (
+            <Link key={session.slug} href={`/sessions/${session.slug}`}>
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                    <div>
+                      <h2 className="text-lg font-semibold">Session {session.session_number}</h2>
+                      <div className="text-sm text-muted-foreground flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {session.date}
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {session.players.map((player: string) => (
+                        <span key={player} className="bg-secondary px-3 py-1 rounded-full text-xs">
+                          {player}
+                        </span>
+                      ))}
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {session.players.map((player: string) => (
-                      <span key={player} className="bg-secondary px-3 py-1 rounded-full text-xs">
-                        {player}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-gold-light text-lg">Nenhuma sessão corresponde aos seus filtros.</p>
+          <Button
+            variant="outline"
+            onClick={clearFilters}
+            className="mt-4 border-gold-dark text-gold-light hover:bg-wine-dark hover:text-gold"
+          >
+            Limpar Filtros
+          </Button>
+        </div>
+      )}
     </PageContainer>
   )
 }

@@ -8,6 +8,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
 import { PageContainer } from "@/components/ui/page-container"
+import { LoadingSpinner } from "@/components/ui/loading-spinner"
 
 interface Player {
   name: string
@@ -112,32 +113,47 @@ export default function PlayersPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {filteredPlayers.map((player) => (
-          <Link key={player.slug} href={`/characters/players/${player.slug}`} className="h-full" prefetch={true}>
-            <Card className="h-full cursor-pointer hover:shadow-md transition-shadow">
-              <CardContent className="p-6 h-full flex flex-col">
-                <h3 className="font-bold text-lg mb-1">{player.name}</h3>
-                <div className="text-sm text-muted-foreground mb-2">
-                  {player.race} {player.class} (Level {player.level})
-                </div>
-                {player.player && (
-                  <div className="text-sm mb-3">
-                    <span className="font-medium">Jogador:</span> {player.player}
+      {isLoading ? (
+        <LoadingSpinner message="Carregando personagens..." />
+      ) : filteredPlayers.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {filteredPlayers.map((player) => (
+            <Link key={player.slug} href={`/characters/players/${player.slug}`} className="h-full" prefetch={true}>
+              <Card className="h-full cursor-pointer hover:shadow-md transition-shadow">
+                <CardContent className="p-6 h-full flex flex-col">
+                  <h3 className="font-bold text-lg mb-1">{player.name}</h3>
+                  <div className="text-sm text-muted-foreground mb-2">
+                    {player.race} {player.class} (Level {player.level})
                   </div>
-                )}
-                <div className="flex flex-wrap gap-1 mt-auto">
-                  {player.tags.map((tag) => (
-                    <span key={tag} className="bg-secondary px-2 py-1 rounded-md text-xs">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
+                  {player.player && (
+                    <div className="text-sm mb-3">
+                      <span className="font-medium">Jogador:</span> {player.player}
+                    </div>
+                  )}
+                  <div className="flex flex-wrap gap-1 mt-auto">
+                    {player.tags.map((tag) => (
+                      <span key={tag} className="bg-secondary px-2 py-1 rounded-md text-xs">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-gold-light text-lg">Nenhum personagem corresponde aos seus filtros.</p>
+          <Button
+            variant="outline"
+            onClick={clearFilters}
+            className="mt-4 border-gold-dark text-gold-light hover:bg-wine-dark hover:text-gold"
+          >
+            Limpar Filtros
+          </Button>
+        </div>
+      )}
     </PageContainer>
   )
 }

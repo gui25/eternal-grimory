@@ -8,6 +8,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
 import { PageContainer } from "@/components/ui/page-container"
+import { LoadingSpinner } from "@/components/ui/loading-spinner"
 
 interface Monster {
   name: string;
@@ -19,6 +20,7 @@ interface Monster {
 
 export default function MonstersPage() {
   const [monsters, setMonsters] = useState<Monster[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [challengeFilter, setChallengeFilter] = useState("")
   const [tagFilter, setTagFilter] = useState("")
@@ -31,6 +33,8 @@ export default function MonstersPage() {
         setMonsters(data)
       } catch (error) {
         console.error("Erro ao buscar monstros:", error)
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -105,28 +109,43 @@ export default function MonstersPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {filteredMonsters.map((monster) => (
-          <Link key={monster.slug} href={`/characters/monsters/${monster.slug}`} prefetch={true}>
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-bold text-lg mb-1">{monster.name}</h3>
-                <div className="text-sm text-muted-foreground mb-2">{monster.type}</div>
-                <div className="text-sm mb-3">
-                  <span className="font-medium">Desafio:</span> {monster.challenge}
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {monster.tags.map((tag) => (
-                    <span key={tag} className="bg-secondary px-2 py-1 rounded-md text-xs">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
+      {isLoading ? (
+        <LoadingSpinner message="Carregando monstros..." />
+      ) : filteredMonsters.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {filteredMonsters.map((monster) => (
+            <Link key={monster.slug} href={`/characters/monsters/${monster.slug}`} prefetch={true}>
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="font-bold text-lg mb-1">{monster.name}</h3>
+                  <div className="text-sm text-muted-foreground mb-2">{monster.type}</div>
+                  <div className="text-sm mb-3">
+                    <span className="font-medium">Desafio:</span> {monster.challenge}
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {monster.tags.map((tag) => (
+                      <span key={tag} className="bg-secondary px-2 py-1 rounded-md text-xs">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-gold-light text-lg">Nenhum monstro corresponde aos seus filtros.</p>
+          <Button
+            variant="outline"
+            onClick={clearFilters}
+            className="mt-4 border-gold-dark text-gold-light hover:bg-wine-dark hover:text-gold"
+          >
+            Limpar Filtros
+          </Button>
+        </div>
+      )}
     </PageContainer>
   )
 }
