@@ -28,6 +28,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function ItemPage({ params }: { params: { slug: string } }) {
   // Obter o ID da campanha atual do cookie
   const campaignId = getCurrentCampaignIdFromCookies()
+  console.log(`[ITEM-PAGE] Slug: ${params.slug}, CampaignId do cookie: ${campaignId || 'não encontrado'}`);
   
   // Obter o conteúdo do item, passando explicitamente o ID da campanha
   const item = await getItem(params.slug, campaignId)
@@ -35,6 +36,7 @@ export default async function ItemPage({ params }: { params: { slug: string } })
 
   // Use type assertion com unknown primeiro para evitar o erro de tipo
   const { contentHtml, meta } = item as unknown as { contentHtml: string, meta: ItemMeta }
+  console.log(`[ITEM-PAGE] Item carregado: ${meta.name}, Campanha: ${meta.campaignId || 'não informado'}`);
 
   // Render item metadata
   const itemMetadata = (

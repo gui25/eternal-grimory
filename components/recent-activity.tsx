@@ -46,16 +46,20 @@ const ActivityItemComponent = memo(function ActivityItemComponent({
   return (
     <Link href={url} prefetch={false}>
       <div className="activity-item group hover:border-gold-primary transition-colors">
-        {icon}
-        <div className="flex-1">
-          <h3 className="font-heading font-semibold text-gold group-hover:text-gold-light transition-colors">
+        <div className="flex-shrink-0">
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-heading font-semibold text-gold group-hover:text-gold-light transition-colors truncate">
             {item.name}
           </h3>
-          <div className="flex justify-between">
-            <p className="text-sm text-gold-light/80">
+          <div className="flex justify-between items-center gap-2">
+            <p className="text-sm text-gold-light/80 truncate min-w-0">
               {item.type || item.category.charAt(0).toUpperCase() + item.category.slice(1)}
             </p>
-            <p className="text-xs text-gold-light/60">{formattedTime}</p>
+            <p className="text-xs text-gold-light/60 whitespace-nowrap flex-shrink-0">
+              {formattedTime}
+            </p>
           </div>
         </div>
       </div>

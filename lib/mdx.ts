@@ -62,20 +62,24 @@ function ensureDirectoryExists(dirPath: string) {
 
 // Get campaign content directory path
 export function getCampaignContentPath(contentType: string, campaignId?: string) {
+  const currentCampaignId = campaignId;
+  
+  console.log(`[CAMPAIGN-PATH] Buscando caminho para tipo ${contentType}, campaignId fornecido: ${currentCampaignId || 'nenhum'}`);
+  
   // Se um ID específico foi passado, use-o diretamente
-  if (campaignId) {
+  if (currentCampaignId) {
     // Encontre a campanha pelo ID
-    const campaign = CAMPAIGNS.find(c => c.id === campaignId);
+    const campaign = CAMPAIGNS.find(c => c.id === currentCampaignId);
     
     if (campaign && campaign.active) {
       const campaignPath = campaign.contentPath;
       const fullPath = path.join(process.cwd(), 'content', campaignPath, contentType);
       
-      console.log(`[FORÇA] Usando campanha específica: ${campaignId}, path: ${campaignPath}`);
+      console.log(`[CAMPAIGN-PATH] Usando campanha específica: ${currentCampaignId}, path: ${campaignPath}, fullPath: ${fullPath}`);
       return fullPath;
     }
     
-    console.log(`[AVISO] Campanha ${campaignId} não encontrada ou inativa`);
+    console.log(`[CAMPAIGN-PATH] Campanha ${currentCampaignId} não encontrada ou inativa`);
   }
   
   // SOLUÇÃO TEMPORÁRIA: 
@@ -90,13 +94,13 @@ export function getCampaignContentPath(contentType: string, campaignId?: string)
           const campaignPath = configCampaign.contentPath;
           const fullPath = path.join(process.cwd(), 'content', campaignPath, contentType);
           
-          console.log(`[CONFIG] Usando campanha de config.json: ${configData.currentCampaign}, path: ${campaignPath}`);
+          console.log(`[CAMPAIGN-PATH] Usando campanha de config.json: ${configData.currentCampaign}, path: ${campaignPath}`);
           return fullPath;
         }
       }
     }
   } catch (error) {
-    console.error('Erro ao ler arquivo de configuração:', error);
+    console.error('[CAMPAIGN-PATH] Erro ao ler arquivo de configuração:', error);
   }
   
   // Última tentativa: tentar obter dos cookies
@@ -104,34 +108,46 @@ export function getCampaignContentPath(contentType: string, campaignId?: string)
     // No servidor, devemos usar getCurrentCampaignIdFromCookies
     if (typeof window === 'undefined') {
       const cookieCampaignId = getCurrentCampaignIdFromCookies();
+      console.log(`[CAMPAIGN-PATH] cookieCampaignId obtido: ${cookieCampaignId || 'nenhum'}`);
+      
       if (cookieCampaignId) {
         const cookieCampaign = CAMPAIGNS.find(c => c.id === cookieCampaignId);
         if (cookieCampaign && cookieCampaign.active) {
           const campaignPath = cookieCampaign.contentPath;
           const fullPath = path.join(process.cwd(), 'content', campaignPath, contentType);
           
-          console.log(`[COOKIE] Usando campanha de cookie: ${cookieCampaignId}, path: ${campaignPath}`);
+          console.log(`[CAMPAIGN-PATH] Usando campanha de cookie: ${cookieCampaignId}, path: ${campaignPath}, fullPath: ${fullPath}`);
           return fullPath;
+        } else {
+          console.log(`[CAMPAIGN-PATH] Campanha de cookie ${cookieCampaignId} não encontrada ou inativa`);
         }
+      } else {
+        console.log(`[CAMPAIGN-PATH] Nenhum cookie de campanha encontrado`);
       }
     } else {
       // No cliente, usamos localStorage
       if (typeof localStorage !== 'undefined') {
         const storageCampaignId = localStorage.getItem('current-campaign');
+        console.log(`[CAMPAIGN-PATH] storageCampaignId obtido: ${storageCampaignId || 'nenhum'}`);
+        
         if (storageCampaignId) {
           const storageCampaign = CAMPAIGNS.find(c => c.id === storageCampaignId);
           if (storageCampaign && storageCampaign.active) {
             const campaignPath = storageCampaign.contentPath;
             const fullPath = path.join(process.cwd(), 'content', campaignPath, contentType);
             
-            console.log(`[STORAGE] Usando campanha de localStorage: ${storageCampaignId}, path: ${campaignPath}`);
+            console.log(`[CAMPAIGN-PATH] Usando campanha de localStorage: ${storageCampaignId}, path: ${campaignPath}, fullPath: ${fullPath}`);
             return fullPath;
+          } else {
+            console.log(`[CAMPAIGN-PATH] Campanha de localStorage ${storageCampaignId} não encontrada ou inativa`);
           }
+        } else {
+          console.log(`[CAMPAIGN-PATH] Nenhum localStorage de campanha encontrado`);
         }
       }
     }
   } catch (error) {
-    console.error('Erro ao obter campanha de cookies/localStorage:', error);
+    console.error('[CAMPAIGN-PATH] Erro ao obter campanha de cookies/localStorage:', error);
   }
   
   // Se chegamos aqui, use a primeira campanha ativa como fallback
@@ -139,23 +155,13 @@ export function getCampaignContentPath(contentType: string, campaignId?: string)
   const defaultPath = defaultCampaign.contentPath;
   const fullPath = path.join(process.cwd(), 'content', defaultPath, contentType);
   
-  console.log(`[PADRÃO] Usando campanha padrão: ${defaultCampaign.id}, path: ${defaultPath}`);
+  console.log(`[CAMPAIGN-PATH] Usando campanha padrão: ${defaultCampaign.id}, path: ${defaultPath}, fullPath: ${fullPath}`);
   return fullPath;
 }
 
 // Get list of all items with their metadata
 export async function getItems(campaignId?: string): Promise<ItemMeta[]> {
   console.log(`[ITEMS] Obtendo itens para campanha: ${campaignId || 'não especificado'}`);
-  
-  // Se não foi especificado um ID de campanha, vamos verificar a query string
-  if (!campaignId && typeof window !== 'undefined') {
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlCampaignId = urlParams.get('campaign');
-    if (urlCampaignId) {
-      console.log(`[ITEMS] Usando campanha da URL: ${urlCampaignId}`);
-      campaignId = urlCampaignId;
-    }
-  }
   
   // Obter o diretório de conteúdo
   const directory = getCampaignContentPath("items", campaignId);
@@ -194,16 +200,6 @@ export async function getItems(campaignId?: string): Promise<ItemMeta[]> {
 // Get specific item by slug
 export async function getItem(slug: string, campaignId?: string) {
   console.log(`[ITEM] Obtendo item ${slug} para campanha: ${campaignId || 'não especificado'}`);
-  
-  // Se não foi especificado um ID de campanha, vamos verificar a query string
-  if (!campaignId && typeof window !== 'undefined') {
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlCampaignId = urlParams.get('campaign');
-    if (urlCampaignId) {
-      console.log(`[ITEM] Usando campanha da URL: ${urlCampaignId}`);
-      campaignId = urlCampaignId;
-    }
-  }
   
   // Obter o diretório de conteúdo
   const directory = getCampaignContentPath("items", campaignId);

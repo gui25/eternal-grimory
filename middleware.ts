@@ -9,21 +9,17 @@ const CAMPAIGN_COOKIE_NAME = 'current-campaign'
 export function middleware(request: NextRequest) {
   console.log("[MIDDLEWARE] Iniciando processamento para:", request.url);
   
-  // Verificar se temos um parâmetro de campanha na URL
-  const url = request.nextUrl.clone()
-  const campaignParam = url.searchParams.get('campaign')
-  
   // Verificar o cookie de campanha atual
   const campaignCookie = request.cookies.get(CAMPAIGN_COOKIE_NAME)
-  const campaignId = campaignParam || campaignCookie?.value
-  
-  // Obter a primeira campanha ativa (default)
-  const defaultCampaign = CAMPAIGNS.find(c => c.active)?.id || CAMPAIGNS[0].id
+  const campaignId = campaignCookie?.value
   
   // Inicializar a resposta
   let response = NextResponse.next()
   
-  console.log(`[MIDDLEWARE] URL: ${url.pathname}, CampaignID (Param/Cookie): ${campaignParam || 'nenhum'}/${campaignCookie?.value || 'nenhum'}`);
+  console.log(`[MIDDLEWARE] URL: ${request.nextUrl.pathname}, CampaignID (Cookie): ${campaignCookie?.value || 'nenhum'}`);
+  
+  // Obter a primeira campanha ativa (default)
+  const defaultCampaign = CAMPAIGNS.find(c => c.active)?.id || CAMPAIGNS[0].id
   
   // Determinar qual ID de campanha usar
   let effectiveCampaignId = campaignId || defaultCampaign
@@ -42,7 +38,7 @@ export function middleware(request: NextRequest) {
   response.cookies.set({
     name: CAMPAIGN_COOKIE_NAME,
     value: effectiveCampaignId,
-    httpOnly: true,
+    httpOnly: false,
     maxAge: 60 * 60 * 24 * 30, // 30 dias
     path: '/',
     sameSite: 'lax'
@@ -50,13 +46,7 @@ export function middleware(request: NextRequest) {
   
   console.log(`[MIDDLEWARE] Cookie definido: ${CAMPAIGN_COOKIE_NAME}=${effectiveCampaignId}`);
   
-  // Se estamos na página raiz e não tem parâmetro de campanha, mas temos cookie,
-  // redirecione para a mesma URL com o parâmetro de campanha
-  if (url.pathname === '/' && !campaignParam && campaignCookie) {
-    url.searchParams.set('campaign', effectiveCampaignId)
-    return NextResponse.redirect(url)
-  }
-  
+  // Retorna a resposta sem modificar a URL
   return response
 }
 

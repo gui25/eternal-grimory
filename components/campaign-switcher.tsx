@@ -15,8 +15,21 @@ export default function CampaignSwitcher() {
   // Quando o componente é montado, obter a campanha atual (client-side only)
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Tentar obter o cookie diretamente 
+      const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
+        const [name, value] = cookie.split('=');
+        acc[name] = value;
+        return acc;
+      }, {} as Record<string, string>);
+      
+      const cookieValue = cookies['current-campaign'];
+      const localStorageValue = localStorage.getItem('current-campaign');
+      
+      console.log('[DEBUG-CAMPAIGN-SWITCHER] Cookie value:', cookieValue);
+      console.log('[DEBUG-CAMPAIGN-SWITCHER] localStorage value:', localStorageValue);
+      
       // Inicializar o estado com a campanha atual
-      setCurrentCampaignState(getCurrentCampaignId())
+      setCurrentCampaignState(getCurrentCampaignId());
     }
   }, [])
 

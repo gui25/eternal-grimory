@@ -12,19 +12,31 @@ export function getCurrentCampaignIdFromCookies(): string | undefined {
     const cookieStore = cookies();
     const campaignId = cookieStore.get(CAMPAIGN_COOKIE_NAME)?.value;
     
+    console.log(`[DEBUG] getCurrentCampaignIdFromCookies - Cookie: ${CAMPAIGN_COOKIE_NAME}=${campaignId || 'não encontrado'}`);
+    
     // Verificar se a campanha existe e está ativa
     if (campaignId) {
       const campaignExists = CAMPAIGNS.some(c => c.id === campaignId && c.active);
+      console.log(`[DEBUG] getCurrentCampaignIdFromCookies - Campaign ${campaignId} exists and is active: ${campaignExists}`);
+      
       if (campaignExists) {
         return campaignId;
+      } else {
+        console.log(`[DEBUG] getCurrentCampaignIdFromCookies - Campaign ${campaignId} not found or not active`);
       }
+    } else {
+      console.log(`[DEBUG] getCurrentCampaignIdFromCookies - No campaign cookie found`);
     }
     
-    // Se não tiver uma campanha válida, retornar undefined
-    return undefined;
+    // Se não tiver uma campanha válida, retornar a primeira campanha ativa
+    const defaultCampaign = CAMPAIGNS.find(c => c.active)?.id;
+    console.log(`[DEBUG] getCurrentCampaignIdFromCookies - Using default campaign: ${defaultCampaign}`);
+    return defaultCampaign;
   } catch (error) {
     console.error("Erro ao obter ID da campanha dos cookies:", error);
-    return undefined;
+    // Se falhar, retornar a primeira campanha ativa
+    const defaultCampaign = CAMPAIGNS.find(c => c.active)?.id;
+    return defaultCampaign;
   }
 }
 
@@ -35,12 +47,12 @@ export function getCurrentCampaignIdFromCookies(): string | undefined {
 export function getCampaignIdFromHttpCookies(cookieHeader: string | null): string | undefined {
   try {
     if (!cookieHeader) {
-      console.log('getCampaignIdFromHttpCookies: Cookie header is null');
+      console.log('[DEBUG] getCampaignIdFromHttpCookies: Cookie header is null');
       return undefined;
     }
     
     // Debugging
-    console.log('getCampaignIdFromHttpCookies - Cookie Header:', cookieHeader);
+    console.log('[DEBUG] getCampaignIdFromHttpCookies - Cookie Header:', cookieHeader);
     
     // Parsear os cookies
     const cookies: Record<string, string> = {};
@@ -56,7 +68,7 @@ export function getCampaignIdFromHttpCookies(cookieHeader: string | null): strin
     });
     
     // Log dos cookies parseados para debug
-    console.log('getCampaignIdFromHttpCookies - Parsed Cookies:', cookies);
+    console.log('[DEBUG] getCampaignIdFromHttpCookies - Parsed Cookies:', cookies);
     
     // Tentar encontrar o cookie da campanha diretamente
     let campaignId = cookies[CAMPAIGN_COOKIE_NAME];
@@ -68,7 +80,7 @@ export function getCampaignIdFromHttpCookies(cookieHeader: string | null): strin
       const match = cookieHeader.match(regex);
       if (match && match[1]) {
         campaignId = match[1];
-        console.log('getCampaignIdFromHttpCookies - Found via regex:', campaignId);
+        console.log('[DEBUG] getCampaignIdFromHttpCookies - Found via regex:', campaignId);
       }
     }
     
@@ -76,17 +88,19 @@ export function getCampaignIdFromHttpCookies(cookieHeader: string | null): strin
     if (campaignId) {
       const campaignExists = CAMPAIGNS.some(c => c.id === campaignId && c.active);
       
-      console.log(`getCampaignIdFromHttpCookies - Campaign ${campaignId} exists: ${campaignExists}`);
+      console.log(`[DEBUG] getCampaignIdFromHttpCookies - Campaign ${campaignId} exists: ${campaignExists}`);
       
       if (campaignExists) {
         return campaignId;
       }
     }
     
-    console.log('getCampaignIdFromHttpCookies - No valid campaign found');
-    return undefined;
+    console.log('[DEBUG] getCampaignIdFromHttpCookies - No valid campaign found, using default');
+    // Retornar a primeira campanha ativa como fallback
+    return CAMPAIGNS.find(c => c.active)?.id;
   } catch (error) {
     console.error("Erro ao extrair ID da campanha dos cookies HTTP:", error);
-    return undefined;
+    // Se falhar, retornar a primeira campanha ativa
+    return CAMPAIGNS.find(c => c.active)?.id;
   }
 } 

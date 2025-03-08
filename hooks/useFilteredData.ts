@@ -29,27 +29,12 @@ export function useFilteredData<T>(
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [currentCampaignId, setCurrentCampaignId] = useState<string | null>(null);
   
-  // Função para obter o ID da campanha da URL
-  const getCampaignFromUrl = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get('campaign');
-    }
-    return null;
-  }, []);
-  
-  // Efeito para verificar e atualizar o ID da campanha a partir da URL
+  // Efeito para verificar e atualizar o ID da campanha a partir dos cookies
   useEffect(() => {
-    const campaignFromUrl = getCampaignFromUrl();
     const campaignFromCookie = getCurrentCampaignIdFromBrowser();
     
-    // Preferir o parâmetro da URL, se disponível
-    const effectiveCampaignId = campaignFromUrl || campaignFromCookie;
-    
-    console.log(`[useFilteredData] Campaign URL/Cookie: ${campaignFromUrl || 'none'}/${campaignFromCookie || 'none'}`);
-    
-    if (effectiveCampaignId !== currentCampaignId) {
-      setCurrentCampaignId(effectiveCampaignId);
+    if (campaignFromCookie !== currentCampaignId) {
+      setCurrentCampaignId(campaignFromCookie);
     }
     
     // Monitorar mudanças nos cookies
@@ -64,24 +49,14 @@ export function useFilteredData<T>(
     const handleCampaignChange = () => {
       // Forçar uma atualização imediata dos dados quando a campanha mudar
       setTimeout(() => {
-        const newCampaignId = getCampaignFromUrl() || getCurrentCampaignIdFromBrowser();
+        const newCampaignId = getCurrentCampaignIdFromBrowser();
         setCurrentCampaignId(newCampaignId);
         mutate();
       }, 500); // Pequeno atraso para garantir que o cookie foi definido
     };
     
-    // Função para lidar com mudanças na URL (parâmetros de consulta)
-    const handleUrlChange = () => {
-      const newCampaignId = getCampaignFromUrl();
-      if (newCampaignId && newCampaignId !== currentCampaignId) {
-        setCurrentCampaignId(newCampaignId);
-        mutate();
-      }
-    };
-    
     // Adicionar listener para o evento de mudança de campanha
     window.addEventListener(CAMPAIGN_CHANGE_EVENT, handleCampaignChange);
-    window.addEventListener('popstate', handleUrlChange);
     
     // Verificar a cada 2 segundos (pode ser ajustado conforme necessário)
     const interval = setInterval(checkCookie, 2000);
@@ -89,23 +64,25 @@ export function useFilteredData<T>(
     return () => {
       clearInterval(interval);
       window.removeEventListener(CAMPAIGN_CHANGE_EVENT, handleCampaignChange);
-      window.removeEventListener('popstate', handleUrlChange);
     };
-  }, [currentCampaignId, getCampaignFromUrl]);
+  }, [currentCampaignId]);
 
-  // Usar o ID da campanha como parte da chave do SWR
-  const cacheKey = currentCampaignId ? `${apiEndpoint}?campaign=${currentCampaignId}` : apiEndpoint;
-  
-  // Construir a URL da API com o ID da campanha
-  const apiUrl = currentCampaignId ? 
-    `${apiEndpoint}${apiEndpoint.includes('?') ? '&' : '?'}campaign=${currentCampaignId}` : 
-    apiEndpoint;
-  
-  console.log(`[useFilteredData] Fetch URL: ${apiUrl}, Campaign: ${currentCampaignId || 'none'}`);
+  // Usar o ID da campanha como parte da chave do SWR, mas SEM adicionar à URL
+  const cacheKey = `${apiEndpoint}-campaign-${currentCampaignId || 'default'}`;
+
+  // Construir a URL da API sem adicionar o parâmetro campaign
+  const apiUrl = apiEndpoint;
+
+  console.log(`[useFilteredData] Fetch URL: ${apiUrl}, Campaign usando cookie/localStorage: ${currentCampaignId || 'none'}`);
   
   const { data, error, isLoading, mutate } = useSWR<T[]>(cacheKey, async () => {
     console.log(`Iniciando fetch para ${apiUrl}`);
-    const response = await fetch(apiUrl);
+    const response = await fetch(apiUrl, {
+      headers: {
+        // Enviar o ID da campanha atual como cabeçalho personalizado
+        'X-Campaign': currentCampaignId || '',
+      }
+    });
     
     if (!response.ok) {
       console.error(`Erro na requisição para ${apiUrl}: ${response.status}`);
@@ -118,7 +95,7 @@ export function useFilteredData<T>(
   }, {
     revalidateOnFocus: false,
     revalidateIfStale: false,
-    dedupingInterval: 5000, // Reduzido para 5 segundos para atualizar mais frequentemente
+    dedupingInterval: 10000, // 10 segundos entre solicitações duplicadas
   });
 
   const filteredData = data 

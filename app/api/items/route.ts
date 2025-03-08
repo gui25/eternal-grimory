@@ -8,42 +8,43 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(request: Request) {
   try {
-    // Obter o parâmetro de consulta "campaign", se fornecido
-    const url = new URL(request.url)
-    const campaignParam = url.searchParams.get('campaign')
+    // Verificar se existe um header personalizado com o ID da campanha
+    const campaignHeader = request.headers.get('X-Campaign')
     
-    // Obter o cookie da campanha atual se o parâmetro não for fornecido
-    const cookieHeader = request.headers.get('cookie')
+    // Se o header existir e não estiver vazio, usar esse valor
+    let campaignId = campaignHeader && campaignHeader.trim() !== '' 
+      ? campaignHeader 
+      : undefined;
+      
+    console.log(`[API-ITEMS] Header X-Campaign: ${campaignHeader || 'não encontrado'}`);
     
-    console.log('API Items - Cookie Header:', cookieHeader)
+    // Se não tiver o header, tentar obter do cookie
+    if (!campaignId) {
+      const cookieHeader = request.headers.get('cookie')
+      campaignId = getCampaignIdFromHttpCookies(cookieHeader)
+      console.log(`[API-ITEMS] Cookie campaign: ${campaignId || 'não encontrado'}`);
+    }
     
-    const campaignIdFromCookie = getCampaignIdFromHttpCookies(cookieHeader)
-    
-    // Usar o parâmetro de consulta, se fornecido, ou o cookie
-    const campaignId = campaignParam || campaignIdFromCookie
-    
-    console.log('API Items - Campaign ID Final:', campaignId)
+    // Verificar se o campaignId é válido
+    if (campaignId) {
+      const isValid = CAMPAIGNS.some(c => c.id === campaignId && c.active);
+      if (!isValid) {
+        console.log(`[API-ITEMS] Campaign ID inválido: ${campaignId}, usando padrão`);
+        campaignId = CAMPAIGNS.find(c => c.active)?.id;
+      }
+    } else {
+      // Se não tiver nenhum ID, usar o padrão
+      campaignId = CAMPAIGNS.find(c => c.active)?.id;
+      console.log(`[API-ITEMS] Nenhum ID de campanha encontrado, usando padrão: ${campaignId}`);
+    }
     
     // Buscar os itens da campanha específica
-    const itemsResult = await getItems(campaignId)
-    
-    // Adicionar o ID da campanha aos metadados dos itens para debugging
-    const itemsWithCampaignInfo = itemsResult.map(item => ({
-      ...item,
-      _debug: {
-        loadedFromCampaign: campaignId || 'default',
-        allCampaigns: CAMPAIGNS.map(c => c.id),
-        requestHadCampaignParam: !!campaignParam
-      }
-    }))
-    
-    return NextResponse.json(itemsWithCampaignInfo)
+    console.log(`[API-ITEMS] Buscando itens para campanha: ${campaignId}`);
+    const items = await getItems(campaignId)
+    return NextResponse.json(items)
   } catch (error) {
-    console.error("Erro ao buscar itens:", error)
-    return NextResponse.json({ 
-      error: "Erro ao buscar itens",
-      details: error instanceof Error ? error.message : 'Erro desconhecido'
-    }, { status: 500 })
+    console.error('[API-ITEMS] Erro:', error);
+    return NextResponse.json({ error: "Erro ao buscar itens" }, { status: 500 })
   }
 }
 

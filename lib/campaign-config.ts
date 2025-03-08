@@ -146,20 +146,38 @@ export function setCurrentCampaign(id: string) {
       if (recentActivity) localStorage.setItem(recentActivityKey, recentActivity);
       
       // Define o cookie (mesmo no cliente, para consistência)
-      const host = window.location.hostname;
       document.cookie = `${CAMPAIGN_COOKIE_NAME}=${id}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax`;
       console.log(`[CAMPANHA] Cookie definido: ${CAMPAIGN_COOKIE_NAME}=${id}`);
       
       // Usar sessionStorage também
       sessionStorage.setItem('campaign', id);
       
-      // Adicionar uma flag à URL
-      const url = new URL(window.location.href);
-      url.searchParams.set('campaign', id);
+      // Verificar se estamos em uma subpágina que não é do sidebar
+      const pathname = window.location.pathname;
+      const pathSegments = pathname.split('/').filter(Boolean);
       
-      // Forçar um recarregamento completo com a URL atualizada
-      console.log(`[CAMPANHA] Redirecionando para: ${url.href}`);
-      window.location.href = url.href;
+      // Páginas principais do sidebar que devem apenas recarregar, sem redirecionar
+      const mainPages = ['', 'items', 'sessions', 'characters', 'npcs', 'players', 'monsters'];
+      
+      // Se tiver mais de um segmento (ex: /items/sword) e não for uma das páginas principais do sidebar
+      const isDetailPage = pathSegments.length > 1 && !mainPages.includes(pathSegments[0]);
+      
+      if (isDetailPage) {
+        // Se for uma página de detalhes, redireciona para a home sem parâmetros na URL
+        console.log(`[CAMPANHA] Redirecionando da página de detalhes ${pathname} para a home`);
+        window.location.href = '/';
+      } else {
+        // Se for uma página principal ou raiz, apenas recarrega
+        // Primeiro, remover qualquer parâmetro ?campaign=xxx da URL atual
+        const url = new URL(window.location.href);
+        url.searchParams.delete('campaign');
+        
+        // Atualizar a URL sem o parâmetro campaign (sem recarregar ainda)
+        window.history.replaceState({}, '', url.toString());
+        
+        console.log(`[CAMPANHA] Recarregando página principal ${pathname} sem parâmetros de campanha`);
+        window.location.reload();
+      }
     }
   } catch (error) {
     console.error('[CAMPANHA] Erro ao definir campanha:', error);
