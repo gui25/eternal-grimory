@@ -70,7 +70,6 @@ Grimório Eterno é uma aplicação web moderna para mestres e jogadores de RPG 
   - Sistema de busca e filtros
   - Atividade recente por campanha
   - Suporte a Markdown/MDX
-  - Internacionalização (pt-BR/en)
 
 ## 🚀 Começando
 
@@ -83,22 +82,20 @@ Grimório Eterno é uma aplicação web moderna para mestres e jogadores de RPG 
 ### Instalação
 
 1. Clone o repositório
+
    ```sh
    git clone https://github.com/seu-usuario/eternal-grimory.git
    ```
 
 2. Instale as dependências
+
    ```sh
    cd eternal-grimory
    npm install
    ```
 
-3. Configure as variáveis de ambiente
-   ```sh
-   cp .env.example .env.local
-   ```
+3. Inicie o servidor de desenvolvimento
 
-4. Inicie o servidor de desenvolvimento
    ```sh
    npm run dev
    ```
@@ -107,7 +104,7 @@ Grimório Eterno é uma aplicação web moderna para mestres e jogadores de RPG 
 
 ### Estrutura de Arquivos
 
-```
+```readme
 eternal-grimory/
 ├── app/                  # App Router e páginas
 ├── components/           # Componentes React
@@ -122,6 +119,7 @@ eternal-grimory/
 ### Criando Conteúdo
 
 #### Itens
+
 ```markdown
 ---
 name: Espada do Destino
@@ -135,6 +133,7 @@ Uma lâmina lendária forjada nos confins do tempo...
 ```
 
 #### Personagens
+
 ```markdown
 ---
 name: Thorin Stormforge
@@ -150,6 +149,7 @@ Um valente guerreiro anão...
 ```
 
 #### Sessões
+
 ```markdown
 ---
 session_number: 1
@@ -184,6 +184,7 @@ Todos os componentes são construídos com Tailwind CSS e são facilmente custom
 - [x] Sistema de múltiplas campanhas
 - [x] Gerenciamento de itens com raridade
 - [x] Sistema de busca e filtros
+- [ ] Internacionalização (pt-BR/en)
 - [ ] Modo offline
 - [ ] Sistema de combate
 - [ ] Integração com VTTs
@@ -207,10 +208,6 @@ Guilherme Bernardo - [Linkedln](https://www.linkedin.com/in/guilhermebernardosil
 
 ---
 
-<div align="center">
-
 ### ⚔️ Feito com paixão por mestres, para mestres ⚔️
 
 [⬆ Voltar ao topo](#grimório-eterno)
-
-</div> 
