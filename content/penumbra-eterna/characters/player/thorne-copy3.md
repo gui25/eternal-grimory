@@ -1,5 +1,5 @@
 ---
-name: "Thorne Coração de Ferro TESTE 2"
+name: "Thorne Coração de Ferro TESTEE 2"
 race: "Anão"
 class: "Paladino"
 level: 8
