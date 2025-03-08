@@ -205,8 +205,6 @@ Distribuído sob a licença MIT. Veja `LICENSE.md` para mais informações.
 
 Guilherme Bernardo - [Linkedln](https://www.linkedin.com/in/guilhermebernardosilva/)
 
-Link do Projeto: [https://github.com/gui25/eternal-grimory](https://github.com/gui25/eternal-grimory)
-
 ---
 
 <div align="center">
