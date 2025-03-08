@@ -203,9 +203,9 @@ Distribuído sob a licença MIT. Veja `LICENSE.md` para mais informações.
 
 ## 📧 Contato
 
-Seu Nome - [@seu_twitter](https://twitter.com/seu_twitter)
+Guilherme Bernardo - [Linkedln](https://www.linkedin.com/in/guilhermebernardosilva/)
 
-Link do Projeto: [https://github.com/seu-usuario/eternal-grimory](https://github.com/seu-usuario/eternal-grimory)
+Link do Projeto: [https://github.com/gui25/eternal-grimory](https://github.com/gui25/eternal-grimory)
 
 ---
 
