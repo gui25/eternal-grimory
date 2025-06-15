@@ -6,10 +6,11 @@ import { createItemMetadata } from "@/lib/metadata"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 
 // Generate metadata for this page
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const campaignId = await getCurrentCampaignIdFromCookies()
   
-  const item = await getItem(params.slug, campaignId)
+  const item = await getItem(slug, campaignId)
   if (!item) return {}
   
   // Use type assertion para evitar erro de tipo
@@ -33,31 +34,50 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function ItemPage({ params }: { params: { slug: string } }) {
+export default async function ItemPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const campaignId = await getCurrentCampaignIdFromCookies()
-  console.log(`[ITEM-PAGE] Slug: ${params.slug}, CampaignId do cookie: ${campaignId || 'não encontrado'}`);
+  console.log(`[ITEM-PAGE] Slug: ${slug}, CampaignId do cookie: ${campaignId || 'não encontrado'}`);
   
-  const item = await getItem(params.slug, campaignId)
+  const item = await getItem(slug, campaignId)
   if (!item) notFound()
 
   // Use type assertion para evitar erro de tipo
   const { contentHtml, meta } = item as unknown as { contentHtml: string, meta: ItemMeta }
   console.log(`[ITEM-PAGE] Item carregado: ${meta.name}, Campanha: ${meta.campaignId || 'não informado'}`);
 
+  // Get rarity badge classes for visual feedback
+  const getRarityBadgeClass = (rarity: string) => {
+    const rarityLower = rarity.toLowerCase()
+    switch (rarityLower) {
+      case 'legendary':
+        return 'legendary-badge'
+      case 'epic':
+        return 'epic-badge'
+      case 'rare':
+        return 'rare-badge'
+      case 'uncommon':
+        return 'uncommon-badge'
+      case 'common':
+      default:
+        return 'common-badge'
+    }
+  }
+
   // Render item metadata
   const itemMetadata = (
     <>
-      <div className={`text-sm inline-block px-2 py-0.5 rounded mb-3 ${meta.rarity ? `rarity-${meta.rarity.toLowerCase()}` : ''} ${meta.rarity?.toLowerCase() === 'legendary' ? 'legendary-badge' : ''}`}>
+      <div className={`text-sm inline-block px-3 py-1 rounded-full mb-3 font-medium ${getRarityBadgeClass(meta.rarity || 'Common')}`}>
         {meta.rarity || 'Comum'}
       </div>
 
-      <div className="text-lg mb-3 text-gold-light">
+      <div className="text-lg mb-3 text-gold-light font-medium">
         {meta.type}
       </div>
       
       <div className="flex flex-wrap gap-2">
         {meta.tags.map((tag: string) => (
-          <span key={tag} className="bg-secondary px-3 py-1 rounded-full text-xs">
+          <span key={tag} className="bg-secondary/80 px-3 py-1 rounded-full text-xs border border-gold/20">
             {tag}
           </span>
         ))}
@@ -82,7 +102,6 @@ export default async function ItemPage({ params }: { params: { slug: string } })
         category: "item",
         rarity: meta.rarity
       }}
-      className={meta.rarity?.toLowerCase() === 'legendary' ? 'legendary-page-content' : ''}
     >
       <div className="mdx-content" dangerouslySetInnerHTML={{ __html: contentHtml }} />
     </DetailPageLayout>

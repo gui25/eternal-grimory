@@ -23,12 +23,13 @@ interface PlayerCharacterMeta {
   category: "player";
 }
 
-export default async function PlayerPage({ params }: { params: { slug: string } }) {
+export default async function PlayerPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const campaignId = await getCurrentCampaignIdFromCookies()
   
-  console.log(`Página de jogador: Carregando ${params.slug} da campanha: ${campaignId || 'padrão'}`)
+  console.log(`Página de jogador: Carregando ${slug} da campanha: ${campaignId || 'padrão'}`)
   
-  const character = await getCharacter(params.slug, "player", campaignId)
+  const character = await getCharacter(slug, "player", campaignId)
   if (!character) notFound()
 
   // Use type assertion to avoid type errors

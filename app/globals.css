@@ -229,10 +229,21 @@
   }
 
   .rarity-legendary {
+    color: hsl(40, 90%, 70%);
+    border-color: hsl(40, 80%, 60%);
+    background-color: rgba(245, 158, 11, 0.05);
+    box-shadow: 
+      0 0 15px rgba(245, 158, 11, 0.4),
+      0 0 25px rgba(245, 158, 11, 0.2),
+      inset 0 0 30px rgba(245, 158, 11, 0.15);
+    animation: legendary-glow-smooth 4s ease-in-out infinite;
     position: relative;
-    border-color: hsl(45, 100%, 47%);
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
     overflow: hidden;
+  }
+
+  .rarity-legendary > * {
+    position: relative;
+    z-index: 1;
   }
 
   .rarity-legendary::before {
@@ -242,56 +253,75 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-      45deg, 
-      hsl(45, 100%, 47%), 
-      hsl(36, 100%, 55%), 
-      hsl(45, 100%, 60%), 
-      hsl(36, 100%, 55%), 
-      hsl(45, 100%, 47%)
-    );
-    opacity: 0.3;
-    z-index: -1;
-    background-size: 400% 400%;
-    animation: legendary-bg 3s ease infinite;
-  }
-
-  .rarity-legendary::after {
-    content: "";
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
+    background: radial-gradient(circle at center, rgba(245, 158, 11, 0.3) 0%, rgba(245, 158, 11, 0.15) 50%, rgba(245, 158, 11, 0.05) 100%);
+    animation: legendary-background-pulse 4s ease-in-out infinite;
+    z-index: 0;
+    pointer-events: none;
     border-radius: inherit;
-    z-index: -2;
-    background-size: 400% 400%;
-    animation: legendary-bg 3s ease infinite, legendary-border 4s linear infinite;
-    filter: blur(5px);
   }
 
-  @keyframes legendary-bg {
-    0% {
-      background-position: 0% 50%;
+  /* Smooth Rarity Animations */
+  @keyframes epic-pulse-smooth {
+    0%, 100% { 
+      box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+      transform: scale(1);
     }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
+    50% { 
+      box-shadow: 0 0 18px rgba(139, 92, 246, 0.6);
+      transform: scale(1.02);
     }
   }
 
-  @keyframes legendary-border {
-    0% {
-      opacity: 0.5;
+  @keyframes epic-glow-smooth {
+    0%, 100% { 
+      box-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
+    }
+    50% { 
+      box-shadow: 0 0 18px rgba(139, 92, 246, 0.5);
+    }
+  }
+
+  @keyframes legendary-glow-smooth {
+    0%, 100% { 
+      box-shadow: 
+        0 0 15px rgba(245, 158, 11, 0.4),
+        0 0 25px rgba(245, 158, 11, 0.2),
+        inset 0 0 30px rgba(245, 158, 11, 0.15);
+    }
+    50% { 
+      box-shadow: 
+        0 0 20px rgba(245, 158, 11, 0.6),
+        0 0 35px rgba(245, 158, 11, 0.3),
+        inset 0 0 40px rgba(245, 158, 11, 0.25);
+    }
+  }
+
+  @keyframes legendary-background-pulse {
+    0%,
+    100% {
+      opacity: 0.4;
+      transform: scale(1);
     }
     50% {
-      opacity: 1;
+      opacity: 0.8;
+      transform: scale(1.02);
     }
-    100% {
-      opacity: 0.5;
+  }
+
+  @keyframes legendary-pulse {
+    0%, 100% { 
+      opacity: 0.2; 
     }
+    50% { 
+      opacity: 0.5; 
+    }
+  }
+
+  @keyframes legendary-shimmer-smooth {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); opacity: 0; }
   }
 
   /* Estilos para conteúdo MDX */
@@ -571,6 +601,10 @@
   .animate-glow {
     animation: glow 2s ease-in-out infinite;
   }
+
+  .animate-legendary-pulse {
+    animation: legendary-pulse 3s ease-in-out infinite;
+  }
 }
 
 /* Custom Scrollbar */
@@ -630,46 +664,146 @@
   color: hsl(0, 70%, 45%);
 }
 
-/* Animações para itens lendários */
+/* Complete Rarity System */
+/* Common Items */
+.common-badge {
+  @apply bg-slate-600 text-slate-100 border border-slate-500;
+}
+
+.rarity-common {
+  color: hsl(210, 10%, 80%);
+  border-color: hsl(210, 10%, 60%);
+}
+
+/* Uncommon Items */
+.uncommon-badge {
+  @apply bg-green-600 text-green-100 border border-green-500;
+}
+
+.rarity-uncommon {
+  color: hsl(120, 60%, 70%);
+  border-color: hsl(120, 50%, 50%);
+}
+
+/* Rare Items */
+.rare-badge {
+  @apply bg-blue-600 text-blue-100 border border-blue-500;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+.rarity-rare {
+  color: hsl(220, 80%, 70%);
+  border-color: hsl(220, 70%, 60%);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.2);
+}
+
+/* Epic Items */
+.epic-badge {
+  @apply bg-purple-600 text-purple-100 border border-purple-500;
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+  animation: epic-pulse-smooth 3s ease-in-out infinite;
+}
+
+.rarity-epic {
+  color: hsl(270, 70%, 70%);
+  border-color: hsl(270, 60%, 60%);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
+  animation: epic-glow-smooth 3s ease-in-out infinite;
+}
+
+/* Legendary Items - Enhanced */
+.legendary-badge {
+  @apply text-yellow-100 border-2;
+  background: linear-gradient(135deg, #f59e0b, #d97706, #f59e0b);
+  border-color: #f59e0b;
+  box-shadow: 
+    0 0 15px rgba(245, 158, 11, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: legendary-pulse-smooth 4s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.legendary-badge::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+  animation: legendary-shimmer-smooth 4s linear infinite;
+}
+
+/* Smooth Rarity Animations */
+@keyframes epic-pulse-smooth {
+  0%, 100% { 
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 18px rgba(139, 92, 246, 0.6);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes epic-glow-smooth {
+  0%, 100% { 
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 18px rgba(139, 92, 246, 0.5);
+  }
+}
+
+@keyframes legendary-pulse-smooth {
+  0%, 100% { 
+    box-shadow: 
+      0 0 15px rgba(245, 158, 11, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 
+      0 0 20px rgba(245, 158, 11, 0.7),
+      0 0 30px rgba(245, 158, 11, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: scale(1.03);
+  }
+}
+
+@keyframes legendary-shimmer-smooth {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); opacity: 0; }
+}
+
+@keyframes legendary-background-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
 @keyframes legendary-pulse {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.5; }
+  0%, 100% { 
+    opacity: 0.2; 
+  }
+  50% { 
+    opacity: 0.5; 
+  }
 }
 
-@keyframes legendary-sparkle-1 {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(-45deg); }
-  100% { transform: translateX(200%) translateY(200%) rotate(-45deg); }
-}
-
-@keyframes legendary-sparkle-2 {
-  0%, 30% { opacity: 0; transform: translateX(200%) translateY(200%) rotate(45deg); }
-  10%, 80% { opacity: 1; }
-  100% { opacity: 0; transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-}
-
-@keyframes legendary-sparkle-3 {
-  0%, 50% { opacity: 0; transform: translateX(-100%) rotate(0); }
-  25%, 85% { opacity: 1; }
-  100% { opacity: 0; transform: translateX(200%) rotate(0); }
-}
-
-/* Classe para aplicação das animações */
 .animate-legendary-pulse {
   animation: legendary-pulse 3s ease-in-out infinite;
 }
 
-.animate-legendary-sparkle-1 {
-  animation: legendary-sparkle-1 4s linear infinite;
-}
-
-.animate-legendary-sparkle-2 {
-  animation: legendary-sparkle-2 5s linear infinite;
-  animation-delay: 0.5s;
-}
-
-.animate-legendary-sparkle-3 {
-  animation: legendary-sparkle-3 4.5s linear infinite;
-  animation-delay: 1s;
-}
 
 

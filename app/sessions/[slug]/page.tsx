@@ -6,11 +6,12 @@ import { createSessionMetadata } from "@/lib/metadata"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 
 // Generate metadata for this page
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   // Obter o ID da campanha atual do cookie
   const campaignId = await getCurrentCampaignIdFromCookies()
   
-  const session = await getSession(params.slug, campaignId)
+  const session = await getSession(slug, campaignId)
   if (!session) return {}
   
   // Use type assertion para evitar erro de tipo
@@ -22,13 +23,14 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   })
 }
 
-export default async function SessionPage({ params }: { params: { slug: string } }) {
+export default async function SessionPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   // Obter o ID da campanha atual do cookie
   const campaignId = await getCurrentCampaignIdFromCookies()
   
-  console.log(`Página de sessão: Carregando ${params.slug} da campanha: ${campaignId || 'padrão'}`)
+  console.log(`Página de sessão: Carregando ${slug} da campanha: ${campaignId || 'padrão'}`)
   
-  const session = await getSession(params.slug, campaignId)
+  const session = await getSession(slug, campaignId)
   if (!session) notFound()
 
   // Use type assertion para evitar erro de tipo

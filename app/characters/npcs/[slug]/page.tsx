@@ -7,12 +7,13 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import TrackView from "@/components/track-view"
 
-export default async function NPCPage({ params }: { params: { slug: string } }) {
+export default async function NPCPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const campaignId = await getCurrentCampaignIdFromCookies()
   
-  console.log(`Página de NPC: Carregando ${params.slug} da campanha: ${campaignId || 'padrão'}`)
+  console.log(`Página de NPC: Carregando ${slug} da campanha: ${campaignId || 'padrão'}`)
   
-  const npc = await getCharacter(params.slug, "npc", campaignId)
+  const npc = await getCharacter(slug, "npc", campaignId)
   if (!npc) notFound()
 
   // Use type assertion para evitar erro de tipo

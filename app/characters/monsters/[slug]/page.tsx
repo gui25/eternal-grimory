@@ -9,12 +9,13 @@ import { PageContainer } from "@/components/ui/page-container"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 
-export default async function MonsterPage({ params }: { params: { slug: string } }) {
+export default async function MonsterPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const campaignId = await getCurrentCampaignIdFromCookies()
   
-  console.log(`Página de monstro: Carregando ${params.slug} da campanha: ${campaignId || 'padrão'}`)
+  console.log(`Página de monstro: Carregando ${slug} da campanha: ${campaignId || 'padrão'}`)
   
-  const monster = await getCharacter(params.slug, "monster", campaignId)
+  const monster = await getCharacter(slug, "monster", campaignId)
   if (!monster) notFound()
 
   // Use type assertion para evitar erro de tipo

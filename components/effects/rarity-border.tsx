@@ -82,7 +82,7 @@ export default function RarityBorder({
 
   // Adicionar classes especiais para itens lendários
   const legendaryClasses = rarity === "legendary" 
-    ? "legendary-item before:absolute before:inset-0 before:bg-gradient-to-r before:from-gold/10 before:via-amber-400/20 before:to-gold/10 before:animate-legendary-pulse" 
+    ? "legendary-item rarity-legendary before:absolute before:inset-0 before:bg-gradient-to-r before:from-gold/10 before:via-amber-400/20 before:to-gold/10 before:animate-legendary-pulse" 
     : "";
 
   return (
@@ -112,7 +112,6 @@ export default function RarityBorder({
       {rarity === "legendary" && (
         <div className="absolute inset-0 z-0 overflow-hidden">
           <div className="absolute w-1 h-10 bg-gold/80 blur-sm top-0 left-1/4 transform -rotate-45 animate-legendary-sparkle-1"></div>
-          <div className="absolute w-1 h-6 bg-amber-300/80 blur-sm bottom-8 right-1/4 transform rotate-45 animate-legendary-sparkle-2"></div>
           <div className="absolute w-8 h-1 bg-gold/80 blur-sm top-1/3 right-0 animate-legendary-sparkle-3"></div>
         </div>
       )}
