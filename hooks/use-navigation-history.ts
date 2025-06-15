@@ -20,26 +20,47 @@ export const useNavigationHistoryInitializer = () => {
     // Construct full URL with search params
     const currentUrl = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '');
     
-    // Add to global history if it's different from the last entry
-    const lastEntry = globalNavigationHistory[globalNavigationHistory.length - 1];
-    if (lastEntry !== currentUrl) {
-      globalNavigationHistory.push(currentUrl);
-      // Keep only last 10 entries to prevent memory issues
-      if (globalNavigationHistory.length > 10) {
-        globalNavigationHistory = globalNavigationHistory.slice(-10);
+    // Get current history from sessionStorage first (in case it was updated by MDX links)
+    const storage = globalThis?.sessionStorage;
+    let currentHistory = [...globalNavigationHistory];
+    
+    if (storage) {
+      try {
+        const storedHistory = storage.getItem("navigationHistory");
+        if (storedHistory) {
+          const parsedHistory = JSON.parse(storedHistory);
+          if (parsedHistory.length > currentHistory.length) {
+            // SessionStorage has more recent data (likely from MDX navigation)
+            currentHistory = parsedHistory;
+            globalNavigationHistory = [...parsedHistory];
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to parse navigation history from sessionStorage');
       }
     }
     
-    // Also store in sessionStorage for persistence
-    const storage = globalThis?.sessionStorage;
-    if (storage) {
-      storage.setItem("navigationHistory", JSON.stringify(globalNavigationHistory));
+    // Add to history if it's different from the last entry
+    const lastEntry = currentHistory[currentHistory.length - 1];
+    if (lastEntry !== currentUrl) {
+      currentHistory.push(currentUrl);
+      // Keep only last 10 entries to prevent memory issues
+      if (currentHistory.length > 10) {
+        currentHistory = currentHistory.slice(-10);
+      }
+      
+      // Update both global and sessionStorage
+      globalNavigationHistory = [...currentHistory];
+      if (storage) {
+        storage.setItem("navigationHistory", JSON.stringify(currentHistory));
+      }
     }
     
     console.log('🔄 Navigation tracked:', {
       currentUrl,
-      history: globalNavigationHistory,
-      previous: globalNavigationHistory[globalNavigationHistory.length - 2] || null
+      history: currentHistory,
+      previous: currentHistory[currentHistory.length - 2] || null,
+      source: 'usePathname'
     });
     
   }, [pathname, searchParams]);
@@ -93,23 +114,32 @@ export const getNavigationHistory = () => {
 /**
  * Smart back button hook that determines navigation behavior
  * @param backLink - The specific link to go back to (e.g., "/characters/monsters")
- * @param backLabel - The label for the specific back link (e.g., "Voltar para Monstros")
+ * @param backLabel - The label for the specific back link (kept for compatibility)
  * @returns Object with navigation state and handlers
  */
 export const useSmartBackButton = (backLink: string, backLabel: string) => {
   const [navigationState, setNavigationState] = useState(() => getNavigationHistory());
   
-  // Update state when navigation changes
+  // Update state when navigation changes - reduced frequency
   useEffect(() => {
     const updateState = () => {
-      setNavigationState(getNavigationHistory());
+      const newState = getNavigationHistory();
+      // Only update if there's actually a change
+      setNavigationState(prevState => {
+        if (prevState.prevPath !== newState.prevPath || 
+            prevState.currentPath !== newState.currentPath ||
+            prevState.fullHistory.length !== newState.fullHistory.length) {
+          return newState;
+        }
+        return prevState;
+      });
     };
     
     // Update immediately
     updateState();
     
-    // Set up interval to check for changes (fallback)
-    const interval = setInterval(updateState, 100);
+    // Set up interval to check for changes (reduced frequency)
+    const interval = setInterval(updateState, 500);
     
     return () => clearInterval(interval);
   }, []);
@@ -128,13 +158,10 @@ export const useSmartBackButton = (backLink: string, backLabel: string) => {
     prevPath,
     cameFromListingPage,
     shouldUseSpecificLink,
-    buttonText: shouldUseSpecificLink ? backLabel : "Voltar",
     fullHistory: navigationState.fullHistory
   });
   
   return {
-    // If we came from the listing page OR prevPath is null, show specific label
-    buttonText: shouldUseSpecificLink ? backLabel : "Voltar",
     // If we came from the listing page OR prevPath is null, use specific link
     useSpecificLink: shouldUseSpecificLink,
     backLink,

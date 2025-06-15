@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { PageContainer } from "@/components/ui/page-container";
 import TrackView from "@/components/track-view";
 import SmartBackButton from "@/components/smart-back-button";
+import SmartImage from "@/components/ui/smart-image";
 
 interface DetailPageLayoutProps {
   children: React.ReactNode;
@@ -57,7 +58,7 @@ export function DetailPageLayout({
         <SmartBackButton 
           backLink={backLink} 
           backLabel={backLabel} 
-          showDebug={true}
+          showDebug={false}
         />
       </div>
 
@@ -65,19 +66,17 @@ export function DetailPageLayout({
       <div className="mb-8 fantasy-card p-6">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Image section */}
-          {image ? (
-            <div className="w-full md:w-1/3 flex-shrink-0">
-              <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-gold-dark">
-                <Image src={image} alt={imageAlt || title} fill className="object-cover" />
-              </div>
+          <div className="w-full md:w-1/3 flex-shrink-0">
+            <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-gold-dark">
+              <SmartImage 
+                src={image} 
+                alt={imageAlt || title} 
+                fill 
+                className="object-cover" 
+                placeholder={imagePlaceholder}
+              />
             </div>
-          ) : (
-            <div className="w-full md:w-1/3 flex-shrink-0">
-              <div className="aspect-square rounded-lg overflow-hidden border-2 border-gold-dark bg-wine-darker flex items-center justify-center">
-                {imagePlaceholder}
-              </div>
-            </div>
-          )}
+          </div>
 
           {/* Title and metadata section */}
           <div className="flex-1">

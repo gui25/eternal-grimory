@@ -2,6 +2,9 @@ import type React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
+import MDXLink from "./mdx-link"
+import SmartImage from "./ui/smart-image"
+import { ImageIcon } from "lucide-react"
 
 // Custom components for MDX content
 export const components = {
@@ -23,29 +26,17 @@ export const components = {
   li: ({ className, ...props }: React.HTMLAttributes<HTMLLIElement>) => (
     <li className={cn("mb-1", className)} {...props} />
   ),
-  a: ({ href, className, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
-    if (href?.startsWith("/")) {
-      return (
-        <Link href={href} className={cn("text-blue-600 hover:underline dark:text-blue-400", className)} {...props} />
-      )
-    }
-    return (
-      <a
-        href={href}
-        className={cn("text-blue-600 hover:underline dark:text-blue-400", className)}
-        target="_blank"
-        rel="noopener noreferrer"
-        {...props}
-      />
-    )
-  },
+  a: ({ href, className, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+    <MDXLink href={href} className={className} {...props} />
+  ),
   img: ({ src, alt, width, height, className, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) => (
-    <Image
+    <SmartImage
       src={src || ""}
       alt={alt || ""}
       width={Number.parseInt(width as string) || 800}
       height={Number.parseInt(height as string) || 600}
       className={cn("rounded-md my-4", className)}
+      placeholder={<ImageIcon className="h-16 w-16 text-gold-light/50" />}
       {...props}
     />
   ),

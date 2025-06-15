@@ -1,11 +1,6 @@
 import { notFound } from "next/navigation"
-import Link from "next/link"
-import Image from "next/image"
 import { getCharacter, CharacterMeta } from "@/lib/mdx"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, Shield, Skull } from "lucide-react"
-import TrackView from "@/components/track-view"
-import { PageContainer } from "@/components/ui/page-container"
+import { Skull } from "lucide-react"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 
