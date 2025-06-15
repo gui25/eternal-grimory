@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { getCharacter } from "@/lib/mdx"
+import { getCharacter, CharacterMeta } from "@/lib/mdx"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Shield, Skull } from "lucide-react"
 import TrackView from "@/components/track-view"
@@ -9,28 +9,16 @@ import { PageContainer } from "@/components/ui/page-container"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 
-// Interface para o objeto meta retornado do getCharacter
-interface CharacterMeta {
-  slug: string;
-  name: string;
-  type: string;
-  challenge: string;
-  tags: string[];
-  image?: string;
-  category: "npc" | "monster" | "player";
-}
-
 export default async function MonsterPage({ params }: { params: { slug: string } }) {
-  // Obter o ID da campanha atual do cookie
-  const campaignId = getCurrentCampaignIdFromCookies()
+  const campaignId = await getCurrentCampaignIdFromCookies()
   
   console.log(`Página de monstro: Carregando ${params.slug} da campanha: ${campaignId || 'padrão'}`)
   
-  const character = await getCharacter(params.slug, "monster", campaignId)
-  if (!character) notFound()
+  const monster = await getCharacter(params.slug, "monster", campaignId)
+  if (!monster) notFound()
 
-  // Use type assertion com unknown primeiro para evitar o erro de tipo
-  const { contentHtml, meta } = character as unknown as { contentHtml: string, meta: CharacterMeta }
+  // Use type assertion para evitar erro de tipo
+  const { contentHtml, meta } = monster as unknown as { contentHtml: string, meta: CharacterMeta }
 
   return (
     <DetailPageLayout

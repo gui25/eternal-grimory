@@ -8,7 +8,7 @@ import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 // Generate metadata for this page
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   // Obter o ID da campanha atual do cookie
-  const campaignId = getCurrentCampaignIdFromCookies()
+  const campaignId = await getCurrentCampaignIdFromCookies()
   
   const session = await getSession(params.slug, campaignId)
   if (!session) return {}
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function SessionPage({ params }: { params: { slug: string } }) {
   // Obter o ID da campanha atual do cookie
-  const campaignId = getCurrentCampaignIdFromCookies()
+  const campaignId = await getCurrentCampaignIdFromCookies()
   
   console.log(`Página de sessão: Carregando ${params.slug} da campanha: ${campaignId || 'padrão'}`)
   

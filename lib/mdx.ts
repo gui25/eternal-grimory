@@ -61,40 +61,46 @@ function ensureDirectoryExists(dirPath: string) {
 }
 
 // Get campaign content directory path
-export function getCampaignContentPath(contentType: string, campaignId?: string) {
-  const currentCampaignId = campaignId;
+export async function getCampaignContentPath(contentType: string, campaignId?: string): Promise<string> {
+  console.log(`[CAMPAIGN-PATH] Buscando caminho para tipo ${contentType}, campaignId fornecido: ${campaignId || 'nenhum'}`);
   
-  console.log(`[CAMPAIGN-PATH] Buscando caminho para tipo ${contentType}, campaignId fornecido: ${currentCampaignId || 'nenhum'}`);
-  
-  // Se um ID específico foi passado, use-o diretamente
-  if (currentCampaignId) {
-    // Encontre a campanha pelo ID
-    const campaign = CAMPAIGNS.find(c => c.id === currentCampaignId);
-    
+  // Se um campaignId foi fornecido, use-o
+  if (campaignId) {
+    const campaign = CAMPAIGNS.find(c => c.id === campaignId);
     if (campaign && campaign.active) {
-      const campaignPath = campaign.contentPath;
-      const fullPath = path.join(process.cwd(), 'content', campaignPath, contentType);
-      
-      console.log(`[CAMPAIGN-PATH] Usando campanha específica: ${currentCampaignId}, path: ${campaignPath}, fullPath: ${fullPath}`);
+      const fullPath = path.join(process.cwd(), 'content', campaign.contentPath, contentType);
+      console.log(`[CAMPAIGN-PATH] Usando campanha específica: ${campaignId}, path: ${campaign.contentPath}, fullPath: ${fullPath}`);
       return fullPath;
+    } else {
+      console.log(`[CAMPAIGN-PATH] Campanha especificada ${campaignId} não encontrada ou inativa`);
     }
-    
-    console.log(`[CAMPAIGN-PATH] Campanha ${currentCampaignId} não encontrada ou inativa`);
   }
   
-  // SOLUÇÃO TEMPORÁRIA: 
-  // Verificar se existe um arquivo de configuração que indica qual campanha usar
-  const configPath = path.join(process.cwd(), 'config', 'current-campaign.json');
+  // Tentar obter o campaignId de uma query string se estivermos no cliente
+  if (typeof window !== 'undefined') {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlCampaignId = urlParams.get('campaign');
+    if (urlCampaignId) {
+      const urlCampaign = CAMPAIGNS.find(c => c.id === urlCampaignId);
+      if (urlCampaign && urlCampaign.active) {
+        const fullPath = path.join(process.cwd(), 'content', urlCampaign.contentPath, contentType);
+        console.log(`[CAMPAIGN-PATH] Usando campanha da URL: ${urlCampaignId}, path: ${urlCampaign.contentPath}, fullPath: ${fullPath}`);
+        return fullPath;
+      }
+    }
+  }
+  
+  // Tentar obter de um arquivo de configuração ou header especial
   try {
+    // Verifica se existe um arquivo de configuração em runtime
+    const configPath = path.join(process.cwd(), '.campaign-config');
     if (fs.existsSync(configPath)) {
-      const configData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-      if (configData.currentCampaign) {
-        const configCampaign = CAMPAIGNS.find(c => c.id === configData.currentCampaign);
+      const configContent = fs.readFileSync(configPath, 'utf8').trim();
+      if (configContent) {
+        const configCampaign = CAMPAIGNS.find(c => c.id === configContent);
         if (configCampaign && configCampaign.active) {
-          const campaignPath = configCampaign.contentPath;
-          const fullPath = path.join(process.cwd(), 'content', campaignPath, contentType);
-          
-          console.log(`[CAMPAIGN-PATH] Usando campanha de config.json: ${configData.currentCampaign}, path: ${campaignPath}`);
+          const fullPath = path.join(process.cwd(), 'content', configCampaign.contentPath, contentType);
+          console.log(`[CAMPAIGN-PATH] Usando campanha do arquivo de config: ${configContent}, path: ${configCampaign.contentPath}, fullPath: ${fullPath}`);
           return fullPath;
         }
       }
@@ -107,7 +113,7 @@ export function getCampaignContentPath(contentType: string, campaignId?: string)
   try {
     // No servidor, devemos usar getCurrentCampaignIdFromCookies
     if (typeof window === 'undefined') {
-      const cookieCampaignId = getCurrentCampaignIdFromCookies();
+      const cookieCampaignId = await getCurrentCampaignIdFromCookies();
       console.log(`[CAMPAIGN-PATH] cookieCampaignId obtido: ${cookieCampaignId || 'nenhum'}`);
       
       if (cookieCampaignId) {
@@ -164,7 +170,7 @@ export async function getItems(campaignId?: string): Promise<ItemMeta[]> {
   console.log(`[ITEMS] Obtendo itens para campanha: ${campaignId || 'não especificado'}`);
   
   // Obter o diretório de conteúdo
-  const directory = getCampaignContentPath("items", campaignId);
+  const directory = await getCampaignContentPath("items", campaignId);
   console.log(`[ITEMS] Buscando em: ${directory}`);
   
   ensureDirectoryExists(directory);
@@ -202,7 +208,7 @@ export async function getItem(slug: string, campaignId?: string) {
   console.log(`[ITEM] Obtendo item ${slug} para campanha: ${campaignId || 'não especificado'}`);
   
   // Obter o diretório de conteúdo
-  const directory = getCampaignContentPath("items", campaignId);
+  const directory = await getCampaignContentPath("items", campaignId);
   console.log(`[ITEM] Buscando em: ${directory}`);
   
   const filePath = path.join(directory, `${slug}.md`);
@@ -252,7 +258,7 @@ export async function getSessions(campaignId?: string): Promise<SessionMeta[]> {
   }
   
   // Obter o diretório de conteúdo
-  const directory = getCampaignContentPath("sessions", campaignId);
+  const directory = await getCampaignContentPath("sessions", campaignId);
   console.log(`[SESSIONS] Buscando em: ${directory}`);
   
   ensureDirectoryExists(directory);
@@ -287,7 +293,7 @@ export async function getSessions(campaignId?: string): Promise<SessionMeta[]> {
 
 // Get specific session by slug
 export async function getSession(slug: string, campaignId?: string) {
-  const directory = getCampaignContentPath("sessions", campaignId)
+  const directory = await getCampaignContentPath("sessions", campaignId)
   const filePath = path.join(directory, `${slug}.md`)
 
   if (!fs.existsSync(filePath)) {
@@ -317,7 +323,7 @@ export async function getCharacters(
   category: "npc" | "monster" | "player", 
   campaignId?: string
 ): Promise<CharacterMeta[]> {
-  const directory = getCampaignContentPath(`characters/${category}`, campaignId)
+  const directory = await getCampaignContentPath(`characters/${category}`, campaignId)
   ensureDirectoryExists(directory)
 
   const files = fs.readdirSync(directory)
@@ -347,7 +353,7 @@ export async function getCharacter(
   category: "npc" | "monster" | "player", 
   campaignId?: string
 ) {
-  const directory = getCampaignContentPath(`characters/${category}`, campaignId)
+  const directory = await getCampaignContentPath(`characters/${category}`, campaignId)
   const filePath = path.join(directory, `${slug}.md`)
 
   if (!fs.existsSync(filePath)) {

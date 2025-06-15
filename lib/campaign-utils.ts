@@ -6,10 +6,10 @@ import { CAMPAIGN_COOKIE_NAME, CAMPAIGNS } from "@/lib/campaign-config";
  * Verifica se a campanha existe e está ativa.
  * Retorna undefined se nenhuma campanha válida for encontrada.
  */
-export function getCurrentCampaignIdFromCookies(): string | undefined {
+export async function getCurrentCampaignIdFromCookies(): Promise<string | undefined> {
   try {
     // Obter o cookie da campanha atual
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const campaignId = cookieStore.get(CAMPAIGN_COOKIE_NAME)?.value;
     
     console.log(`[DEBUG] getCurrentCampaignIdFromCookies - Cookie: ${CAMPAIGN_COOKIE_NAME}=${campaignId || 'não encontrado'}`);

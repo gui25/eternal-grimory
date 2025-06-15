@@ -7,7 +7,6 @@ const nextConfig = {
   
   // Add performance optimizations
   reactStrictMode: true,
-  swcMinify: true,
   
   // Optimize images
   images: {
@@ -20,6 +19,9 @@ const nextConfig = {
   // Configure build output for better production performance
   output: 'standalone',
   
+  // Server external packages (moved from experimental)
+  serverExternalPackages: [],
+  
   // Improve performance of large pages
   compiler: {
     // Remove console logs in production
@@ -30,8 +32,6 @@ const nextConfig = {
   
   // Configure experimental features for better performance
   experimental: {
-    // Enable server components optimizations
-    serverComponentsExternalPackages: [],
     // Optimize middleware
     optimizePackageImports: ['lucide-react'],
   },

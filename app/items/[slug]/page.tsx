@@ -7,34 +7,40 @@ import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 
 // Generate metadata for this page
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  // Obter o ID da campanha atual do cookie
-  const campaignId = getCurrentCampaignIdFromCookies()
+  const campaignId = await getCurrentCampaignIdFromCookies()
   
   const item = await getItem(params.slug, campaignId)
   if (!item) return {}
   
-  // Use type assertion com unknown primeiro para evitar o erro de tipo
+  // Use type assertion para evitar erro de tipo
   const { meta } = item as unknown as { contentHtml: string, meta: ItemMeta }
-  return createItemMetadata({
-    name: meta.name,
-    description: meta.description,
-    type: meta.type,
-    rarity: meta.rarity,
-    image: meta.image,
-    slug: meta.slug,
-  })
+  
+  return {
+    title: `${meta.name} | Grimório Eterno`,
+    description: meta.description || `${meta.name} - ${meta.type} (${meta.rarity})`,
+    openGraph: {
+      title: meta.name,
+      description: meta.description || `${meta.name} - ${meta.type} (${meta.rarity})`,
+      images: [
+        {
+          url: meta.image || "/default-item.jpg",
+          width: 1200,
+          height: 630,
+          alt: meta.name,
+        },
+      ],
+    },
+  }
 }
 
 export default async function ItemPage({ params }: { params: { slug: string } }) {
-  // Obter o ID da campanha atual do cookie
-  const campaignId = getCurrentCampaignIdFromCookies()
+  const campaignId = await getCurrentCampaignIdFromCookies()
   console.log(`[ITEM-PAGE] Slug: ${params.slug}, CampaignId do cookie: ${campaignId || 'não encontrado'}`);
   
-  // Obter o conteúdo do item, passando explicitamente o ID da campanha
   const item = await getItem(params.slug, campaignId)
   if (!item) notFound()
 
-  // Use type assertion com unknown primeiro para evitar o erro de tipo
+  // Use type assertion para evitar erro de tipo
   const { contentHtml, meta } = item as unknown as { contentHtml: string, meta: ItemMeta }
   console.log(`[ITEM-PAGE] Item carregado: ${meta.name}, Campanha: ${meta.campaignId || 'não informado'}`);
 

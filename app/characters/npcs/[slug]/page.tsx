@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { getCharacter } from "@/lib/mdx"
+import { getCharacter, CharacterMeta } from "@/lib/mdx"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { PageContainer } from "@/components/ui/page-container"
 import { User, ArrowLeft } from "lucide-react"
@@ -7,28 +7,16 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import TrackView from "@/components/track-view"
 
-export default async function NpcPage({ params }: { params: { slug: string } }) {
-  // Obter o ID da campanha atual do cookie
-  const campaignId = getCurrentCampaignIdFromCookies()
+export default async function NPCPage({ params }: { params: { slug: string } }) {
+  const campaignId = await getCurrentCampaignIdFromCookies()
   
   console.log(`Página de NPC: Carregando ${params.slug} da campanha: ${campaignId || 'padrão'}`)
   
-  const character = await getCharacter(params.slug, "npc", campaignId)
-  if (!character) notFound()
+  const npc = await getCharacter(params.slug, "npc", campaignId)
+  if (!npc) notFound()
 
   // Use type assertion para evitar erro de tipo
-  const { contentHtml, meta } = character as unknown as { 
-    contentHtml: string, 
-    meta: {
-      name: string;
-      type: string;
-      affiliation: string;
-      tags: string[];
-      slug: string;
-      image?: string;
-      category: "npc";
-    }
-  }
+  const { contentHtml, meta } = npc as unknown as { contentHtml: string, meta: CharacterMeta }
 
   return (
     <PageContainer className="max-w-3xl mx-auto">

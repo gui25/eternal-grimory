@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { getCharacter } from "@/lib/mdx"
+import { getCharacter, CharacterMeta } from "@/lib/mdx"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, User } from "lucide-react"
 import TrackView from "@/components/track-view"
@@ -24,16 +24,15 @@ interface PlayerCharacterMeta {
 }
 
 export default async function PlayerPage({ params }: { params: { slug: string } }) {
-  // Obter o ID da campanha atual do cookie
-  const campaignId = getCurrentCampaignIdFromCookies()
+  const campaignId = await getCurrentCampaignIdFromCookies()
   
   console.log(`Página de jogador: Carregando ${params.slug} da campanha: ${campaignId || 'padrão'}`)
   
   const character = await getCharacter(params.slug, "player", campaignId)
   if (!character) notFound()
 
-  // Use type assertion com unknown primeiro para evitar o erro de tipo
-  const { contentHtml, meta } = character as unknown as { contentHtml: string, meta: PlayerCharacterMeta }
+  // Use type assertion to avoid type errors
+  const { contentHtml, meta } = character as unknown as { contentHtml: string, meta: CharacterMeta }
 
   // Informação do jogador como descrição em vez de subtitle
   const playerInfo = meta.player ? `Jogado por ${meta.player}` : undefined;
