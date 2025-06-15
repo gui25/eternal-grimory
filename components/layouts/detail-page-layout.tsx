@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { PageContainer } from "@/components/ui/page-container";
 import TrackView from "@/components/track-view";
+import SmartBackButton from "@/components/smart-back-button";
 
 interface DetailPageLayoutProps {
   children: React.ReactNode;
@@ -51,14 +52,13 @@ export function DetailPageLayout({
       {/* Track this page view */}
       <TrackView item={trackViewItem} />
 
-      {/* Back button */}
+      {/* Smart Back button */}
       <div className="mb-6">
-        <Button variant="rpg" size="lg" asChild className="back-button">
-          <Link href={backLink} className="flex items-center">
-            <ArrowLeft className="mr-2 h-5 w-5" />
-            <span>{backLabel}</span>
-          </Link>
-        </Button>
+        <SmartBackButton 
+          backLink={backLink} 
+          backLabel={backLabel} 
+          showDebug={true}
+        />
       </div>
 
       {/* Entity header with optional image */}

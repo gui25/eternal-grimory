@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
 import Sidebar from "@/components/sidebar"
 import RoutePreloader from "@/components/route-preloader"
+import NavigationHistoryProvider from "@/components/navigation-history-provider"
 
 // Load fonts
 const headingFont = Cinzel({
@@ -65,6 +66,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
           {/* Analytics components */}
           <Analytics />
           <SpeedInsights />
+          
+          {/* Navigation history tracking */}
+          <NavigationHistoryProvider />
           
           {/* Preload key routes */}
           <RoutePreloader />
