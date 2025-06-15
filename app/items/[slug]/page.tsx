@@ -77,7 +77,7 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
       
       <div className="flex flex-wrap gap-2">
         {meta.tags.map((tag: string) => (
-          <span key={tag} className="bg-secondary/80 px-3 py-1 rounded-full text-xs border border-gold/20">
+          <span key={tag} className="bg-secondary/80 px-3 py-1 rounded-full text-xs ">
             {tag}
           </span>
         ))}
