@@ -135,7 +135,8 @@ function createFrontmatter(type: string, name: string, metadata: any): string {
         type: metadata.type || 'NPC',
         affiliation: metadata.affiliation || '',
         tags: metadata.tags || [],
-        image: metadata.image || ''
+        image: metadata.image || '',
+        description: metadata.description || ''
       }
       break
     
@@ -147,7 +148,8 @@ function createFrontmatter(type: string, name: string, metadata: any): string {
         race: metadata.race || 'Humano',
         level: metadata.level || 1,
         tags: metadata.tags || [],
-        image: metadata.image || ''
+        image: metadata.image || '',
+        description: metadata.description || ''
       }
       break
     

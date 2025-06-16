@@ -1,8 +1,11 @@
 ---
 name: "Cota de Malha Élfica"
-rarity: "Rare"
+slug: "cota-de-malha-elfica"
+updated: "2025-06-16T02:23:19.498Z"
 type: "Armor"
+rarity: "Raro"
 tags: ["Light", "Stealth"]
+description: "Resiste a porrada, mas até certo ponto"
 ---
 
 # Cota de Malha Élfica

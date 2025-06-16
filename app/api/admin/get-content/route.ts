@@ -94,7 +94,8 @@ export async function GET(request: NextRequest) {
         processedData = {
           ...processedData,
           type: frontmatter.type || 'NPC',
-          affiliation: frontmatter.affiliation || ''
+          affiliation: frontmatter.affiliation || '',
+          description: frontmatter.description || ''
         }
         break
       
@@ -104,7 +105,8 @@ export async function GET(request: NextRequest) {
           player: frontmatter.player || '',
           class: frontmatter.class || 'Guerreiro',
           race: frontmatter.race || 'Humano',
-          level: frontmatter.level || 1
+          level: frontmatter.level || 1,
+          description: frontmatter.description || ''
         }
         break
       
@@ -112,7 +114,8 @@ export async function GET(request: NextRequest) {
         processedData = {
           ...processedData,
           type: frontmatter.type || 'Item',
-          rarity: frontmatter.rarity || 'Comum'
+          rarity: frontmatter.rarity || 'Comum',
+          description: frontmatter.description || ''
         }
         break
       

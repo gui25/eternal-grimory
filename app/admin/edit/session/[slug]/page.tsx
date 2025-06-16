@@ -7,12 +7,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, Save, Calendar, Eye, Edit } from 'lucide-react'
+import { ArrowLeft, Save, Calendar, Eye, Edit, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
+import { useNameValidation } from '@/hooks/use-name-validation'
 
 export default function EditSessionPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
@@ -21,12 +22,25 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
   const [isLoadingData, setIsLoadingData] = useState(true)
   const [htmlContent, setHtmlContent] = useState('')
   const [originalSlug, setOriginalSlug] = useState('')
+  const [nameValidationError, setNameValidationError] = useState('')
+  const [canSubmit, setCanSubmit] = useState(true)
+  
+  // Hook de validação de nome
+  const { validateName, isValidating, validationMessage, isValid } = useNameValidation({
+    type: 'session',
+    onValidation: (valid, message) => {
+      setNameValidationError(valid ? '' : message)
+      setCanSubmit(valid)
+    }
+  })
+  
   const [formData, setFormData] = useState({
     session_number: 1,
     slug: '',
     date: '',
     players: '',
     image: '',
+    description: '',
     content: ''
   })
 
@@ -94,15 +108,26 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
   }
 
   const handleSessionNumberChange = (sessionNumber: number) => {
+    const sessionName = `Sessão ${sessionNumber}`
     setFormData(prev => ({
       ...prev,
       session_number: sessionNumber,
       slug: generateSlug(sessionNumber)
     }))
+    
+    // Validar nome em tempo real
+    validateName(sessionName)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Verificar se o nome é válido
+    if (!canSubmit || nameValidationError) {
+      toast.error('Corrija os erros antes de salvar a sessão')
+      return
+    }
+    
     setIsLoading(true)
 
     try {
@@ -123,7 +148,8 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
             session_number: formData.session_number,
             date: formData.date,
             players,
-            image: formData.image
+            image: formData.image,
+            description: formData.description
           }
         })
       })
@@ -148,7 +174,8 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
     session_number: formData.session_number,
     date: formData.date,
     players: formData.players.split(',').map(player => player.trim()).filter(Boolean),
-    image: formData.image
+    image: formData.image,
+    description: formData.description
   }
 
   if (isLoadingData) {
@@ -196,14 +223,29 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="session_number">Número da Sessão *</Label>
-                  <Input
-                    id="session_number"
-                    type="number"
-                    min="1"
-                    value={formData.session_number}
-                    onChange={(e) => handleSessionNumberChange(parseInt(e.target.value) || 1)}
-                    required
-                  />
+                  <div className="relative">
+                    <Input
+                      id="session_number"
+                      type="number"
+                      min="1"
+                      value={formData.session_number}
+                      onChange={(e) => handleSessionNumberChange(parseInt(e.target.value) || 1)}
+                      required
+                      className={nameValidationError ? 'border-red-500 pr-10' : ''}
+                    />
+                    {isValidating && (
+                      <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
+                    )}
+                    {nameValidationError && !isValidating && (
+                      <AlertCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-500" />
+                    )}
+                  </div>
+                  {nameValidationError && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {nameValidationError}
+                    </p>
+                  )}
                 </div>
                 
                 <div className="space-y-2">
@@ -250,6 +292,18 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="description">Descrição</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Escreva uma descrição para a sessão..."
+                  rows={4}
+                  className="font-mono text-sm"
+                />
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="content">Relatório da Sessão (Markdown/MDX)</Label>
                 <Textarea
                   id="content"
@@ -265,7 +319,7 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
               </div>
 
               <div className="flex gap-2 pt-4">
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading || !canSubmit}>
                   <Save className="h-4 w-4 mr-2" />
                   {isLoading ? 'Salvando...' : 'Salvar Alterações'}
                 </Button>

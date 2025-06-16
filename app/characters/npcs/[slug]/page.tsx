@@ -54,6 +54,7 @@ export default async function NPCPage({ params }: { params: Promise<{ slug: stri
         </div>
         </>
       }
+      description={meta.description}
       trackViewItem={{
           slug: meta.slug,
           name: meta.name,

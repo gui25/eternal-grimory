@@ -8,12 +8,13 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, Save, Sparkles, Eye, Edit } from 'lucide-react'
+import { ArrowLeft, Save, Sparkles, Eye, Edit, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
+import { useNameValidation } from '@/hooks/use-name-validation'
 
 export default function EditItemPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
@@ -22,6 +23,8 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
   const [isLoadingData, setIsLoadingData] = useState(true)
   const [htmlContent, setHtmlContent] = useState('')
   const [originalSlug, setOriginalSlug] = useState('')
+  const [nameValidationError, setNameValidationError] = useState('')
+  const [canSubmit, setCanSubmit] = useState(true)
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -31,6 +34,16 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
     image: '',
     description: '',
     content: ''
+  })
+
+  // Hook de validação de nome
+  const { validateName, isValidating, validationMessage, isValid } = useNameValidation({
+    type: 'item',
+    excludeSlug: originalSlug,
+    onValidation: (valid, message) => {
+      setNameValidationError(valid ? '' : message)
+      setCanSubmit(valid)
+    }
   })
 
   // Resolver params e carregar dados
@@ -109,10 +122,20 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
       name,
       slug: generateSlug(name)
     }))
+    
+    // Validar nome em tempo real
+    validateName(name)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Verificar se o nome é válido
+    if (!canSubmit || nameValidationError) {
+      toast.error('Corrija os erros antes de salvar')
+      return
+    }
+    
     setIsLoading(true)
 
     try {
@@ -232,13 +255,28 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Nome *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => handleNameChange(e.target.value)}
-                    placeholder="Ex: Espada Flamejante"
-                    required
-                  />
+                  <div className="relative">
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => handleNameChange(e.target.value)}
+                      placeholder="Ex: Espada Flamejante"
+                      required
+                      className={nameValidationError ? 'border-red-500 pr-10' : ''}
+                    />
+                    {isValidating && (
+                      <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
+                    )}
+                    {nameValidationError && !isValidating && (
+                      <AlertCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-500" />
+                    )}
+                  </div>
+                  {nameValidationError && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {nameValidationError}
+                    </p>
+                  )}
                 </div>
                 
                 <div className="space-y-2">
@@ -328,7 +366,7 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
               </div>
 
               <div className="flex gap-2 pt-4">
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading || !canSubmit}>
                   <Save className="h-4 w-4 mr-2" />
                   {isLoading ? 'Salvando...' : 'Salvar Alterações'}
                 </Button>

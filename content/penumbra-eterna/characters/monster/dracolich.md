@@ -1,10 +1,11 @@
 ---
 name: "Dracolich"
+slug: "dracolich"
+updated: "2025-06-16T02:49:01.205Z"
 type: "Dragão Morto-vivo"
 challenge: "Legendary"
 tags: ["Undead", "Dragon", "Spellcaster"]
 image: "/placeholder.svg?height=400&width=400"
-description: "Um dragão não-morto de poder terrível que guarda as ruínas de Eldoria."
 ---
 
 # Dracolich

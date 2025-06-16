@@ -1,7 +1,7 @@
 ---
 name: "Thorne Coração de Ferro"
 slug: "thorne-coracao-de-ferro"
-updated: "2025-06-16T02:30:56.346Z"
+updated: "2025-06-16T02:24:30.418Z"
 player: "Mike"
 class: "Paladino"
 race: "Anão"
@@ -12,7 +12,7 @@ image: "/placeholder.svg?height=400&width=400"
 
 # Thorne Coração de Ferro
 
-Um paladino anão inabalável que fez um juramento para proteger o mundo natural.
+Um paladino anão inabalável que jurou um juramento para proteger o mundo natural.
 
 ## Estatísticas do Personagem
 

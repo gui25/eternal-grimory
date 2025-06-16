@@ -7,23 +7,37 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, Save, Calendar, Eye, Edit } from 'lucide-react'
+import { ArrowLeft, Save, Calendar, Eye, Edit, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
+import { useNameValidation } from '@/hooks/use-name-validation'
 
 export default function CreateSessionPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [htmlContent, setHtmlContent] = useState('')
+  const [nameValidationError, setNameValidationError] = useState('')
+  const [canSubmit, setCanSubmit] = useState(true)
+  
+  // Hook de validação de nome
+  const { validateName, isValidating, validationMessage, isValid } = useNameValidation({
+    type: 'session',
+    onValidation: (valid, message) => {
+      setNameValidationError(valid ? '' : message)
+      setCanSubmit(valid)
+    }
+  })
+  
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
     date: '',
     tags: '',
     image: '',
+    description: '',
     content: `Um resumo da sessão, incluindo os principais eventos, decisões dos jogadores e momentos marcantes.
 
 ## Participantes
@@ -139,10 +153,20 @@ A sessão começou na taverna "O Javali Dourado", onde os aventureiros receberam
       name,
       slug: generateSlug(name)
     }))
+    
+    // Validar nome em tempo real
+    validateName(name)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Verificar se o nome é válido
+    if (!canSubmit || nameValidationError) {
+      toast.error('Corrija os erros antes de criar a sessão')
+      return
+    }
+    
     setIsLoading(true)
 
     try {
@@ -161,7 +185,8 @@ A sessão começou na taverna "O Javali Dourado", onde os aventureiros receberam
           metadata: {
             date: formData.date,
             tags,
-            image: formData.image
+            image: formData.image,
+            description: formData.description
           }
         })
       })
@@ -186,7 +211,8 @@ A sessão começou na taverna "O Javali Dourado", onde os aventureiros receberam
     name: formData.name || 'Nome da Sessão',
     date: formData.date,
     tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-    image: formData.image
+    image: formData.image,
+    description: formData.description
   }
 
   // Processar markdown para HTML quando o conteúdo mudar
@@ -248,13 +274,28 @@ A sessão começou na taverna "O Javali Dourado", onde os aventureiros receberam
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Nome da Sessão *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => handleNameChange(e.target.value)}
-                    placeholder="Ex: Sessão 5: O Covil dos Bandidos"
-                    required
-                  />
+                  <div className="relative">
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => handleNameChange(e.target.value)}
+                      placeholder="Ex: Sessão 5: O Covil dos Bandidos"
+                      required
+                      className={nameValidationError ? 'border-red-500 pr-10' : ''}
+                    />
+                    {isValidating && (
+                      <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
+                    )}
+                    {nameValidationError && !isValidating && (
+                      <AlertCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-500" />
+                    )}
+                  </div>
+                  {nameValidationError && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {nameValidationError}
+                    </p>
+                  )}
                 </div>
                 
                 <div className="space-y-2">
@@ -300,6 +341,18 @@ A sessão começou na taverna "O Javali Dourado", onde os aventureiros receberam
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="description">Descrição</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Escreva uma descrição para a sessão..."
+                  rows={4}
+                  className="font-mono text-sm"
+                />
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="content">Conteúdo da Sessão (Markdown/MDX)</Label>
                 <Textarea
                   id="content"
@@ -315,7 +368,7 @@ A sessão começou na taverna "O Javali Dourado", onde os aventureiros receberam
               </div>
 
               <div className="flex gap-4 pt-4">
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading || !canSubmit}>
                   <Save className="h-4 w-4 mr-2" />
                   {isLoading ? 'Criando...' : 'Criar Sessão'}
                 </Button>

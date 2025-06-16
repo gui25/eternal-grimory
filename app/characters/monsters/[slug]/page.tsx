@@ -48,6 +48,7 @@ export default async function MonsterPage({ params }: { params: Promise<{ slug: 
           </div>
         </>
       }
+      description={meta.description}
       trackViewItem={{
         slug: meta.slug,
         name: meta.name,
