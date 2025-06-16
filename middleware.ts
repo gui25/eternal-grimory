@@ -9,6 +9,15 @@ const CAMPAIGN_COOKIE_NAME = 'current-campaign'
 export function middleware(request: NextRequest) {
   console.log("[MIDDLEWARE] Iniciando processamento para:", request.url);
   
+  // Verificar se é uma rota de admin
+  if (request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname.startsWith('/api/admin')) {
+    // Só permitir em desenvolvimento
+    if (process.env.NODE_ENV !== 'development') {
+      console.log("[MIDDLEWARE] Bloqueando acesso a rota de admin em produção");
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+  }
+  
   // Verificar o cookie de campanha atual
   const campaignCookie = request.cookies.get(CAMPAIGN_COOKIE_NAME)
   const campaignId = campaignCookie?.value
@@ -60,5 +69,14 @@ function isValidCampaign(campaignId?: string | null): boolean {
 
 // Configuração do middleware para ser executado em todas as rotas
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+  ],
 } 

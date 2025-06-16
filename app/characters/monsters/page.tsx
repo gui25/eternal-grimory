@@ -3,12 +3,13 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Search } from "lucide-react"
+import { Search, Plus } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
 import { PageContainer } from "@/components/ui/page-container"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { AdminSection, AdminButton } from "@/components/ui/admin-button"
 
 interface Monster {
   name: string;
@@ -76,6 +77,13 @@ export default function MonstersPage() {
   return (
     <PageContainer>
       <h1 className="fantasy-heading">Monstros</h1>
+
+      <AdminSection>
+        <AdminButton href="/admin/create/monster">
+          <Plus className="h-4 w-4 mr-2" />
+          Criar Monstro
+        </AdminButton>
+      </AdminSection>
 
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">

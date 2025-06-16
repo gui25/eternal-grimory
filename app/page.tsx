@@ -6,6 +6,7 @@ import RecentActivity from "@/components/recent-activity"
 import ConfettiButton from "@/components/confetti-button"
 import { PageContainer } from "@/components/ui/page-container"
 import { SectionHeader } from "@/components/section-header"
+import { AdminSection, AdminButton } from "@/components/ui/admin-button"
 
 export default async function Dashboard() {
   const items = await getItems()
@@ -30,6 +31,13 @@ export default async function Dashboard() {
           <ConfettiButton className="w-full sm:w-auto">A Aventura Aguarda!</ConfettiButton>
         </div>
       </div>
+
+      <AdminSection>
+        <AdminButton href="/admin" variant="default">
+          <Shield className="h-4 w-4 mr-2" />
+          Painel de Administração
+        </AdminButton>
+      </AdminSection>
 
       <section>
         <SectionHeader 

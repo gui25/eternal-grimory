@@ -1,5 +1,5 @@
 "use client"
-import { Grid3X3, List } from "lucide-react"
+import { Grid3X3, List, Plus } from "lucide-react"
 import { useState } from "react"
 import ItemGrid from "@/components/item-grid"
 import ItemList from "@/components/item-list"
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { SectionLayout } from "@/components/layouts/section-layout"
 import { FilterBar } from "@/components/ui/filter-bar"
 import { CAMPAIGNS } from "@/lib/campaign-config"
+import { AdminSection, AdminButton } from "@/components/ui/admin-button"
 
 export default function ItemsPage() {
   const [isGridView, setIsGridView] = useState(true);
@@ -108,6 +109,13 @@ export default function ItemsPage() {
   // Filter bar component
   const filterBar = (
     <div className="space-y-4 pb-2">
+      <AdminSection>
+        <AdminButton href="/admin/create/item">
+          <Plus className="h-4 w-4 mr-2" />
+          Criar Item
+        </AdminButton>
+      </AdminSection>
+      
       <FilterBar
         search={search}
         onSearchChange={setSearch}

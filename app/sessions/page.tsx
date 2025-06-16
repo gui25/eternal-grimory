@@ -3,11 +3,12 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Search, Calendar, Filter } from "lucide-react"
+import { Search, Calendar, Filter, Plus } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { PageContainer } from "@/components/ui/page-container"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { AdminSection, AdminButton } from "@/components/ui/admin-button"
 
 interface Session {
   session_number: number;
@@ -61,6 +62,13 @@ export default function SessionsPage() {
     <PageContainer>
       <h1 className="fantasy-heading">Relatórios de Sessão</h1>
 
+      <AdminSection>
+        <AdminButton href="/admin/create/session">
+          <Plus className="h-4 w-4 mr-2" />
+          Criar Sessão
+        </AdminButton>
+      </AdminSection>
+
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -86,7 +94,7 @@ export default function SessionsPage() {
             ))}
           </select>
           <Filter className="absolute right-2 top-2.5 h-4 w-4 text-gold-light pointer-events-none" />
-        </ div>
+        </div>
 
         <Button variant="outline" onClick={clearFilters}>
           Limpar Filtros
