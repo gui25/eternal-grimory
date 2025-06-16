@@ -62,6 +62,12 @@ export default function SessionsPage() {
     setPlayerFilter("")
   }
 
+  const handleEditClick = (e: React.MouseEvent, sessionSlug: string) => {
+    e.preventDefault()
+    e.stopPropagation()
+    window.location.href = `/admin/edit/session/${sessionSlug}`
+  }
+
   return (
     <PageContainer>
       <h1 className="fantasy-heading">Relatórios de Sessão</h1>
@@ -111,32 +117,28 @@ export default function SessionsPage() {
         <div className="flex flex-col gap-6">
           {filteredSessions.map((session) => (
             <div key={session.slug} className="relative group">
-              {showAdmin && (
-                <div className="absolute top-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button
-                    asChild
-                    size="sm"
-                    variant="outline"
-                    className="h-8 w-8 p-0"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Link href={`/admin/edit/session/${session.slug}`}>
-                      <Edit className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                </div>
-              )}
-              
               <Link href={`/sessions/${session.slug}`}>
                 <Card className="cursor-pointer hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                      <div>
-                        <h2 className="text-lg font-semibold">Session {session.session_number}</h2>
-                        <div className="text-sm text-muted-foreground flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {session.date}
+                      <div className="flex items-center gap-3">
+                        <div>
+                          <h2 className="text-lg font-semibold">Session {session.session_number}</h2>
+                          <div className="text-sm text-muted-foreground flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {session.date}
+                          </div>
                         </div>
+                        {showAdmin && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 w-8 p-0 ml-2"
+                            onClick={(e) => handleEditClick(e, session.slug)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {session.players.map((player: string) => (
