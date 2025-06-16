@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation"
 import { getSession, SessionMeta } from "@/lib/mdx"
-import { Calendar } from "lucide-react"
+import { Calendar, Edit } from "lucide-react"
 import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 import { createSessionMetadata } from "@/lib/metadata"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
+import { AdminButton } from "@/components/ui/admin-button"
 
 // Generate metadata for this page
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -67,6 +68,12 @@ export default async function SessionPage({ params }: { params: Promise<{ slug: 
       image={meta.image}
       imageAlt={`Sessão ${meta.session_number}`}
       imagePlaceholder={<Calendar className="h-24 w-24 text-gold-light/50" />}
+      actionButtons={
+        <AdminButton href={`/admin/edit/session/${slug}`} variant="outline" size="sm">
+          <Edit className="h-4 w-4 mr-2" />
+          Editar
+        </AdminButton>
+      }
       metadata={sessionMetadata}
       description={meta.description}
       trackViewItem={{

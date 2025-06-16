@@ -3,13 +3,14 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Search, Plus } from "lucide-react"
+import { Search, Plus, Edit } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
 import { PageContainer } from "@/components/ui/page-container"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { AdminSection, AdminButton } from "@/components/ui/admin-button"
+import { isAdminMode } from "@/lib/dev-utils"
 
 interface Monster {
   name: string;
@@ -25,8 +26,11 @@ export default function MonstersPage() {
   const [search, setSearch] = useState("")
   const [challengeFilter, setChallengeFilter] = useState("")
   const [tagFilter, setTagFilter] = useState("")
+  const [showAdmin, setShowAdmin] = useState(false)
 
   useEffect(() => {
+    setShowAdmin(isAdminMode())
+    
     const fetchMonsters = async () => {
       try {
         const response = await fetch("/api/characters/monsters")
@@ -122,9 +126,25 @@ export default function MonstersPage() {
       ) : filteredMonsters.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {filteredMonsters.map((monster) => (
-            <Link key={monster.slug} href={`/characters/monsters/${monster.slug}`} prefetch={true}>
-              <Card>
-                <CardContent className="p-6">
+            <Card key={monster.slug} className="relative group">
+              <CardContent className="p-6">
+                {showAdmin && (
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      asChild
+                      size="sm"
+                      variant="outline"
+                      className="h-8 w-8 p-0"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Link href={`/admin/edit/monster/${monster.slug}`}>
+                        <Edit className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+                
+                <Link href={`/characters/monsters/${monster.slug}`} prefetch={true} className="block">
                   <h3 className="font-bold text-lg mb-1">{monster.name}</h3>
                   <div className="text-sm text-muted-foreground mb-2">{monster.type}</div>
                   <div className="text-sm mb-3">
@@ -137,9 +157,9 @@ export default function MonstersPage() {
                       </span>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
-            </Link>
+                </Link>
+              </CardContent>
+            </Card>
           ))}
         </div>
       ) : (

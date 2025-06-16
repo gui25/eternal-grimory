@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation"
 import { getCharacter, CharacterMeta } from "@/lib/mdx"
-import { Skull } from "lucide-react"
+import { Skull, Edit } from "lucide-react"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
+import { AdminButton } from "@/components/ui/admin-button"
 
 export default async function MonsterPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -24,6 +25,12 @@ export default async function MonsterPage({ params }: { params: Promise<{ slug: 
       image={meta.image}
       imageAlt={meta.name}
       imagePlaceholder={<Skull className="h-24 w-24 text-red-accent/40" />}
+      actionButtons={
+        <AdminButton href={`/admin/edit/monster/${slug}`} variant="outline" size="sm">
+          <Edit className="h-4 w-4 mr-2" />
+          Editar
+        </AdminButton>
+      }
       metadata={
         <>
           <div className="flex items-center text-lg mb-4 text-gold-light">

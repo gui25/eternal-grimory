@@ -13,6 +13,7 @@ Este projeto inclui um sistema de administração que permite criar e editar con
 ### 1. Acesso ao Painel
 
 Em desenvolvimento local, você verá:
+
 - **Página inicial**: Seção "Modo Desenvolvimento" com link para o painel
 - **Páginas de listagem**: Botões "Criar [Tipo]" no topo
 - **Botões flutuantes**: Ícone "+" no canto inferior direito
@@ -21,6 +22,7 @@ Em desenvolvimento local, você verá:
 ### 2. Criação de Conteúdo
 
 O sistema permite criar:
+
 - **Monstros**: `/admin/create/monster`
 - **NPCs**: `/admin/create/npc`
 - **Itens**: `/admin/create/item`
@@ -38,33 +40,36 @@ O sistema permite criar:
 
 Os arquivos são criados na campanha atualmente ativa:
 
-```
+```mdx
 content/
 ├── [campanha]/
-│   ├── characters/
-│   │   ├── monster/
-│   │   │   └── [slug].md
-│   │   ├── npc/
-│   │   │   └── [slug].md
-│   │   └── player/
-│   │       └── [slug].md
-│   ├── items/
-│   │   └── [slug].md
-│   └── sessions/
-│       └── [slug].md
+│ ├── characters/
+│ │ ├── monster/
+│ │ │ └── [slug].md
+│ │ ├── npc/
+│ │ │ └── [slug].md
+│ │ └── player/
+│ │ └── [slug].md
+│ ├── items/
+│ │ └── [slug].md
+│ └── sessions/
+│ └── [slug].md
 ```
 
 ## 🛠️ Funcionalidades
 
 ### Geração Automática de Slug
+
 - O slug é gerado automaticamente baseado no nome
 - Remove acentos e caracteres especiais
 - Converte para lowercase com hífens
 
 ### Frontmatter Automático
+
 Cada tipo de conteúdo tem seu frontmatter específico:
 
 **Monstros:**
+
 ```yaml
 ---
 name: "Nome do Monstro"
@@ -77,6 +82,7 @@ image: "url-da-imagem"
 ```
 
 **NPCs:**
+
 ```yaml
 ---
 name: "Nome do NPC"
@@ -89,6 +95,7 @@ image: "url-da-imagem"
 ```
 
 **Itens:**
+
 ```yaml
 ---
 name: "Nome do Item"
@@ -101,6 +108,7 @@ image: "url-da-imagem"
 ```
 
 **Sessões:**
+
 ```yaml
 ---
 title: "Título da Sessão"
@@ -135,12 +143,14 @@ image: "url-da-imagem"
 ## 🎯 Casos de Uso
 
 ### Para o Mestre (DM)
+
 - Criar rapidamente novos NPCs durante a sessão
 - Documentar itens encontrados pelos jogadores
 - Registrar eventos importantes da sessão
 - Adicionar monstros personalizados
 
 ### Para Desenvolvimento
+
 - Testar novos conteúdos localmente
 - Iterar rapidamente no design de personagens
 - Manter histórico de mudanças com Git
@@ -156,22 +166,26 @@ image: "url-da-imagem"
 ## 🔄 Workflow Recomendado
 
 1. **Desenvolvimento Local**:
+
    ```bash
    npm run dev
    # Acesse http://localhost:3000/admin
    ```
 
 2. **Criar Conteúdo**:
+
    - Use a interface web para criar arquivos
    - Teste localmente para verificar se está correto
 
 3. **Versionamento**:
+
    ```bash
    git add content/
    git commit -m "feat: adicionar novo monstro X"
    ```
 
 4. **Deploy**:
+
    ```bash
    git push origin main
    # O conteúdo aparecerá em produção
@@ -180,16 +194,19 @@ image: "url-da-imagem"
 ## 🐛 Troubleshooting
 
 ### Botões não aparecem
+
 - Verifique se está em `localhost`
 - Confirme que `NODE_ENV=development`
 - Recarregue a página
 
 ### Erro ao criar arquivo
+
 - Verifique se o slug não está duplicado
 - Confirme que todos os campos obrigatórios estão preenchidos
 - Verifique as permissões de escrita no diretório
 
 ### Arquivo não aparece no site
+
 - Confirme que o arquivo foi criado corretamente
 - Verifique o frontmatter YAML
 - Recarregue a página ou reinicie o servidor
@@ -201,4 +218,4 @@ Para adicionar novos tipos de conteúdo:
 1. Adicione o tipo em `/api/admin/create/route.ts`
 2. Crie uma nova página em `/admin/create/[tipo]/page.tsx`
 3. Adicione o botão nas páginas de listagem correspondentes
-4. Atualize esta documentação 
+4. Atualize esta documentação

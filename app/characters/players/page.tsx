@@ -3,13 +3,14 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Search, Plus } from "lucide-react"
+import { Search, Plus, Edit } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
 import { PageContainer } from "@/components/ui/page-container"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { AdminSection, AdminButton } from "@/components/ui/admin-button"
+import { isAdminMode } from "@/lib/dev-utils"
 
 interface Player {
   name: string
@@ -27,15 +28,18 @@ export default function PlayersPage() {
   const [search, setSearch] = useState("")
   const [classFilter, setClassFilter] = useState("")
   const [raceFilter, setRaceFilter] = useState("")
+  const [showAdmin, setShowAdmin] = useState(false)
 
   useEffect(() => {
+    setShowAdmin(isAdminMode())
+    
     const fetchPlayers = async () => {
       try {
         const response = await fetch("/api/characters/players")
         const data = await response.json()
         setPlayers(data)
       } catch (error) {
-        console.error("Erro ao buscar personagens:", error)
+        console.error("Erro ao buscar jogadores:", error)
       } finally {
         setIsLoading(false)
       }
@@ -48,11 +52,10 @@ export default function PlayersPage() {
     const matchesSearch =
       search === "" ||
       player.name.toLowerCase().includes(search.toLowerCase()) ||
-      (player.player && player.player.toLowerCase().includes(search.toLowerCase()))
+      (player.player && player.player.toLowerCase().includes(search.toLowerCase())) ||
+      (player.class && player.class.toLowerCase().includes(search.toLowerCase()))
 
-    const matchesClass =
-      classFilter === "" || (player.class && player.class.toLowerCase() === classFilter.toLowerCase())
-
+    const matchesClass = classFilter === "" || (player.class && player.class.toLowerCase() === classFilter.toLowerCase())
     const matchesRace = raceFilter === "" || (player.race && player.race.toLowerCase() === raceFilter.toLowerCase())
 
     return matchesSearch && matchesClass && matchesRace
@@ -64,37 +67,36 @@ export default function PlayersPage() {
     setRaceFilter("")
   }
 
-  const allClasses = Array.from(new Set(players.filter((p) => p.class).map((player) => player.class)))
-  const allRaces = Array.from(new Set(players.filter((p) => p.race).map((player) => player.race)))
+  const allClasses = Array.from(new Set(players.map((player) => player.class).filter(Boolean)))
+  const allRaces = Array.from(new Set(players.map((player) => player.race).filter(Boolean)))
 
-  // Converter para o formato de opções do FilterSelect
-  const classOptions: FilterOption[] = allClasses.map((className) => ({
-    value: className || "",
-    label: className || "",
+  const classOptions: FilterOption[] = allClasses.map((playerClass) => ({
+    value: playerClass!,
+    label: playerClass!,
   }))
 
   const raceOptions: FilterOption[] = allRaces.map((race) => ({
-    value: race || "",
-    label: race || "",
+    value: race!,
+    label: race!,
   }))
 
   return (
-    <PageContainer className="space-y-6">
+    <PageContainer>
       <h1 className="fantasy-heading">Personagens dos Jogadores</h1>
 
       <AdminSection>
         <AdminButton href="/admin/create/player">
           <Plus className="h-4 w-4 mr-2" />
-          Criar Player
+          Criar Personagem
         </AdminButton>
       </AdminSection>
 
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar personagens..."
-            className="pl-8 w-full"
+            className="pl-8"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -126,28 +128,45 @@ export default function PlayersPage() {
       ) : filteredPlayers.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {filteredPlayers.map((player) => (
-            <Link key={player.slug} href={`/characters/players/${player.slug}`} className="h-full" prefetch={true}>
-              <Card className="h-full cursor-pointer hover:shadow-md transition-shadow">
-                <CardContent className="p-6 h-full flex flex-col">
-                  <h3 className="font-bold text-lg mb-1">{player.name}</h3>
-                  <div className="text-sm text-muted-foreground mb-2">
-                    {player.race} {player.class} (Level {player.level})
+            <Card key={player.slug} className="relative group">
+              <CardContent className="p-6">
+                {showAdmin && (
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      asChild
+                      size="sm"
+                      variant="outline"
+                      className="h-8 w-8 p-0"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Link href={`/admin/edit/player/${player.slug}`}>
+                        <Edit className="h-4 w-4" />
+                      </Link>
+                    </Button>
                   </div>
+                )}
+                
+                <Link href={`/characters/players/${player.slug}`} prefetch={true} className="block">
+                  <h3 className="text-lg font-bold">{player.name}</h3>
                   {player.player && (
-                    <div className="text-sm mb-3">
-                      <span className="font-medium">Jogador:</span> {player.player}
-                    </div>
+                    <p className="text-sm text-muted-foreground">Jogado por: {player.player}</p>
                   )}
-                  <div className="flex flex-wrap gap-1 mt-auto">
+                  <div className="text-sm mt-1">
+                    <span className="font-medium">Nível {player.level}</span>
+                    {player.race && player.class && (
+                      <span> • {player.race} {player.class}</span>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-1 mt-2">
                     {player.tags.map((tag) => (
                       <span key={tag} className="bg-secondary px-2 py-1 rounded-md text-xs">
                         {tag}
                       </span>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
-            </Link>
+                </Link>
+              </CardContent>
+            </Card>
           ))}
         </div>
       ) : (

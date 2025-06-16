@@ -18,6 +18,7 @@ interface DetailPageLayoutProps {
   imagePlaceholder?: React.ReactNode;
   metadata?: React.ReactNode;
   description?: string;
+  actionButtons?: React.ReactNode;
   trackViewItem: {
     slug: string;
     name: string;
@@ -44,6 +45,7 @@ export function DetailPageLayout({
   imagePlaceholder,
   metadata,
   description,
+  actionButtons,
   trackViewItem,
   className,
   mobilePadding = true,
@@ -54,12 +56,17 @@ export function DetailPageLayout({
       <TrackView item={trackViewItem} />
 
       {/* Smart Back button */}
-      <div className="mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <SmartBackButton 
           backLink={backLink} 
           backLabel={backLabel} 
           showDebug={false}
         />
+        {actionButtons && (
+          <div className="flex gap-2">
+            {actionButtons}
+          </div>
+        )}
       </div>
 
       {/* Entity header with optional image */}

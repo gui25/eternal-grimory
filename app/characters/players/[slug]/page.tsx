@@ -3,12 +3,13 @@ import Link from "next/link"
 import Image from "next/image"
 import { getCharacter, CharacterMeta } from "@/lib/mdx"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, User } from "lucide-react"
+import { ArrowLeft, User, Edit } from "lucide-react"
 import TrackView from "@/components/track-view"
 import { PlayerMeta } from "@/types/content"
 import { PageContainer } from "@/components/ui/page-container"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
+import { AdminButton } from "@/components/ui/admin-button"
 
 // Define a interface localmente
 interface PlayerCharacterMeta {
@@ -29,62 +30,60 @@ export default async function PlayerPage({ params }: { params: Promise<{ slug: s
   
   console.log(`Página de jogador: Carregando ${slug} da campanha: ${campaignId || 'padrão'}`)
   
-  const character = await getCharacter(slug, "player", campaignId)
-  if (!character) notFound()
+  const player = await getCharacter(slug, "player", campaignId)
+  if (!player) notFound()
 
-  // Use type assertion to avoid type errors
-  const { contentHtml, meta } = character as unknown as { contentHtml: string, meta: CharacterMeta }
+  // Use type assertion para evitar erro de tipo
+  const { contentHtml, meta } = player as unknown as { contentHtml: string, meta: CharacterMeta }
 
-  // Informação do jogador como descrição em vez de subtitle
-  const playerInfo = meta.player ? `Jogado por ${meta.player}` : undefined;
+  // Render player metadata
+  const playerMetadata = (
+    <>
+      <div className="flex items-center text-lg mb-2 text-gold-light">
+        <span>Nível {meta.level}</span>
+        <span className="mx-2">•</span>
+        <span>{meta.race} {meta.class}</span>
+      </div>
+      {meta.player && (
+        <div className="text-sm text-muted-foreground mb-4">
+          Jogado por: {meta.player}
+        </div>
+      )}
+      
+      <div className="flex flex-wrap gap-2 mb-6">
+        {meta.tags.map((tag: string) => (
+          <span key={tag} className="bg-secondary px-3 py-1 rounded-full text-xs">
+            {tag}
+          </span>
+        ))}
+      </div>
+    </>
+  )
 
   return (
     <DetailPageLayout
       title={meta.name}
       backLink="/characters/players"
-      backLabel="Voltar para Jogadores"
+      backLabel="Voltar para Personagens"
       image={meta.image}
       imageAlt={meta.name}
-      imagePlaceholder={<User className="h-24 w-24 text-gold-light/50" />}
-      description={playerInfo}
-      metadata={
-        <>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4 text-gold-light">
-            {meta.race && <span>{meta.race}</span>}
-            
-            {meta.race && meta.class && (
-              <span className="hidden sm:inline">•</span>
-            )}
-            
-            {meta.class && <span>{meta.class}</span>}
-            
-            {(meta.race || meta.class) && meta.level && (
-              <span className="hidden sm:inline">•</span>
-            )}
-            
-            {meta.level && <span>Nível {meta.level}</span>}
-          </div>
-          
-          <div className="flex flex-wrap gap-2 mb-6">
-            {meta.tags.map(tag => (
-              <span key={tag} className="bg-secondary px-3 py-1 rounded-full text-xs">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </>
+      imagePlaceholder={<User className="h-24 w-24 text-blue-accent/50" />}
+      actionButtons={
+        <AdminButton href={`/admin/edit/player/${slug}`} variant="outline" size="sm">
+          <Edit className="h-4 w-4 mr-2" />
+          Editar
+        </AdminButton>
       }
+      metadata={playerMetadata}
+      description={meta.description}
       trackViewItem={{
         slug: meta.slug,
         name: meta.name,
         type: meta.class || "Personagem",
-        category: "player",
+        category: "player"
       }}
     >
-      <article 
-        className="prose prose-slate dark:prose-invert max-w-none mdx-content"
-        dangerouslySetInnerHTML={{ __html: contentHtml }}
-      />
+      <div className="mdx-content" dangerouslySetInnerHTML={{ __html: contentHtml }} />
     </DetailPageLayout>
   )
 }

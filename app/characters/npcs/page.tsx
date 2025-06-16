@@ -3,13 +3,14 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Search, Plus } from "lucide-react"
+import { Search, Plus, Edit } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
 import { PageContainer } from "@/components/ui/page-container"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { AdminSection, AdminButton } from "@/components/ui/admin-button"
+import { isAdminMode } from "@/lib/dev-utils"
 
 interface NPC {
   name: string
@@ -25,8 +26,11 @@ export default function NPCsPage() {
   const [search, setSearch] = useState("")
   const [affiliationFilter, setAffiliationFilter] = useState("")
   const [tagFilter, setTagFilter] = useState("")
+  const [showAdmin, setShowAdmin] = useState(false)
 
   useEffect(() => {
+    setShowAdmin(isAdminMode())
+    
     const fetchNPCs = async () => {
       try {
         const response = await fetch("/api/characters/npcs")
@@ -123,9 +127,25 @@ export default function NPCsPage() {
       ) : filteredNPCs.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {filteredNPCs.map((npc) => (
-            <Link key={npc.slug} href={`/characters/npcs/${npc.slug}`} prefetch={true}>
-              <Card>
-                <CardContent className="pt-4">
+            <Card key={npc.slug} className="relative group">
+              <CardContent className="p-6">
+                {showAdmin && (
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      asChild
+                      size="sm"
+                      variant="outline"
+                      className="h-8 w-8 p-0"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Link href={`/admin/edit/npc/${npc.slug}`}>
+                        <Edit className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+                
+                <Link href={`/characters/npcs/${npc.slug}`} prefetch={true} className="block">
                   <h3 className="text-lg font-bold">{npc.name}</h3>
                   <p className="text-sm text-gray-500">{npc.type}</p>
                   <div className="mt-2">
@@ -138,9 +158,9 @@ export default function NPCsPage() {
                       </span>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
-            </Link>
+                </Link>
+              </CardContent>
+            </Card>
           ))}
         </div>
       ) : (
