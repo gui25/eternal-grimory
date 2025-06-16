@@ -181,9 +181,8 @@ Use este item para criar tensão em encontros com orcs. A luz de aviso pode tant
       case 'comum': return 'bg-gray-100 text-gray-800'
       case 'incomum': return 'bg-green-100 text-green-800'
       case 'raro': return 'bg-blue-100 text-blue-800'
-      case 'muito raro': return 'bg-purple-100 text-purple-800'
+      case 'épico': return 'bg-purple-100 text-purple-800'
       case 'lendário': return 'bg-orange-100 text-orange-800'
-      case 'artefato': return 'bg-red-100 text-red-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
@@ -248,7 +247,7 @@ Use este item para criar tensão em encontros com orcs. A luz de aviso pode tant
                     id="type"
                     value={formData.type}
                     onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))}
-                    placeholder="Ex: Arma, Armadura, Poção, Artefato"
+                    placeholder="Ex: Arma, Armadura, Poção, Acessório"
                   />
                 </div>
                 
@@ -262,9 +261,8 @@ Use este item para criar tensão em encontros com orcs. A luz de aviso pode tant
                       <SelectItem value="Comum">Comum</SelectItem>
                       <SelectItem value="Incomum">Incomum</SelectItem>
                       <SelectItem value="Raro">Raro</SelectItem>
-                      <SelectItem value="Muito Raro">Muito Raro</SelectItem>
+                      <SelectItem value="Épico">Épico</SelectItem>
                       <SelectItem value="Lendário">Lendário</SelectItem>
-                      <SelectItem value="Artefato">Artefato</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

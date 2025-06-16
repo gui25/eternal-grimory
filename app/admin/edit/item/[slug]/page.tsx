@@ -160,7 +160,7 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
       case 'lendário':
       case 'legendary':
         return 'legendary-badge'
-      case 'muito raro':
+      case 'épico':
       case 'epic':
         return 'epic-badge'
       case 'raro':
@@ -257,7 +257,7 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
                     id="type"
                     value={formData.type}
                     onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))}
-                    placeholder="Ex: Arma, Armadura, Poção, Artefato"
+                    placeholder="Ex: Arma, Armadura, Poção, Acessório"
                   />
                 </div>
                 
@@ -271,9 +271,8 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
                       <SelectItem value="Comum">Comum</SelectItem>
                       <SelectItem value="Incomum">Incomum</SelectItem>
                       <SelectItem value="Raro">Raro</SelectItem>
-                      <SelectItem value="Muito Raro">Muito Raro</SelectItem>
+                      <SelectItem value="Épico">Épico</SelectItem>
                       <SelectItem value="Lendário">Lendário</SelectItem>
-                      <SelectItem value="Artefato">Artefato</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

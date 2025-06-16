@@ -423,7 +423,7 @@ Uma descrição detalhada do item, incluindo sua aparência, materiais e caracte
 ## Propriedades do Item
 
 **Tipo:** ${data.type || '[Categoria do item]'}  
-**Raridade:** ${data.rarity || '[Comum/Incomum/Raro/Muito Raro/Lendário]'}  
+**Raridade:** ${data.rarity || '[Comum/Incomum/Raro/Épico/Lendário]'}  
 **Requer Sintonia:** [Sim/Não]  
 **Peso:** [Valor] kg  
 **Valor:** [Valor] po (estimado)
