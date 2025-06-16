@@ -13,6 +13,7 @@ export function isDevelopment(): boolean {
  * Verifica se estamos rodando localmente (localhost)
  */
 export function isLocalhost(): boolean {
+  // Durante o build, não temos acesso ao window
   if (typeof window === 'undefined') {
     // No servidor, verificar se estamos em desenvolvimento
     return isDevelopment()
@@ -28,5 +29,25 @@ export function isLocalhost(): boolean {
  * Verifica se as funcionalidades de admin devem estar disponíveis
  */
 export function isAdminMode(): boolean {
+  // Durante o build de produção, sempre retornar false
+  if (process.env.NODE_ENV === 'production') {
+    return false
+  }
+  
   return isDevelopment() && isLocalhost()
+}
+
+/**
+ * Wrapper seguro para funcionalidades que só devem existir em desenvolvimento
+ */
+export function withDevOnly<T>(devFunction: () => T, fallback: T): T {
+  if (isDevelopment()) {
+    try {
+      return devFunction()
+    } catch (error) {
+      console.warn('Dev-only function failed:', error)
+      return fallback
+    }
+  }
+  return fallback
 } 

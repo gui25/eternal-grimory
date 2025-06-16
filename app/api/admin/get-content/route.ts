@@ -7,11 +7,6 @@ import { getCurrentCampaignIdFromCookies } from '@/lib/campaign-utils'
 import { getCampaignContentPath } from '@/lib/mdx'
 import matter from 'gray-matter'
 
-// Só permitir em desenvolvimento
-if (!isDevelopment()) {
-  throw new Error('Admin API only available in development')
-}
-
 export async function GET(request: NextRequest) {
   try {
     // Verificar se estamos em desenvolvimento

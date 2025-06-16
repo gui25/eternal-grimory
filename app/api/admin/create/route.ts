@@ -6,11 +6,6 @@ import { isDevelopment } from '@/lib/dev-utils'
 import { getCurrentCampaignIdFromCookies } from '@/lib/campaign-utils'
 import { getCampaignContentPath } from '@/lib/mdx'
 
-// Só permitir em desenvolvimento
-if (!isDevelopment()) {
-  throw new Error('Admin API only available in development')
-}
-
 export async function POST(request: NextRequest) {
   try {
     // Verificar se estamos em desenvolvimento
