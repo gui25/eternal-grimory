@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useCallback, useMemo, memo } from "react"
+import React, { useState, useCallback, useMemo, memo, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -14,8 +14,10 @@ import {
   Shield,
   User,
   Home,
+  Settings,
 } from "lucide-react"
 import CampaignSwitcher from "./campaign-switcher"
+import { isAdminMode } from "@/lib/dev-utils"
 
 type NavItem = {
   href: string
@@ -67,7 +69,12 @@ const NAVIGATION_ITEMS: NavItem[] = [
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [showAdmin, setShowAdmin] = useState(false)
   const pathname = usePathname()
+
+  useEffect(() => {
+    setShowAdmin(isAdminMode())
+  }, [])
 
   const toggleSidebar = useCallback(() => {
     setIsOpen(prev => !prev)
@@ -99,6 +106,25 @@ export default function Sidebar() {
             </li>
           ))}
           
+          {/* Admin Panel - only show in development mode */}
+          {showAdmin && (
+            <li className="pt-2">
+              <NavLink
+                href="/admin"
+                active={isActive("/admin")}
+                onClick={closeSidebar}
+                icon={<Settings className="h-5 w-5" />}
+              >
+                <span className="flex items-center">
+                  Admin
+                  <span className="ml-2 px-2 py-0.5 text-xs bg-gold-primary/20 text-gold-primary rounded-full">
+                    DEV
+                  </span>
+                </span>
+              </NavLink>
+            </li>
+          )}
+          
           {/* Campaign Switcher logo após as Sessões */}
           <li className="pt-2">
             <CampaignSwitcher />
@@ -106,7 +132,7 @@ export default function Sidebar() {
         </ul>
       </nav>
     </div>
-  ), [isActive, closeSidebar])
+  ), [isActive, closeSidebar, showAdmin])
 
   return (
     <>

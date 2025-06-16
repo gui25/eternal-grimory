@@ -76,6 +76,11 @@ export default function AdminDashboard() {
 
   const quickActions = [
     {
+      title: 'Gerenciar Campanhas',
+      href: '/admin/campaigns',
+      icon: Folder
+    },
+    {
       title: 'Ver Monstros',
       href: '/characters/monsters',
       icon: Skull

@@ -38,32 +38,35 @@ export const CAMPAIGNS: CampaignInfo[] = [
     },
     dmName: "Mestre de Teste",
     active: true
+  },
+  {
+    id: "teste",
+    name: "Teste",
+    description: "Teste",
+    contentPath: "teste",
+    theme: {
+      primary: "gold",
+      secondary: "wine-dark",
+      accent: "red-accent"
+    },
+    dmName: "Teste",
+    active: true
   }
 ];
 
-// Nome do cookie e chave do localStorage
 export const CAMPAIGN_COOKIE_NAME = 'current-campaign';
 export const CAMPAIGN_LOCAL_STORAGE_KEY = 'current-campaign';
 
-/**
- * Obtém o ID da campanha atualmente selecionada
- * @returns ID da campanha atual
- */
+
 export function getCurrentCampaignId(): string {
-  // Obtém a primeira campanha ativa como padrão
   const defaultCampaign = CAMPAIGNS.find(c => c.active)?.id || CAMPAIGNS[0].id
   
-  // Verificar se estamos no servidor
   if (typeof window === 'undefined') {
-    // No servidor, não temos acesso direto aos cookies, retornar o padrão
     return defaultCampaign;
   } else {
-    // No cliente, podemos usar localStorage e cookies
     try {
-      // Tentar obter do localStorage primeiro (é mais direto)
       const fromLocalStorage = localStorage.getItem(CAMPAIGN_LOCAL_STORAGE_KEY)
       
-      // Verificar localStorage
       if (fromLocalStorage) {
         const isValid = CAMPAIGNS.some(c => 
           c.id === fromLocalStorage && c.active
@@ -122,22 +125,16 @@ export function setCurrentCampaign(id: string) {
   console.log(`[CAMPANHA] Alterando para: ${id}, caminho: ${campaign.contentPath}`);
   
   try {
-    // Guarda no localStorage para persistência entre sessões
     if (typeof window !== 'undefined') {
-      // Em vez de limpar todo o localStorage, vamos salvar as atividades recentes 
-      // e restaurá-las após a troca de campanha
       const recentViewsKey = 'recently-viewed-items';
       const recentActivityKey = 'recent-activity';
       
-      // Salvar atividades recentes
       const recentViews = localStorage.getItem(recentViewsKey);
       const recentActivity = localStorage.getItem(recentActivityKey);
       
-      // Limpar apenas as chaves relacionadas à campanha, não tudo
       localStorage.removeItem(CAMPAIGN_LOCAL_STORAGE_KEY);
       localStorage.removeItem(CAMPAIGN_COOKIE_NAME);
       
-      // Definir o novo valor da campanha
       localStorage.setItem(CAMPAIGN_LOCAL_STORAGE_KEY, id);
       console.log(`[CAMPANHA] localStorage definido para: ${id}`);
       

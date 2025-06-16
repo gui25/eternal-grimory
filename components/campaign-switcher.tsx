@@ -34,7 +34,8 @@ export default function CampaignSwitcher() {
   }, [])
 
   // Objeto da campanha atual
-  const currentCampaign = CAMPAIGNS.find(c => c.id === currentCampaignState) || CAMPAIGNS[0]
+  const validCampaigns = CAMPAIGNS.filter(c => c && c.id && c.name)
+  const currentCampaign = validCampaigns.find(c => c.id === currentCampaignState) || validCampaigns[0]
   
   // Função para lidar com a mudança de campanha
   const handleCampaignChange = (campaignId: string) => {
@@ -83,7 +84,7 @@ export default function CampaignSwitcher() {
           <div className={cn(
             "border-t border-gold-primary bg-background shadow-lg overflow-hidden rounded-b-lg", 
           )}>
-            {CAMPAIGNS.filter(c => c.active).map(campaign => (
+            {validCampaigns.filter(c => c.active).map(campaign => (
               <button
                 key={campaign.id}
                 onClick={() => handleCampaignChange(campaign.id)}
