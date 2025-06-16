@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 // Global navigation history to persist across component unmounts
 let globalNavigationHistory: string[] = [];
@@ -13,12 +13,12 @@ let globalNavigationHistory: string[] = [];
  */
 export const useNavigationHistoryInitializer = () => {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    // Construct full URL with search params
-    const currentUrl = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '');
+    // Construct full URL with search params - usando window.location.search em vez de useSearchParams
+    const searchParams = typeof window !== 'undefined' ? window.location.search : '';
+    const currentUrl = pathname + searchParams;
     
     // Get current history from sessionStorage first (in case it was updated by MDX links)
     const storage = globalThis?.sessionStorage;
@@ -63,7 +63,7 @@ export const useNavigationHistoryInitializer = () => {
       source: 'usePathname'
     });
     
-  }, [pathname, searchParams]);
+  }, [pathname]); // Removido searchParams da dependência
 
   // Initialize from sessionStorage on first load
   useEffect(() => {
