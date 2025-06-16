@@ -29,6 +29,7 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
     rarity: 'Comum',
     tags: '',
     image: '',
+    description: '',
     content: ''
   })
 
@@ -132,7 +133,8 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
             type: formData.type,
             rarity: formData.rarity,
             tags,
-            image: formData.image
+            image: formData.image,
+            description: formData.description
           }
         })
       })
@@ -181,7 +183,8 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
     type: formData.type,
     rarity: formData.rarity,
     tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-    image: formData.image
+    image: formData.image,
+    description: formData.description
   }
 
   if (isLoadingData) {
@@ -295,6 +298,17 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
                   value={formData.image}
                   onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
                   placeholder="https://exemplo.com/imagem.jpg"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Descrição do Item</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Escreva a descrição do item"
+                  rows={4}
                 />
               </div>
 

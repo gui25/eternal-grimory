@@ -26,6 +26,7 @@ export default function CreateItemPage() {
     rarity: 'Comum',
     tags: '',
     image: '',
+    description: '',
     content: `Uma descrição detalhada do item, incluindo sua aparência, materiais e características distintivas.
 
 ## Propriedades do Item
@@ -120,7 +121,8 @@ Use este item para criar tensão em encontros com orcs. A luz de aviso pode tant
             type: formData.type,
             rarity: formData.rarity,
             tags,
-            image: formData.image
+            image: formData.image,
+            description: formData.description
           }
         })
       })
@@ -146,7 +148,8 @@ Use este item para criar tensão em encontros com orcs. A luz de aviso pode tant
     type: formData.type,
     rarity: formData.rarity,
     tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-    image: formData.image
+    image: formData.image,
+    description: formData.description
   }
 
   // Processar markdown para HTML quando o conteúdo mudar
@@ -296,6 +299,18 @@ Use este item para criar tensão em encontros com orcs. A luz de aviso pode tant
                   value={formData.image}
                   onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
                   placeholder="https://exemplo.com/imagem.jpg"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Descrição</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Escreva a descrição do item..."
+                  rows={4}
+                  className="font-mono text-sm"
                 />
               </div>
 

@@ -154,7 +154,8 @@ function createFrontmatter(type: string, name: string, metadata: any): string {
         type: metadata.type || 'Item',
         rarity: metadata.rarity || 'Comum',
         tags: metadata.tags || [],
-        image: metadata.image || ''
+        image: metadata.image || '',
+        description: metadata.description || ''
       }
       break
     
