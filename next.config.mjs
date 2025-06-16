@@ -16,9 +16,6 @@ const nextConfig = {
     ],
   },
   
-  // Configure build output for better production performance
-  output: 'standalone',
-  
   // Server external packages (moved from experimental)
   serverExternalPackages: [],
   
