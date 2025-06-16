@@ -112,12 +112,6 @@
     background: linear-gradient(135deg, hsl(var(--gold-primary)), hsl(var(--gold-light)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    white-space: normal; /* Permite quebra de linha */
-    word-wrap: break-word; /* Quebra palavras longas */
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limita a 2 linhas */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
 
   .character-info {
@@ -824,7 +818,7 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.24);
     transform: scale(1.006);
   }
-  50% { 
+  50% {
     box-shadow: 
       0 0 22px rgba(245, 158, 11, 0.62),
       0 0 18px rgba(245, 158, 11, 0.35),
@@ -848,7 +842,7 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.21);
     transform: scale(1.003);
   }
-  100% { 
+  100% {
     box-shadow: 
       0 0 16px rgba(245, 158, 11, 0.45),
       0 0 8px rgba(245, 158, 11, 0.25),

@@ -6,6 +6,7 @@ import RecentActivity from "@/components/recent-activity"
 import ConfettiButton from "@/components/confetti-button"
 import { PageContainer } from "@/components/ui/page-container"
 import { SectionHeader } from "@/components/section-header"
+import { truncateText } from "@/utils/string-utils"
 
 export default async function Dashboard() {
   const items = await getItems()
@@ -45,7 +46,7 @@ export default async function Dashboard() {
                 <div className="character-card h-full">
                   <h3 className="character-name flex items-center">
                     <Sparkles className="h-4 w-4 mr-1 flex-shrink-0 text-gold" />
-                    {player.name}
+                    {truncateText(player.name)}
                   </h3>
                   <p className="character-info">
                     Level {player.level} {player.race} {player.class}
