@@ -17,14 +17,19 @@ export default function ItemList({ items }: { items: ItemMeta[] }) {
 
   const getRarityClass = (rarity: string) => {
     switch (rarity.toLowerCase()) {
+      case "comum":
       case "common":
         return "rarity-common"
+      case "incomum":
       case "uncommon":
         return "rarity-uncommon"
+      case "raro":
       case "rare":
         return "rarity-rare"
+      case "épico":
       case "epic":
         return "rarity-epic"
+      case "lendário":
       case "legendary":
         return "rarity-legendary"
       default:
@@ -34,14 +39,19 @@ export default function ItemList({ items }: { items: ItemMeta[] }) {
 
   const getRarityBadgeClass = (rarity: string) => {
     switch (rarity.toLowerCase()) {
+      case "comum":
       case "common":
         return "common-badge"
+      case "incomum":
       case "uncommon":
         return "uncommon-badge"
+      case "raro":
       case "rare":
         return "rare-badge"
+      case "épico":
       case "epic":
         return "epic-badge"
+      case "lendário":
       case "legendary":
         return "legendary-badge"
       default:
@@ -51,14 +61,19 @@ export default function ItemList({ items }: { items: ItemMeta[] }) {
 
   const getRarityTextClass = (rarity: string) => {
     switch (rarity.toLowerCase()) {
+      case "comum":
       case "common":
         return "text-gray-300"
+      case "incomum":
       case "uncommon":
         return "text-green-400"
+      case "raro":
       case "rare":
         return "text-blue-400"
+      case "épico":
       case "epic":
         return "text-purple-400"
+      case "lendário":
       case "legendary":
         return "text-amber-400"
       default:

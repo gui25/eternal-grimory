@@ -1,7 +1,9 @@
 ---
 name: "Orbe do Tipo Dragão"
-rarity: "Legendary"
+slug: "orbe-do-tipo-dragao"
+updated: "2025-06-16T02:12:37.289Z"
 type: "Artifact"
+rarity: "Lendário"
 tags: ["Cursed", "Dragon Magic"]
 ---
 

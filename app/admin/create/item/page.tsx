@@ -178,12 +178,23 @@ Use este item para criar tensão em encontros com orcs. A luz de aviso pode tant
 
   const getRarityColor = (rarity: string) => {
     switch (rarity.toLowerCase()) {
-      case 'comum': return 'bg-gray-100 text-gray-800'
-      case 'incomum': return 'bg-green-100 text-green-800'
-      case 'raro': return 'bg-blue-100 text-blue-800'
-      case 'épico': return 'bg-purple-100 text-purple-800'
-      case 'lendário': return 'bg-orange-100 text-orange-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'comum': 
+      case 'common': 
+        return 'bg-gray-100 text-gray-800'
+      case 'incomum': 
+      case 'uncommon': 
+        return 'bg-green-100 text-green-800'
+      case 'raro': 
+      case 'rare': 
+        return 'bg-blue-100 text-blue-800'
+      case 'épico': 
+      case 'epic': 
+        return 'bg-purple-100 text-purple-800'
+      case 'lendário': 
+      case 'legendary': 
+        return 'bg-orange-100 text-orange-800'
+      default: 
+        return 'bg-gray-100 text-gray-800'
     }
   }
 

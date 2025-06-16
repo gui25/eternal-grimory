@@ -113,14 +113,19 @@ export default function RecentlyViewed() {
 // Helper function to get the appropriate text color class for item rarity
 function getRarityTextClass(rarity: string) {
   switch (rarity.toLowerCase()) {
+    case "comum":
     case "common":
       return "text-gray-700 dark:text-gray-300"
+    case "incomum":
     case "uncommon":
       return "text-green-600 dark:text-green-400"
+    case "raro":
     case "rare":
       return "text-blue-600 dark:text-blue-400"
+    case "épico":
     case "epic":
       return "text-purple-600 dark:text-purple-400"
+    case "lendário":
     case "legendary":
       return "text-amber-600 dark:text-amber-400"
     default:

@@ -51,14 +51,19 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
   const getRarityBadgeClass = (rarity: string) => {
     const rarityLower = rarity.toLowerCase()
     switch (rarityLower) {
+      case 'lendário':
       case 'legendary':
         return 'legendary-badge'
+      case 'épico':
       case 'epic':
         return 'epic-badge'
+      case 'raro':
       case 'rare':
         return 'rare-badge'
+      case 'incomum':
       case 'uncommon':
         return 'uncommon-badge'
+      case 'comum':
       case 'common':
       default:
         return 'common-badge'
