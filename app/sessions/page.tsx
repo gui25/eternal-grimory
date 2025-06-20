@@ -10,7 +10,7 @@ import { PageContainer } from "@/components/ui/page-container"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { AdminSection, AdminButton } from "@/components/ui/admin-button"
 import { isAdminMode } from "@/lib/dev-utils"
-import { formatDateBR, parseBRDate } from "@/utils/date-utils"
+import { formatDateBR, formatDateForMDX, parseBRDate } from "@/utils/date-utils"
 
 interface Session {
   session_number: number;
@@ -46,7 +46,7 @@ export default function SessionsPage() {
   
   const filteredSessions = sessions.filter((session) => {
     // Extract title from session_number (this would be in the MDX content)
-    const title = `Session ${session.session_number}`
+    const title = `SESSÃO ${session.session_number}`
 
     const matchesSearch = search === "" || title.toLowerCase().includes(search.toLowerCase())
 
@@ -124,10 +124,10 @@ export default function SessionsPage() {
                     <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                       <div className="flex items-center gap-3">
                         <div>
-                          <h2 className="text-lg font-semibold">Session {session.session_number}</h2>
+                          <h2 className="text-lg font-semibold">SESSÃO {session.session_number}</h2>
                           <div className="text-sm text-muted-foreground flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
-                            {parseBRDate(session.date) ? formatDateBR(parseBRDate(session.date)!) : session.date}
+                            {parseBRDate(session.date) ? formatDateForMDX(parseBRDate(session.date)!) : session.date}
                           </div>
                         </div>
                         {showAdmin && (
