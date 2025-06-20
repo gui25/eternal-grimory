@@ -407,10 +407,6 @@ export default function EditMonsterPage({ params }: { params: Promise<{ slug: st
                     </div>
                   </div>
 
-                  {/* Descrição opcional */}
-                  {mockFrontmatter.description && (
-                    <div className="mt-4 italic text-gray-300">"{mockFrontmatter.description}"</div>
-                  )}
                 </div>
 
                 {/* Main content com as mesmas classes da página real */}
