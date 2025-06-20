@@ -393,6 +393,11 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
                       )}
                     </div>
                   </div>
+
+                  {/* Descrição opcional */}
+                  {mockFrontmatter.description && (
+                    <div className="mt-4 italic text-gray-300">"{mockFrontmatter.description}"</div>
+                  )}
                 </div>
 
                 <article 

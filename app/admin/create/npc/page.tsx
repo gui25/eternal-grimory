@@ -415,6 +415,11 @@ Use este NPC como fonte de informações e ganchos de aventura. Ele pode fornece
                       </div>
                     </div>
                   </div>
+
+                  {/* Descrição opcional */}
+                  {mockFrontmatter.description && (
+                    <div className="mt-4 italic text-gray-300">"{mockFrontmatter.description}"</div>
+                  )}
                 </div>
 
                 {/* Main content com as mesmas classes da página real */}

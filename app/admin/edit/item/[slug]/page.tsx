@@ -431,6 +431,11 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
                       </div>
                     </div>
                   </div>
+
+                  {/* Descrição opcional */}
+                  {mockFrontmatter.description && (
+                    <div className="mt-4 italic text-gray-300">"{mockFrontmatter.description}"</div>
+                  )}
                 </div>
 
                 <article 

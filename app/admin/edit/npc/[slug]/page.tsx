@@ -29,6 +29,7 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
     affiliation: '',
     tags: '',
     image: '',
+    description: '',
     content: ''
   })
 
@@ -132,7 +133,8 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
             type: formData.type,
             affiliation: formData.affiliation,
             tags,
-            image: formData.image
+            image: formData.image,
+            description: formData.description
           }
         })
       })
@@ -158,7 +160,8 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
     type: formData.type,
     affiliation: formData.affiliation,
     tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-    image: formData.image
+    image: formData.image,
+    description: formData.description
   }
 
   if (isLoadingData) {
@@ -260,6 +263,19 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="description">Descrição Breve (Opcional)</Label>
+                <Input
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Ex: Uma comerciante experiente que conhece todos os segredos da cidade"
+                />
+                <p className="text-xs text-muted-foreground">
+                  💡 Uma descrição curta que aparecerá destacada na página do NPC
+                </p>
+              </div>
+
+              <div className="space-y-2">
                 <ImageUpload
                   value={formData.image}
                   onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
@@ -350,6 +366,11 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
                       </div>
                     </div>
                   </div>
+
+                  {/* Descrição opcional */}
+                  {mockFrontmatter.description && (
+                    <div className="mt-4 italic text-gray-300">"{mockFrontmatter.description}"</div>
+                  )}
                 </div>
 
                 <article 

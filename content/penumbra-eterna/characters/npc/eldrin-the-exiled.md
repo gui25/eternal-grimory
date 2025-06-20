@@ -1,5 +1,7 @@
 ---
 name: "Eldrin, o Exilado"
+slug: "eldrin-o-exilado"
+updated: "2025-06-20T22:20:57.412Z"
 type: "Elfo Feiticeiro"
 affiliation: "A Ordem dos Renegados"
 tags: ["Elf", "Sorcerer", "Villain"]

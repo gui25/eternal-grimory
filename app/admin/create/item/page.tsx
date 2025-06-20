@@ -436,6 +436,11 @@ Use este item para criar tensão em encontros com orcs. A luz de aviso pode tant
                       </div>
                     </div>
                   </div>
+
+                  {/* Descrição opcional */}
+                  {mockFrontmatter.description && (
+                    <div className="mt-4 italic text-gray-300">"{mockFrontmatter.description}"</div>
+                  )}
                 </div>
 
                 {/* Main content com as mesmas classes da página real */}
