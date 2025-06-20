@@ -1,38 +1,40 @@
 ---
-name: "Eldrin, the Exiled"
-type: "Elf Sorcerer"
-affiliation: "The Forsaken Order"
+name: "Eldrin, o Exilado"
+type: "Elfo Feiticeiro"
+affiliation: "A Ordem dos Renegados"
 tags: ["Elf", "Sorcerer", "Villain"]
+image: "/placeholder.svg?height=400&width=400"
+description: "Um poderoso feiticeiro élfico que traiu seu povo por magia proibida."
 ---
 
-# Eldrin, the Exiled
+# Eldrin, o Exilado
 
-A powerful elven sorcerer who betrayed his people for forbidden magic.
+Um poderoso feiticeiro élfico que traiu seu povo por magia proibida.
 
-## Notable Appearances
+## Aparições Notáveis
 
-- **Session 5:** First seen summoning shadows in the catacombs.
-- **Session 12:** Revealed his ultimate plan to open the **Shadow Gate**.
-- **Session 15:** Fled after the party destroyed his ritual.
+- **Sessão 5:** Visto pela primeira vez invocando sombras nas catacumbas.
+- **Sessão 12:** Revelou seu plano final de abrir o **Portão das Sombras**.
+- **Sessão 15:** Fugiu após o grupo destruir seu ritual.
 
-## Abilities
+## Habilidades
 
-- **Dark Binding:** Prevents movement for 1d6 rounds.
-- **Void Blast:** Deals 4d8 necrotic damage.
-- **Shadow Step:** Can teleport between areas of darkness as a bonus action.
+- **Vínculo Sombrio:** Impede movimento por 1d6 rodadas.
+- **Explosão do Vazio:** Causa 4d8 de dano necrótico.
+- **Passo das Sombras:** Pode se teletransportar entre áreas de escuridão como uma ação bônus.
 
-## Description
+## Descrição
 
-Eldrin was once a respected member of the High Elven Council, but his obsession with forbidden shadow magic led to his exile. He now seeks to open the Shadow Gate, a portal to the realm of darkness, in order to gain unlimited power.
+Eldrin foi outrora um respeitado membro do Conselho dos Altos Elfos, mas sua obsessão com magia das sombras proibida levou ao seu exílio. Agora ele busca abrir o Portão das Sombras, um portal para o reino da escuridão, a fim de obter poder ilimitado.
 
-His silver hair has darkened to an unnatural black, and his once-bright eyes now glow with an eerie purple light. Runes of dark magic are tattooed across his skin, pulsing with power when he casts spells.
+Seu cabelo prateado escureceu para um preto antinatural, e seus olhos outrora brilhantes agora brilham com uma luz roxa sinistra. Runas de magia negra estão tatuadas em sua pele, pulsando com poder quando ele lança magias.
 
-## Relations
+## Relações
 
-**Allies:** The Forsaken Order, Shadow Cultists
-**Enemies:** The party, The High Elven Council, The Order of Light
+**Aliados:** A Ordem dos Renegados, Cultistas das Sombras
+**Inimigos:** O grupo, O Conselho dos Altos Elfos, A Ordem da Luz
 
-## Current Schemes
+## Planos Atuais
 
-Eldrin is currently searching for the three Shadow Keys needed to unlock the Shadow Gate. He has already obtained one from the ruins of Eldoria and knows the location of the second in the Frostpeak Mountains.
+Eldrin está atualmente procurando as três Chaves das Sombras necessárias para desbloquear o Portão das Sombras. Ele já obteve uma das ruínas de Eldoria e conhece a localização da segunda nas Montanhas do Pico Gelado.
 
