@@ -15,6 +15,7 @@ import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import { useNameValidation } from '@/hooks/use-name-validation'
 import { formatDateBR, formatDateForInput, formatDateForMDX, inputDateToBR, parseBRDate } from '@/utils/date-utils'
+import { DateInputBR } from '@/components/ui/date-input-br'
 
 export default function EditSessionPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
@@ -60,7 +61,8 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
             const sessionData = result.data
             setFormData({
               ...sessionData,
-              date: formatDateForInput(parseBRDate(sessionData.date) || sessionData.date)
+              // Manter o formato brasileiro para o novo componente
+              date: sessionData.date
             })
           } else {
             toast.error('Erro ao carregar dados da sessão')
@@ -151,7 +153,7 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
           originalSlug: originalSlug,
           metadata: {
             session_number: formData.session_number,
-            date: formatDateForMDX(formData.date),
+            date: formData.date, // Já está no formato brasileiro correto
             players,
             image: formData.image,
             description: formData.description
@@ -177,7 +179,7 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
 
   const mockFrontmatter = {
     session_number: formData.session_number,
-    date: inputDateToBR(formData.date),
+    date: formData.date || '',
     players: formData.players.split(',').map(player => player.trim()).filter(Boolean),
     image: formData.image,
     description: formData.description
@@ -267,11 +269,11 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
 
               <div className="space-y-2">
                 <Label htmlFor="date">Data da Sessão *</Label>
-                <Input
+                <DateInputBR
                   id="date"
-                  type="date"
                   value={formData.date}
-                  onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                  onChange={(value) => setFormData(prev => ({ ...prev, date: value }))}
+                  placeholder="Clique para selecionar uma data"
                   required
                 />
               </div>

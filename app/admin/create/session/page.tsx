@@ -15,6 +15,7 @@ import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import { useNameValidation } from '@/hooks/use-name-validation'
 import { formatDateBR, formatDateForInput, formatDateForMDX, inputDateToBR } from '@/utils/date-utils'
+import { DateInputBR } from '@/components/ui/date-input-br'
 
 export default function CreateSessionPage() {
   const router = useRouter()
@@ -184,7 +185,7 @@ A sessão começou na taverna "O Javali Dourado", onde os aventureiros receberam
           name: formData.name,
           content: formData.content,
           metadata: {
-            date: formatDateForMDX(formData.date),
+            date: formData.date, // Já está no formato brasileiro correto
             tags,
             image: formData.image,
             description: formData.description
@@ -210,7 +211,7 @@ A sessão começou na taverna "O Javali Dourado", onde os aventureiros receberam
 
   const mockFrontmatter = {
     name: formData.name || 'Nome da Sessão',
-    date: inputDateToBR(formData.date),
+    date: formData.date || '',
     tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
     image: formData.image,
     description: formData.description
@@ -313,11 +314,11 @@ A sessão começou na taverna "O Javali Dourado", onde os aventureiros receberam
 
               <div className="space-y-2">
                 <Label htmlFor="date">Data da Sessão</Label>
-                <Input
+                <DateInputBR
                   id="date"
-                  type="date"
                   value={formData.date}
-                  onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                  onChange={(value) => setFormData(prev => ({ ...prev, date: value }))}
+                  placeholder="Clique para selecionar uma data"
                 />
               </div>
 

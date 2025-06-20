@@ -1,8 +1,8 @@
 ---
 slug: "sessao-24"
-updated: "2025-06-20T01:47:11.873Z"
+updated: "2025-06-20T01:55:50.500Z"
 title: "Sessão 24"
-date: "4 de junho de 2025"
+date: "27 de junho de 2025"
 session_number: "24"
 players: ["Lirian", "Gorthak", "Sylva", "Vex"]
 ---
