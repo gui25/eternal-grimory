@@ -5,6 +5,7 @@ import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 import { createSessionMetadata } from "@/lib/metadata"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { AdminButton } from "@/components/ui/admin-button"
+import { formatDateBR, parseBRDate } from "@/utils/date-utils"
 
 // Generate metadata for this page
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -42,7 +43,7 @@ export default async function SessionPage({ params }: { params: Promise<{ slug: 
     <>
       <div className="text-lg mb-4 text-gold-light">
         <Calendar className="inline-block mr-2 h-5 w-5" />
-        {meta.date}
+        {parseBRDate(meta.date) ? formatDateBR(parseBRDate(meta.date)!) : meta.date}
       </div>
 
       {meta.players && meta.players.length > 0 && (

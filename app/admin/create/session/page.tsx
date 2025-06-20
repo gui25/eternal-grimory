@@ -14,6 +14,7 @@ import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import { useNameValidation } from '@/hooks/use-name-validation'
+import { formatDateBR, formatDateForInput, formatDateForMDX, inputDateToBR } from '@/utils/date-utils'
 
 export default function CreateSessionPage() {
   const router = useRouter()
@@ -183,7 +184,7 @@ A sessão começou na taverna "O Javali Dourado", onde os aventureiros receberam
           name: formData.name,
           content: formData.content,
           metadata: {
-            date: formData.date,
+            date: formatDateForMDX(formData.date),
             tags,
             image: formData.image,
             description: formData.description
@@ -209,7 +210,7 @@ A sessão começou na taverna "O Javali Dourado", onde os aventureiros receberam
 
   const mockFrontmatter = {
     name: formData.name || 'Nome da Sessão',
-    date: formData.date,
+    date: inputDateToBR(formData.date),
     tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
     image: formData.image,
     description: formData.description
@@ -419,7 +420,7 @@ A sessão começou na taverna "O Javali Dourado", onde os aventureiros receberam
                       <h1 className="fantasy-heading mb-2">{mockFrontmatter.name}</h1>
                       <div className="flex items-center text-lg mb-4 text-gold-light">
                         {mockFrontmatter.date && (
-                          <span>{new Date(mockFrontmatter.date).toLocaleDateString('pt-BR')}</span>
+                          <span>{mockFrontmatter.date}</span>
                         )}
                       </div>
                       

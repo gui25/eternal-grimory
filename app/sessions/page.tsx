@@ -10,6 +10,7 @@ import { PageContainer } from "@/components/ui/page-container"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { AdminSection, AdminButton } from "@/components/ui/admin-button"
 import { isAdminMode } from "@/lib/dev-utils"
+import { formatDateBR, parseBRDate } from "@/utils/date-utils"
 
 interface Session {
   session_number: number;
@@ -126,7 +127,7 @@ export default function SessionsPage() {
                           <h2 className="text-lg font-semibold">Session {session.session_number}</h2>
                           <div className="text-sm text-muted-foreground flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
-                            {session.date}
+                            {parseBRDate(session.date) ? formatDateBR(parseBRDate(session.date)!) : session.date}
                           </div>
                         </div>
                         {showAdmin && (

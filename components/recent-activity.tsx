@@ -172,7 +172,7 @@ function formatTimestamp(timestamp: number) {
     return `${days} dia${days !== 1 ? "s" : ""} atrás`
   }
 
-  // Format as date
-  return new Date(timestamp).toLocaleDateString()
+  // Format as Brazilian date
+  return new Date(timestamp).toLocaleDateString('pt-BR')
 }
 

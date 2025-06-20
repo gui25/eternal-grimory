@@ -357,7 +357,11 @@ export default function CampaignsPage() {
                               </p>
                             )}
                             <p className="text-xs text-muted-foreground mt-2">
-                              Criada em: {new Date(campaign.createdAt).toLocaleDateString('pt-BR')}
+                              Criada em: {new Date(campaign.createdAt).toLocaleDateString('pt-BR', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric'
+                })}
                             </p>
                           </div>
                           <div className="flex items-center gap-2">

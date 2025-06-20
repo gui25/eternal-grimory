@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { formatDateBR, parseBRDate } from "@/utils/date-utils"
 
 type RecentItem = {
   slug: string
@@ -95,7 +96,7 @@ export default function RecentlyViewed() {
                 >
                   <div>
                     <p className="font-medium">{session.name}</p>
-                    <p className="text-sm opacity-70">{session.date}</p>
+                    <p className="text-sm opacity-70">{session.date && parseBRDate(session.date) ? formatDateBR(parseBRDate(session.date)!) : session.date || ''}</p>
                   </div>
                   <Button variant="outline" size="sm" asChild>
                     <Link href={`/sessions/${session.slug}`}>View</Link>

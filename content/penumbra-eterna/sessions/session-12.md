@@ -1,9 +1,11 @@
 ---
-date: "3 de Março, 2025"
-session_number: 12
+slug: "sessao-12"
+updated: "2025-06-20T01:46:41.171Z"
+title: "Sessão 12"
+date: "11 de junho de 2025"
+session_number: "12"
 players: ["Lirian", "Gorthak", "Sylva", "Vex"]
 image: "/placeholder.svg?height=300&width=500"
-description: "O grupo explora as ruínas de Eldoria e enfrenta um terrível Dracolich."
 ---
 
 # Sessão 12: A Queda de Eldoria

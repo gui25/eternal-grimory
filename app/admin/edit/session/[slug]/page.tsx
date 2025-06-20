@@ -14,6 +14,7 @@ import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import { useNameValidation } from '@/hooks/use-name-validation'
+import { formatDateBR, formatDateForInput, formatDateForMDX, inputDateToBR, parseBRDate } from '@/utils/date-utils'
 
 export default function EditSessionPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
@@ -56,7 +57,11 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
         if (response.ok) {
           const result = await response.json()
           if (result.success) {
-            setFormData(result.data)
+            const sessionData = result.data
+            setFormData({
+              ...sessionData,
+              date: formatDateForInput(parseBRDate(sessionData.date) || sessionData.date)
+            })
           } else {
             toast.error('Erro ao carregar dados da sessão')
             router.push('/sessions')
@@ -146,7 +151,7 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
           originalSlug: originalSlug,
           metadata: {
             session_number: formData.session_number,
-            date: formData.date,
+            date: formatDateForMDX(formData.date),
             players,
             image: formData.image,
             description: formData.description
@@ -172,7 +177,7 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
 
   const mockFrontmatter = {
     session_number: formData.session_number,
-    date: formData.date,
+    date: inputDateToBR(formData.date),
     players: formData.players.split(',').map(player => player.trim()).filter(Boolean),
     image: formData.image,
     description: formData.description

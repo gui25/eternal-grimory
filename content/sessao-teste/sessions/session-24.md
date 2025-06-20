@@ -1,6 +1,9 @@
 ---
-date: "3 de Março, 2025"
-session_number: 24
+slug: "sessao-24"
+updated: "2025-06-20T01:47:11.873Z"
+title: "Sessão 24"
+date: "4 de junho de 2025"
+session_number: "24"
 players: ["Lirian", "Gorthak", "Sylva", "Vex"]
 ---
 
