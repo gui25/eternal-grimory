@@ -1,13 +1,12 @@
 ---
 name: "Thorne Coração de Ferro"
 slug: "thorne-coracao-de-ferro"
-updated: "2025-06-16T02:24:30.418Z"
+updated: "2025-06-20T21:40:48.832Z"
 player: "Mike"
 class: "Paladino"
 race: "Anão"
 level: "8"
 tags: ["Tank", "Healer", "Oath of the Ancients"]
-image: "/placeholder.svg?height=400&width=400"
 ---
 
 # Thorne Coração de Ferro

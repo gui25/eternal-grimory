@@ -32,6 +32,7 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
     level: 1,
     tags: '',
     image: '',
+    description: '',
     content: ''
   })
 
@@ -169,7 +170,8 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
             race: formData.race,
             level: formData.level,
             tags,
-            image: formData.image
+            image: formData.image,
+            description: formData.description
           }
         })
       })
@@ -197,7 +199,8 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
     race: formData.race,
     level: formData.level,
     tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-    image: formData.image
+    image: formData.image,
+    description: formData.description
   }
 
 
@@ -323,6 +326,19 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="description">Descrição Breve (Opcional)</Label>
+                <Input
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Ex: Um paladino anão que jurou proteger a natureza"
+                />
+                <p className="text-xs text-muted-foreground">
+                  💡 Uma descrição curta que aparecerá destacada na página do personagem
+                </p>
+              </div>
+
+              <div className="space-y-2">
                 <ImageUpload
                   value={formData.image}
                   onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
@@ -415,6 +431,11 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
                       </div>
                     </div>
                   </div>
+
+                  {/* Descrição opcional */}
+                  {mockFrontmatter.description && (
+                    <div className="mt-4 italic text-gray-300">"{mockFrontmatter.description}"</div>
+                  )}
                 </div>
 
                 <article 

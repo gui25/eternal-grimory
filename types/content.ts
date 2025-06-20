@@ -11,6 +11,7 @@ export interface MonsterMeta extends BaseViewedItem {
   challenge: string;
   tags: string[];
   image?: string;
+  description?: string;
 }
 
 // Tipo para NPCs
@@ -21,6 +22,7 @@ export interface NpcMeta extends BaseViewedItem {
   tags: string[];
   image?: string;
   affiliation?: string;
+  description?: string;
 }
 
 // Tipo para personagens jogadores
@@ -33,6 +35,7 @@ export interface PlayerMeta extends BaseViewedItem {
   image?: string;
   player?: string;
   level?: number;
+  description?: string;
 }
 
 // Tipo para itens

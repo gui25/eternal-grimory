@@ -374,14 +374,16 @@ Prefere soluções diretas e honestas. Não gosta de subterfúgios, mas respeita
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Descrição do Personagem</Label>
-                <Textarea
+                <Label htmlFor="description">Descrição Breve (Opcional)</Label>
+                <Input
                   id="description"
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Uma breve descrição do personagem"
-                  rows={4}
+                  placeholder="Ex: Um paladino anão que jurou proteger a natureza"
                 />
+                <p className="text-xs text-muted-foreground">
+                  💡 Uma descrição curta que aparecerá destacada na página do personagem
+                </p>
               </div>
 
               <div className="space-y-2">
@@ -469,6 +471,11 @@ Prefere soluções diretas e honestas. Não gosta de subterfúgios, mas respeita
                       </div>
                     </div>
                   </div>
+
+                  {/* Descrição opcional */}
+                  {mockFrontmatter.description && (
+                    <div className="mt-4 italic text-gray-300">"{mockFrontmatter.description}"</div>
+                  )}
                 </div>
 
                 {/* Main content com as mesmas classes da página real */}

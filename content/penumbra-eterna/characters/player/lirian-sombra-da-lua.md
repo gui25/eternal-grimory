@@ -1,7 +1,7 @@
 ---
 name: "Lirian Sombra da Lua"
 slug: "lirian-sombra-da-lua"
-updated: "2025-06-20T18:42:56.913Z"
+updated: "2025-06-20T21:36:47.802Z"
 player: "Sarah"
 class: "Bardo"
 race: "Meio-Elfo"
