@@ -15,6 +15,7 @@ import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import { useNameValidation } from '@/hooks/use-name-validation'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export default function CreateItemPage() {
   const router = useRouter()
@@ -331,12 +332,13 @@ Use este item para criar tensão em encontros com orcs. A luz de aviso pode tant
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">URL da Imagem</Label>
-                <Input
-                  id="image"
+                <ImageUpload
                   value={formData.image}
-                  onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="https://exemplo.com/imagem.jpg"
+                  onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
+                  type="item"
+                  slug={formData.slug || 'novo-item'}
+                  label="Imagem do Item"
+                  disabled={isLoading}
                 />
               </div>
 

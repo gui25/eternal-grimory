@@ -16,6 +16,7 @@ import remarkHtml from 'remark-html'
 import { useNameValidation } from '@/hooks/use-name-validation'
 import { formatDateBR, formatDateForInput, formatDateForMDX, inputDateToBR, parseBRDate } from '@/utils/date-utils'
 import { DateInputBR } from '@/components/ui/date-input-br'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export default function EditSessionPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
@@ -289,12 +290,13 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">URL da Imagem</Label>
-                <Input
-                  id="image"
+                <ImageUpload
                   value={formData.image}
-                  onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="https://exemplo.com/imagem.jpg"
+                  onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
+                  type="session"
+                  slug={formData.slug || 'sessao'}
+                  label="Imagem da Sessão"
+                  disabled={isLoading}
                 />
               </div>
 

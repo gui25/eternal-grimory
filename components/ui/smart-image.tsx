@@ -53,7 +53,6 @@ export default function SmartImage({
   };
 
   const handleImageError = (event: React.SyntheticEvent<HTMLImageElement>) => {
-    console.warn(`Failed to load image: ${src}`);
     setImageError(true);
     setImageLoaded(false);
     onError?.(event);
@@ -76,9 +75,42 @@ export default function SmartImage({
     );
   }
 
-  // Render the actual image
+  // Check if it's a local image that might have issues with Next/Image optimization
+  const isLocalImage = src && (src.startsWith('/saved-images/') || src.startsWith('/temp-images/'));
+  
+  // For local images, use a regular img tag to avoid Next.js optimization issues
+  if (isLocalImage) {
+    return (
+      <div className={cn("relative", fill ? "w-full h-full" : "", containerClassName)}>
+        <img
+          src={src}
+          alt={alt}
+          className={cn(
+            "transition-opacity duration-300 object-cover opacity-100",
+            fill ? "absolute inset-0 w-full h-full" : "",
+            className
+          )}
+          style={!fill && width && height ? { width, height } : undefined}
+          onError={() => setImageError(true)}
+        />
+        
+        {/* Show placeholder only if image errored */}
+        {imageError && (
+          <div 
+            className={cn(
+              "absolute inset-0 flex items-center justify-center bg-wine-darker"
+            )}
+          >
+            {placeholder}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Render the actual image using Next/Image for external/optimized images
   return (
-    <div className={cn("relative", containerClassName)}>
+    <div className={cn("relative", fill ? "w-full h-full" : "", containerClassName)}>
       <Image
         src={src}
         alt={alt}

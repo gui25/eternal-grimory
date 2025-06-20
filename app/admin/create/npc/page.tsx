@@ -14,6 +14,7 @@ import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import { useNameValidation } from '@/hooks/use-name-validation'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export default function CreateNPCPage() {
   const router = useRouter()
@@ -308,12 +309,13 @@ Use este NPC como fonte de informações e ganchos de aventura. Ele pode fornece
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">URL da Imagem</Label>
-                <Input
-                  id="image"
+                <ImageUpload
                   value={formData.image}
-                  onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="https://exemplo.com/imagem.jpg"
+                  onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
+                  type="npc"
+                  slug={formData.slug || 'novo-npc'}
+                  label="Imagem do NPC"
+                  disabled={isLoading}
                 />
               </div>
 

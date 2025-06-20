@@ -14,6 +14,7 @@ import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import { useNameValidation } from '@/hooks/use-name-validation'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export default function CreatePlayerPage() {
   const router = useRouter()
@@ -21,6 +22,7 @@ export default function CreatePlayerPage() {
   const [htmlContent, setHtmlContent] = useState('')
   const [nameValidationError, setNameValidationError] = useState('')
   const [canSubmit, setCanSubmit] = useState(true)
+  const [moveImageToSaved, setMoveImageToSaved] = useState<(() => Promise<void>) | null>(null)
   
   // Hook de validação de nome
   const { validateName, isValidating, validationMessage, isValid } = useNameValidation({
@@ -180,6 +182,11 @@ Prefere soluções diretas e honestas. Não gosta de subterfúgios, mas respeita
     setIsLoading(true)
 
     try {
+      // Mover imagem temporária para pasta definitiva se necessário
+      if (moveImageToSaved && typeof moveImageToSaved === 'function') {
+        await moveImageToSaved()
+      }
+
       const tags = formData.tags.split(',').map(tag => tag.trim()).filter(Boolean)
       
       const response = await fetch('/api/admin/create', {
@@ -355,12 +362,14 @@ Prefere soluções diretas e honestas. Não gosta de subterfúgios, mas respeita
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">URL da Imagem</Label>
-                <Input
-                  id="image"
+                <ImageUpload
                   value={formData.image}
-                  onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="https://exemplo.com/imagem.jpg"
+                  onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
+                  type="player"
+                  slug={formData.slug || 'novo-player'}
+                  label="Imagem do Personagem"
+                  disabled={isLoading}
+                  onTempImageReady={setMoveImageToSaved}
                 />
               </div>
 

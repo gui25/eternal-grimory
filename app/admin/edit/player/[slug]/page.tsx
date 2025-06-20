@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export default function EditPlayerPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
@@ -21,6 +22,7 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
   const [isLoadingData, setIsLoadingData] = useState(true)
   const [htmlContent, setHtmlContent] = useState('')
   const [originalSlug, setOriginalSlug] = useState('')
+  const [moveImageToSaved, setMoveImageToSaved] = useState<(() => Promise<void>) | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -45,7 +47,34 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
         if (response.ok) {
           const result = await response.json()
           if (result.success) {
-            setFormData(result.data)
+            // Preservar a imagem se ela já foi modificada (evita sobrescrever uploads recentes)
+            setFormData(prevData => {
+              const newData = result.data
+              
+              // Se é a primeira carga (prevData vazio/inicial), sempre usar dados do servidor
+              if (!prevData.name && !prevData.image) {
+                return newData
+              }
+              
+              // Se já temos uma imagem carregada (temp ou saved), preservá-la
+              if (prevData.image && 
+                  prevData.image !== '' && 
+                  !prevData.image.includes('placeholder.svg')) {
+                newData.image = prevData.image
+                return newData
+              }
+              
+              // Se foi removida explicitamente E o servidor ainda tem a imagem original, manter a remoção
+              if (prevData.image === '' && 
+                  newData.image && 
+                  !newData.image.includes('placeholder.svg')) {
+                newData.image = ''
+                return newData
+              }
+              
+              // Caso contrário, usar os dados do servidor (permite novos uploads após remoção)
+              return newData
+            })
           } else {
             toast.error('Erro ao carregar dados do personagem')
             router.push('/characters/players')
@@ -116,6 +145,11 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
     setIsLoading(true)
 
     try {
+      // Mover imagem temporária para pasta definitiva se necessário
+      if (moveImageToSaved && typeof moveImageToSaved === 'function') {
+        await moveImageToSaved()
+      }
+
       const tags = formData.tags.split(',').map(tag => tag.trim()).filter(Boolean)
       
       const response = await fetch('/api/admin/edit', {
@@ -165,6 +199,8 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
     tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
     image: formData.image
   }
+
+
 
   if (isLoadingData) {
     return (
@@ -287,12 +323,14 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">URL da Imagem</Label>
-                <Input
-                  id="image"
+                <ImageUpload
                   value={formData.image}
-                  onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="https://exemplo.com/imagem.jpg"
+                  onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
+                  type="player"
+                  slug={formData.slug || 'player'}
+                  label="Imagem do Personagem"
+                  disabled={isLoading}
+                  onTempImageReady={setMoveImageToSaved}
                 />
               </div>
 

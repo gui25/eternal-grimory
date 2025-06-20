@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export default function EditNPCPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
@@ -259,12 +260,13 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">URL da Imagem</Label>
-                <Input
-                  id="image"
+                <ImageUpload
                   value={formData.image}
-                  onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="https://exemplo.com/imagem.jpg"
+                  onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
+                  type="npc"
+                  slug={formData.slug || 'npc'}
+                  label="Imagem do NPC"
+                  disabled={isLoading}
                 />
               </div>
 

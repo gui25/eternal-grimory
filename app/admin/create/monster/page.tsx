@@ -14,6 +14,7 @@ import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import { useNameValidation } from '@/hooks/use-name-validation'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export default function CreateMonsterPage() {
   const router = useRouter()
@@ -305,12 +306,13 @@ Esta criatura é inteligente e prefere negociar antes de lutar. Use sua presenç
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">URL da Imagem</Label>
-                <Input
-                  id="image"
+                <ImageUpload
                   value={formData.image}
-                  onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="https://exemplo.com/imagem.jpg"
+                  onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
+                  type="monster"
+                  slug={formData.slug || 'novo-monstro'}
+                  label="Imagem do Monstro"
+                  disabled={isLoading}
                 />
               </div>
 

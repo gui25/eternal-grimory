@@ -1,12 +1,13 @@
 ---
 name: "Thorne Coração de Ferro TESTE 1"
-race: "Anão"
-class: "Paladino"
-level: 8
+slug: "thorne-coracao-de-ferro-teste-1"
+updated: "2025-06-20T21:00:35.498Z"
 player: "Mike"
+class: "Paladino"
+race: "Anão"
+level: "8"
 tags: ["Tank", "Healer", "Oath of the Ancients"]
-image: "/placeholder.svg?height=400&width=400"
-description: "Um paladino anão que jurou proteger a natureza."
+image: "/saved-images/penumbra-eterna_player_thorne-coracao-de-ferro-teste-1_1750453232138.jpg"
 ---
 
 # Thorne Coração de Ferro

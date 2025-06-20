@@ -15,6 +15,7 @@ import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import { useNameValidation } from '@/hooks/use-name-validation'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export default function EditItemPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
@@ -330,12 +331,13 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">URL da Imagem</Label>
-                <Input
-                  id="image"
+                <ImageUpload
                   value={formData.image}
-                  onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="https://exemplo.com/imagem.jpg"
+                  onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
+                  type="item"
+                  slug={formData.slug || 'item'}
+                  label="Imagem do Item"
+                  disabled={isLoading}
                 />
               </div>
 

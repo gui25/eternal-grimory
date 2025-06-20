@@ -1,9 +1,11 @@
 ---
 name: "Lirian Sombra da Lua"
-race: "Meio-Elfo"
-class: "Bardo"
-level: 8
+slug: "lirian-sombra-da-lua"
+updated: "2025-06-20T18:42:56.913Z"
 player: "Sarah"
+class: "Bardo"
+race: "Meio-Elfo"
+level: "8"
 tags: ["Spellcaster", "Face", "College of Lore"]
 ---
 

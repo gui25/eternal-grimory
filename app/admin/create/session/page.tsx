@@ -16,6 +16,7 @@ import remarkHtml from 'remark-html'
 import { useNameValidation } from '@/hooks/use-name-validation'
 import { formatDateBR, formatDateForInput, formatDateForMDX, inputDateToBR } from '@/utils/date-utils'
 import { DateInputBR } from '@/components/ui/date-input-br'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export default function CreateSessionPage() {
   const router = useRouter()
@@ -333,12 +334,13 @@ A sessão começou na taverna "O Javali Dourado", onde os aventureiros receberam
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">URL da Imagem</Label>
-                <Input
-                  id="image"
+                <ImageUpload
                   value={formData.image}
-                  onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="https://exemplo.com/imagem.jpg"
+                  onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
+                  type="session"
+                  slug={formData.slug || 'nova-sessao'}
+                  label="Imagem da Sessão"
+                  disabled={isLoading}
                 />
               </div>
 
