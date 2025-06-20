@@ -16,6 +16,8 @@ import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import { useNameValidation } from '@/hooks/use-name-validation'
 import { ImageUpload } from '@/components/ui/image-upload'
+import { DeleteButton } from '@/components/ui/delete-button'
+import { getCurrentCampaignId } from '@/lib/campaign-config'
 
 export default function EditItemPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
@@ -378,6 +380,14 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
                     Cancelar
                   </Link>
                 </Button>
+
+                <DeleteButton
+                  type="item"
+                  slug={originalSlug}
+                  name={formData.name}
+                  campaignId={getCurrentCampaignId()}
+                  className="ml-auto"
+                />
               </div>
             </form>
           </CardContent>

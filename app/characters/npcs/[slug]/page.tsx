@@ -4,6 +4,8 @@ import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { User, Edit } from "lucide-react"
 import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 import { AdminButton } from "@/components/ui/admin-button"
+import { DeleteButton } from "@/components/ui/delete-button"
+import { getCurrentCampaignId } from "@/lib/campaign-config"
 
 export default async function NPCPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -26,10 +28,20 @@ export default async function NPCPage({ params }: { params: Promise<{ slug: stri
       imageAlt={meta.name}
       imagePlaceholder={<User className="h-24 w-24 text-gold-light/50" />}
       actionButtons={
-        <AdminButton href={`/admin/edit/npc/${slug}`} variant="outline" size="sm">
-          <Edit className="h-4 w-4 mr-2" />
-          Editar
-        </AdminButton>
+        <>
+          <AdminButton href={`/admin/edit/npc/${slug}`} variant="outline" size="sm">
+            <Edit className="h-4 w-4 mr-2" />
+            Editar
+          </AdminButton>
+          <DeleteButton
+            type="npc"
+            slug={slug}
+            name={meta.name}
+            campaignId={getCurrentCampaignId()}
+            className="hidden sm:flex"
+            size="sm"
+          />
+        </>
       }
       metadata={
         <>

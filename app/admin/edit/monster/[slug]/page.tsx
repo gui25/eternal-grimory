@@ -15,6 +15,8 @@ import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import { useNameValidation } from '@/hooks/use-name-validation'
 import { ImageUpload } from '@/components/ui/image-upload'
+import { DeleteButton } from '@/components/ui/delete-button'
+import { getCurrentCampaignId } from '@/lib/campaign-config'
 
 export default function EditMonsterPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
@@ -352,6 +354,14 @@ export default function EditMonsterPage({ params }: { params: Promise<{ slug: st
                     Cancelar
                   </Link>
                 </Button>
+
+                <DeleteButton
+                  type="monster"
+                  slug={originalSlug}
+                  name={formData.name}
+                  campaignId={getCurrentCampaignId()}
+                  className="ml-auto"
+                />
               </div>
             </form>
           </CardContent>

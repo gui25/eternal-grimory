@@ -5,6 +5,8 @@ import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 import { createSessionMetadata } from "@/lib/metadata"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { AdminButton } from "@/components/ui/admin-button"
+import { DeleteButton } from "@/components/ui/delete-button"
+import { getCurrentCampaignId } from "@/lib/campaign-config"
 import { formatDateBR, formatDateForMDX, parseBRDate } from "@/utils/date-utils"
 
 // Generate metadata for this page
@@ -70,10 +72,20 @@ export default async function SessionPage({ params }: { params: Promise<{ slug: 
       imageAlt={`Sessão ${meta.session_number}`}
       imagePlaceholder={<Calendar className="h-24 w-24 text-gold-light/50" />}
       actionButtons={
-        <AdminButton href={`/admin/edit/session/${slug}`} variant="outline" size="sm">
-          <Edit className="h-4 w-4 mr-2" />
-          Editar
-        </AdminButton>
+        <>
+          <AdminButton href={`/admin/edit/session/${slug}`} variant="outline" size="sm">
+            <Edit className="h-4 w-4 mr-2" />
+            Editar
+          </AdminButton>
+          <DeleteButton
+            type="session"
+            slug={slug}
+            name={`Sessão ${meta.session_number}`}
+            campaignId={getCurrentCampaignId()}
+            className="hidden sm:flex"
+            size="sm"
+          />
+        </>
       }
       metadata={sessionMetadata}
       description={meta.description}

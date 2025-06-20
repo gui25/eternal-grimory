@@ -10,6 +10,8 @@ import { PageContainer } from "@/components/ui/page-container"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 import { AdminButton } from "@/components/ui/admin-button"
+import { DeleteButton } from "@/components/ui/delete-button"
+import { getCurrentCampaignId } from "@/lib/campaign-config"
 
 // Define a interface localmente
 interface PlayerCharacterMeta {
@@ -69,10 +71,20 @@ export default async function PlayerPage({ params }: { params: Promise<{ slug: s
       imageAlt={meta.name}
       imagePlaceholder={<User className="h-24 w-24 text-blue-accent/50" />}
       actionButtons={
-        <AdminButton href={`/admin/edit/player/${slug}`} variant="outline" size="sm">
-          <Edit className="h-4 w-4 mr-2" />
-          Editar
-        </AdminButton>
+        <>
+          <AdminButton href={`/admin/edit/player/${slug}`} variant="outline" size="sm">
+            <Edit className="h-4 w-4 mr-2" />
+            Editar
+          </AdminButton>
+          <DeleteButton
+            type="player"
+            slug={slug}
+            name={meta.name}
+            campaignId={getCurrentCampaignId()}
+            className="hidden sm:flex"
+            size="sm"
+          />
+        </>
       }
       metadata={playerMetadata}
       description={meta.description}

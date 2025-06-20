@@ -14,6 +14,8 @@ import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import { ImageUpload } from '@/components/ui/image-upload'
+import { DeleteButton } from '@/components/ui/delete-button'
+import { getCurrentCampaignId } from '@/lib/campaign-config'
 
 export default function EditPlayerPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
@@ -376,6 +378,14 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
                     Cancelar
                   </Link>
                 </Button>
+
+                <DeleteButton
+                  type="player"
+                  slug={originalSlug}
+                  name={formData.name}
+                  campaignId={getCurrentCampaignId()}
+                  className="ml-auto"
+                />
               </div>
             </form>
           </CardContent>

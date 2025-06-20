@@ -5,6 +5,8 @@ import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 import { createItemMetadata } from "@/lib/metadata"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { AdminButton } from "@/components/ui/admin-button"
+import { DeleteButton } from "@/components/ui/delete-button"
+import { getCurrentCampaignId } from "@/lib/campaign-config"
 
 // Generate metadata for this page
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -100,10 +102,20 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
       imageAlt={meta.name}
       imagePlaceholder={<Sparkles className="h-24 w-24 text-gold-light/50" />}
       actionButtons={
-        <AdminButton href={`/admin/edit/item/${slug}`} variant="outline" size="sm">
-          <Edit className="h-4 w-4 mr-2" />
-          Editar
-        </AdminButton>
+        <>
+          <AdminButton href={`/admin/edit/item/${slug}`} variant="outline" size="sm">
+            <Edit className="h-4 w-4 mr-2" />
+            Editar
+          </AdminButton>
+          <DeleteButton
+            type="item"
+            slug={slug}
+            name={meta.name}
+            campaignId={getCurrentCampaignId()}
+            className="hidden sm:flex"
+            size="sm"
+          />
+        </>
       }
       metadata={itemMetadata}
       description={meta.description}

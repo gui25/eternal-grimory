@@ -17,6 +17,8 @@ import { useNameValidation } from '@/hooks/use-name-validation'
 import { formatDateBR, formatDateForInput, formatDateForMDX, inputDateToBR, parseBRDate } from '@/utils/date-utils'
 import { DateInputBR } from '@/components/ui/date-input-br'
 import { ImageUpload } from '@/components/ui/image-upload'
+import { DeleteButton } from '@/components/ui/delete-button'
+import { getCurrentCampaignId } from '@/lib/campaign-config'
 
 export default function EditSessionPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
@@ -338,6 +340,14 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
                     Cancelar
                   </Link>
                 </Button>
+
+                <DeleteButton
+                  type="session"
+                  slug={originalSlug}
+                  name={`Sessão ${formData.session_number}`}
+                  campaignId={getCurrentCampaignId()}
+                  className="ml-auto"
+                />
               </div>
             </form>
           </CardContent>

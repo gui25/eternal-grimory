@@ -4,6 +4,8 @@ import { Skull, Edit } from "lucide-react"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 import { AdminButton } from "@/components/ui/admin-button"
+import { DeleteButton } from "@/components/ui/delete-button"
+import { getCurrentCampaignId } from "@/lib/campaign-config"
 
 export default async function MonsterPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -26,10 +28,20 @@ export default async function MonsterPage({ params }: { params: Promise<{ slug: 
       imageAlt={meta.name}
       imagePlaceholder={<Skull className="h-24 w-24 text-red-accent/40" />}
       actionButtons={
-        <AdminButton href={`/admin/edit/monster/${slug}`} variant="outline" size="sm">
-          <Edit className="h-4 w-4 mr-2" />
-          Editar
-        </AdminButton>
+        <>
+          <AdminButton href={`/admin/edit/monster/${slug}`} variant="outline" size="sm">
+            <Edit className="h-4 w-4 mr-2" />
+            Editar
+          </AdminButton>
+          <DeleteButton
+            type="monster"
+            slug={slug}
+            name={meta.name}
+            campaignId={getCurrentCampaignId()}
+            className="hidden sm:flex"
+            size="sm"
+          />
+        </>
       }
       metadata={
         <>
