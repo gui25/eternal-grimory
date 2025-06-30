@@ -10,6 +10,17 @@ export interface Session {
   content: string;
 }
 
+// Tipos para Anotações
+export interface Note {
+  slug: string;
+  name: string;
+  date?: string;
+  description: string;
+  tags: string[];
+  image?: string;
+  content: string;
+}
+
 // Tipos para Itens
 export interface Item {
   slug: string;

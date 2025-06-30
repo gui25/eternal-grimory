@@ -48,6 +48,9 @@ export async function PUT(request: NextRequest) {
       case 'session':
         contentType = 'sessions'
         break
+      case 'note':
+        contentType = 'notes'
+        break
       default:
         return NextResponse.json(
           { error: 'Invalid content type' },
@@ -172,6 +175,16 @@ function createFrontmatter(type: string, name: string, metadata: any): string {
         image: metadata.image || ''
       }
       delete frontmatterData.name // Remove 'name' for sessions
+      break
+    
+    case 'note':
+      frontmatterData = {
+        ...baseData,
+        date: metadata.date || '',
+        tags: metadata.tags || [],
+        image: metadata.image || '',
+        description: metadata.description || ''
+      }
       break
     
     default:

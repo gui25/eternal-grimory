@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card"
 import Link from "next/link"
-import { Shield, Sword, Scroll, Users, BirdIcon as Dragon, Sparkles } from "lucide-react"
-import { getItems, getSessions, getCharacters } from "@/lib/mdx"
+import { Shield, Sword, Scroll, Users, BirdIcon as Dragon, Sparkles, FileText } from "lucide-react"
+import { getItems, getSessions, getCharacters, getNotes } from "@/lib/mdx"
 import RecentActivity from "@/components/recent-activity"
 import ConfettiButton from "@/components/confetti-button"
 import { PageContainer } from "@/components/ui/page-container"
@@ -14,6 +14,7 @@ export default async function Dashboard() {
   const players = await getCharacters("player")
   const npcs = await getCharacters("npc")
   const monsters = await getCharacters("monster")
+  const notes = await getNotes()
 
   return (
     <PageContainer>
@@ -74,7 +75,7 @@ export default async function Dashboard() {
         )}
       </section>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
         <Link href="/items" prefetch={true} className="h-full">
           <Card className="stat-card h-full">
             <div className="p-6">
@@ -123,6 +124,19 @@ export default async function Dashboard() {
               </div>
               <div className="stat-value">{monsters.length}</div>
               <p className="text-sm text-gold-light/70 mt-2">Criaturas e inimigos encontrados</p>
+            </div>
+          </Card>
+        </Link>
+
+        <Link href="/notes" className="h-full">
+          <Card className="stat-card h-full">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-heading font-semibold text-gold">Anotações</h3>
+                <FileText className="h-5 w-5 text-gold" />
+              </div>
+              <div className="stat-value">{notes.length}</div>
+              <p className="text-sm text-gold-light/70 mt-2">Registros e informações importantes</p>
             </div>
           </Card>
         </Link>

@@ -24,7 +24,8 @@ export async function DELETE(request: NextRequest) {
       'npc': 'characters/npc', 
       'monster': 'characters/monster',
       'item': 'items',
-      'session': 'sessions'
+      'session': 'sessions',
+      'note': 'notes'
     }
 
     const contentPath = typeToPath[type]
@@ -56,7 +57,7 @@ export async function DELETE(request: NextRequest) {
     await fs.unlink(filePath)
 
     // Se for um tipo com imagem, tentar deletar a imagem associada
-    if (['player', 'npc', 'monster', 'item'].includes(type)) {
+    if (['player', 'npc', 'monster', 'item', 'note'].includes(type)) {
       try {
         // Ler o conteúdo do arquivo antes de deletar para obter a imagem
         const savedImagesDir = path.join(process.cwd(), 'public', 'saved-images')

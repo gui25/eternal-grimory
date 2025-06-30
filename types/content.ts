@@ -59,5 +59,15 @@ export interface SessionMeta extends BaseViewedItem {
   description?: string;
 }
 
+// Tipo para anotações
+export interface NotesMeta extends BaseViewedItem {
+  category: "notes";
+  name: string;
+  date?: string;
+  tags: string[];
+  image?: string;
+  description: string;
+}
+
 // União de todos os tipos possíveis para ViewedItem
-export type ViewedItem = MonsterMeta | NpcMeta | PlayerMeta | ItemMeta | SessionMeta;
+export type ViewedItem = MonsterMeta | NpcMeta | PlayerMeta | ItemMeta | SessionMeta | NotesMeta;

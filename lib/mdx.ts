@@ -30,6 +30,16 @@ export type SessionMeta = {
   campaignId?: string
 }
 
+export type NotesMeta = {
+  name: string
+  date?: string
+  description: string
+  tags: string[]
+  slug: string
+  image?: string
+  campaignId?: string
+}
+
 export type CharacterMeta = {
   name: string
   type: string
@@ -348,6 +358,82 @@ export async function getCharacters(
 }
 
 // Get specific character by slug and category
+// Get list of all notes with their metadata
+export async function getNotes(campaignId?: string): Promise<NotesMeta[]> {
+  console.log(`[NOTES] Obtendo anotações para campanha: ${campaignId || 'não especificado'}`);
+  
+  // Obter o diretório de conteúdo
+  const directory = await getCampaignContentPath("notes", campaignId);
+  console.log(`[NOTES] Buscando em: ${directory}`);
+  
+  ensureDirectoryExists(directory);
+
+  const files = fs.readdirSync(directory);
+  const mdFiles = files.filter((file) => file.endsWith(".md"));
+  
+  console.log(`[NOTES] Encontradas ${mdFiles.length} anotações.`);
+
+  const notes = mdFiles.map((filename) => {
+    const filePath = path.join(directory, filename);
+    const fileContent = fs.readFileSync(filePath, "utf8");
+
+    // Use gray-matter to parse the frontmatter
+    const { data } = matter(fileContent);
+    const finalCampaignId = campaignId || CAMPAIGNS.find(c => c.contentPath === directory.split('/').slice(-2)[0])?.id || CAMPAIGNS[0].id;
+
+    return {
+      ...data,
+      slug: filename.replace(".md", ""),
+      campaignId: finalCampaignId,
+      _source: {
+        path: filePath,
+        campaignPath: directory.split('/').slice(-2)[0]
+      }
+    } as unknown as NotesMeta
+  });
+
+  // Sort by date (most recent first) or by name if no date
+  return notes.sort((a, b) => {
+    if (a.date && b.date) {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    }
+    if (a.date && !b.date) return -1;
+    if (!a.date && b.date) return 1;
+    return a.name.localeCompare(b.name);
+  });
+}
+
+// Get single note by slug
+export async function getNote(slug: string, campaignId?: string) {
+  console.log(`[NOTE] Obtendo anotação ${slug} para campanha: ${campaignId || 'não especificado'}`);
+  
+  const directory = await getCampaignContentPath("notes", campaignId);
+  ensureDirectoryExists(directory);
+  
+  const filePath = path.join(directory, `${slug}.md`);
+  
+  if (!fs.existsSync(filePath)) {
+    console.log(`[NOTE] Arquivo não encontrado: ${filePath}`);
+    notFound();
+  }
+
+  const fileContent = fs.readFileSync(filePath, "utf8");
+  const { data, content } = matter(fileContent);
+  const htmlContent = await markdownToHtml(content);
+  const finalCampaignId = campaignId || CAMPAIGNS.find(c => c.contentPath === directory.split('/').slice(-2)[0])?.id || CAMPAIGNS[0].id;
+
+  return {
+    ...data,
+    slug,
+    content: htmlContent,
+    campaignId: finalCampaignId,
+    _source: {
+      path: filePath,
+      campaignPath: directory.split('/').slice(-2)[0]
+    }
+  };
+}
+
 export async function getCharacter(
   slug: string, 
   category: "npc" | "monster" | "player", 

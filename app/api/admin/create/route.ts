@@ -47,6 +47,9 @@ export async function POST(request: NextRequest) {
       case 'session':
         contentType = 'sessions'
         break
+      case 'note':
+        contentType = 'notes'
+        break
       default:
         return NextResponse.json(
           { error: 'Invalid content type' },
@@ -173,6 +176,16 @@ function createFrontmatter(type: string, name: string, metadata: any): string {
         image: metadata.image || ''
       }
       delete frontmatterData.name // Remove 'name' for sessions
+      break
+    
+    case 'note':
+      frontmatterData = {
+        ...baseData,
+        date: metadata.date || '',
+        tags: metadata.tags || [],
+        image: metadata.image || '',
+        description: metadata.description || ''
+      }
       break
     
     default:
@@ -558,6 +571,52 @@ Descrição da decisão tomada pelos jogadores e suas possíveis consequências.
 
 ### Preparação para Próxima Sessão
 - [O que precisa ser preparado]`
+
+    case 'note':
+      return `# ${data.name}
+
+${data.description || 'Uma anotação sobre algo importante na campanha.'}
+
+## Detalhes
+
+Descreva aqui os detalhes específicos sobre esta anotação.
+
+### Características Principais
+- **Aspecto 1**: Descrição detalhada
+- **Aspecto 2**: Descrição detalhada
+- **Aspecto 3**: Descrição detalhada
+
+## Conexões
+
+### Relacionado a Sessões
+- [Sessão X]: Como esta anotação se relaciona com eventos da sessão
+
+### Relacionado a Personagens
+- **[Nome do NPC]**: Como este NPC se relaciona com a anotação
+- **[Nome do Monstro]**: Conexão com criaturas relevantes
+
+### Relacionado a Locais
+- **[Nome do Local]**: Descrição da conexão geográfica
+
+## Implicações
+
+### Para os Jogadores
+Como esta informação pode afetar ou interessar aos jogadores.
+
+### Para a História
+Como esta anotação se encaixa na narrativa maior da campanha.
+
+## Notas Adicionais
+
+### Informações Secretas
+Informações que apenas o mestre deve saber.
+
+### Possíveis Desenvolvimentos
+Como esta anotação pode evoluir ou se desenvolver no futuro.
+
+### Referencias
+- **Fonte 1**: [Onde esta informação foi obtida]
+- **Fonte 2**: [Material de referência usado]`
 
     default:
       return `# ${data.name}\n\nDescreva aqui o conteúdo...`

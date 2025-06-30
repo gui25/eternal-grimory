@@ -48,6 +48,9 @@ export async function POST(request: NextRequest) {
       case 'session':
         contentType = 'sessions'
         break
+      case 'note':
+        contentType = 'notes'
+        break
       case 'campaign':
         // Para campanhas, verificar na pasta raiz de content
         const contentDir = path.join(process.cwd(), 'content')
@@ -125,6 +128,7 @@ function getTypeLabel(type: string): string {
     case 'player': return 'um jogador'
     case 'item': return 'um item'
     case 'session': return 'uma sessão'
+    case 'note': return 'uma anotação'
     case 'campaign': return 'uma campanha'
     default: return 'um conteúdo'
   }

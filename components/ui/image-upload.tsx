@@ -11,7 +11,7 @@ import { toast } from "sonner"
 interface ImageUploadProps {
   value?: string
   onChange?: (value: string) => void
-  type: 'session' | 'item' | 'monster' | 'npc' | 'player'
+  type: 'session' | 'item' | 'monster' | 'npc' | 'player' | 'note'
   slug: string
   className?: string
   label?: string

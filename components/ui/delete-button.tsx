@@ -18,7 +18,7 @@ import { Trash2, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface DeleteButtonProps {
-  type: 'player' | 'npc' | 'monster' | 'item' | 'session'
+  type: 'player' | 'npc' | 'monster' | 'item' | 'session' | 'note'
   slug: string
   name: string
   campaignId: string
@@ -65,7 +65,8 @@ export function DeleteButton({
           'npc': '/characters/npcs',
           'monster': '/characters/monsters',
           'item': '/items',
-          'session': '/sessions'
+          'session': '/sessions',
+          'note': '/notes'
         }
         router.push(typeToPath[type])
       }
@@ -82,7 +83,8 @@ export function DeleteButton({
     'npc': 'NPC',
     'monster': 'monstro',
     'item': 'item',
-    'session': 'sessão'
+    'session': 'sessão',
+    'note': 'anotação'
   }
 
   return (

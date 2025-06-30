@@ -15,6 +15,7 @@ import {
   User,
   Home,
   Settings,
+  FileText,
 } from "lucide-react"
 import CampaignSwitcher from "./campaign-switcher"
 import { isAdminMode } from "@/lib/dev-utils"
@@ -65,6 +66,7 @@ const NAVIGATION_ITEMS: NavItem[] = [
   { href: "/characters/monsters", label: "Monstros", icon: <Shield className="h-5 w-5" /> },
   { href: "/items", label: "Itens", icon: <Sword className="h-5 w-5" /> },
   { href: "/sessions", label: "Sessões", icon: <Scroll className="h-5 w-5" /> },
+  { href: "/notes", label: "Anotações", icon: <FileText className="h-5 w-5" /> },
 ]
 
 export default function Sidebar() {

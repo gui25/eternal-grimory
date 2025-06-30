@@ -49,6 +49,9 @@ export async function GET(request: NextRequest) {
       case 'session':
         contentType = 'sessions'
         break
+      case 'note':
+        contentType = 'notes'
+        break
       default:
         return NextResponse.json(
           { error: 'Invalid content type' },

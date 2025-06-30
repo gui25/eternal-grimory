@@ -82,7 +82,8 @@ export async function POST(request: NextRequest) {
       path.join(campaignPath, 'characters', 'npc'),
       path.join(campaignPath, 'characters', 'monster'),
       path.join(campaignPath, 'items'),
-      path.join(campaignPath, 'sessions')
+      path.join(campaignPath, 'sessions'),
+      path.join(campaignPath, 'notes')
     ]
 
     for (const dir of directories) {
@@ -101,6 +102,7 @@ ${description || 'Uma nova campanha de RPG.'}
 - **characters/monster/** - Monstros e criaturas
 - **items/** - Itens, armas, armaduras e equipamentos
 - **sessions/** - Registros das sessões de jogo
+- **notes/** - Anotações e registros importantes
 
 ## Como usar
 
