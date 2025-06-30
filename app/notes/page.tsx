@@ -117,55 +117,75 @@ export default function NotesPage() {
       {isLoading ? (
         <LoadingSpinner message="Carregando anotações..." />
       ) : filteredNotes.length > 0 ? (
-        <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredNotes.map((note) => (
-            <div key={note.slug} className="relative group">
-              <Link href={`/notes/${note.slug}`}>
-                <Card className="cursor-pointer hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                      <div className="flex items-start gap-3 flex-1">
-                        <FileText className="h-5 w-5 text-gold-light mt-1 flex-shrink-0" />
-                        <div className="flex-1">
-                          <h2 className="text-lg font-semibold text-gold mb-1">{note.name}</h2>
-                          <p className="text-sm text-muted-foreground mb-2">{note.description}</p>
-                          {note.date && (
-                            <div className="text-sm text-muted-foreground flex items-center gap-1 mb-2">
-                              <Calendar className="h-3 w-3" />
-                              {parseBRDate(note.date) ? formatDateForMDX(parseBRDate(note.date)!) : note.date}
-                            </div>
-                          )}
-                          {note.tags && note.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-1">
-                              {note.tags.slice(0, 5).map((tag) => (
-                                <Badge key={tag} variant="secondary" className="text-xs">
-                                  {tag}
-                                </Badge>
-                              ))}
-                              {note.tags.length > 5 && (
-                                <Badge variant="outline" className="text-xs">
-                                  +{note.tags.length - 5}
-                                </Badge>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                        {showAdmin && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-8 w-8 p-0 ml-2"
-                            onClick={(e) => handleEditClick(e, note.slug)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
+            <Card key={note.slug} className="relative group cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-105">
+              <CardContent className="p-0">
+                {showAdmin && (
+                  <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-8 w-8 p-0"
+                      onClick={(e) => handleEditClick(e, note.slug)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+                
+                <Link href={`/notes/${note.slug}`} className="block">
+                  {/* Image/Icon Section */}
+                  <div className="aspect-video relative overflow-hidden rounded-t-lg bg-background border-b border-gold-dark">
+                    {note.image ? (
+                      <img
+                        src={note.image}
+                        alt={note.name}
+                        className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-wine-darker/50">
+                        <FileText className="h-12 w-12 text-gold/50" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content Section */}
+                  <div className="p-4 space-y-3">
+                    <div>
+                      <h3 className="text-lg font-semibold text-foreground line-clamp-2 group-hover:text-gold-light transition-colors">
+                        {note.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                        {note.description}
+                      </p>
+                    </div>
+
+                    {note.date && (
+                      <div className="text-sm text-muted-foreground flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {parseBRDate(note.date) ? formatDateForMDX(parseBRDate(note.date)!) : note.date}
+                      </div>
+                    )}
+
+                    {note.tags && note.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {note.tags.slice(0, 3).map((tag) => (
+                          <Badge key={tag} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                        {note.tags.length > 3 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{note.tags.length - 3}
+                          </Badge>
                         )}
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            </div>
+                    )}
+                  </div>
+                </Link>
+              </CardContent>
+            </Card>
           ))}
         </div>
       ) : (

@@ -71,6 +71,13 @@ export default function AdminDashboard() {
       icon: BookOpen,
       href: '/admin/create/session',
       color: 'text-gold-primary'
+    },
+    {
+      title: 'Criar Anotação',
+      description: 'Registrar informações importantes da campanha',
+      icon: FileText,
+      href: '/admin/create/note',
+      color: 'text-gold-primary'
     }
   ]
 
@@ -104,6 +111,11 @@ export default function AdminDashboard() {
       title: 'Ver Sessões',
       href: '/sessions',
       icon: BookOpen
+    },
+    {
+      title: 'Ver Anotações',
+      href: '/notes',
+      icon: FileText
     }
   ]
 
