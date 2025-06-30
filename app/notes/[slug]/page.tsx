@@ -43,9 +43,15 @@ export default async function NotePage({ params }: NotePageProps) {
   const noteMetadata = (
     <>
       {meta.date && (
-        <div className="text-lg mb-4 text-gold-light">
+        <div className="text-lg mb-3 text-gold-light">
           <Calendar className="inline-block mr-2 h-5 w-5" />
           {parseBRDate(meta.date) ? formatDateForMDX(parseBRDate(meta.date)!) : meta.date}
+        </div>
+      )}
+
+      {meta.description && (
+        <div className="mb-3 italic text-gray-100">
+          "{meta.description}"
         </div>
       )}
 
@@ -89,7 +95,6 @@ export default async function NotePage({ params }: NotePageProps) {
         </>
       }
       metadata={noteMetadata}
-      description={meta.description}
       trackViewItem={{
         slug: meta.slug || slug,
         name: meta.name,

@@ -131,6 +131,15 @@ export async function GET(request: NextRequest) {
           players: Array.isArray(frontmatter.players) ? frontmatter.players.join(', ') : ''
         }
         break
+      
+      case 'note':
+        processedData = {
+          ...processedData,
+          date: frontmatter.date || frontmatter.created?.split('T')[0] || '',
+          description: frontmatter.description || '',
+          tags: Array.isArray(frontmatter.tags) ? frontmatter.tags : (frontmatter.tags || '').split(',').map((tag: string) => tag.trim()).filter(Boolean)
+        }
+        break
     }
 
     return NextResponse.json({

@@ -152,21 +152,9 @@ export default function NotesPage() {
 
                   {/* Content Section */}
                   <div className="p-4 space-y-3">
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground line-clamp-2 group-hover:text-gold-light transition-colors">
-                        {note.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                        {note.description}
-                      </p>
-                    </div>
-
-                    {note.date && (
-                      <div className="text-sm text-muted-foreground flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {parseBRDate(note.date) ? formatDateForMDX(parseBRDate(note.date)!) : note.date}
-                      </div>
-                    )}
+                    <h3 className="text-lg font-semibold text-foreground line-clamp-2 group-hover:text-gold-light transition-colors">
+                      {note.name}
+                    </h3>
 
                     {note.tags && note.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1">
@@ -180,6 +168,17 @@ export default function NotesPage() {
                             +{note.tags.length - 3}
                           </Badge>
                         )}
+                      </div>
+                    )}
+
+                    <p className="text-sm text-gray-100 line-clamp-2">
+                      {note.description}
+                    </p>
+
+                    {note.date && (
+                      <div className="text-sm text-muted-foreground flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {parseBRDate(note.date) ? formatDateForMDX(parseBRDate(note.date)!) : note.date}
                       </div>
                     )}
                   </div>

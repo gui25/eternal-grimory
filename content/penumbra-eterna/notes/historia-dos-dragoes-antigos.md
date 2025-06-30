@@ -1,9 +1,10 @@
 ---
-name: História dos Dragões Antigos
-date: 20 de março de 2025
-description: Lore e história sobre os dragões ancestrais que uma vez dominaram o continente.
-tags: ['lore', 'dragoes', 'historia', 'mitos']
-image: ''
+name: "História dos Dragões Antigos"
+slug: "historia-dos-dragoes-antigos"
+updated: "2025-06-30T18:24:09.073Z"
+date: "30 de junho de 2025"
+tags: ["lore", "dragoes", "historia", "mitos"]
+description: "Dragoes lendarios"
 ---
 
 # História dos Dragões Antigos

@@ -1,9 +1,10 @@
 ---
-name: Torre do Mago Sombrio
-date: 15 de março de 2025
-description: Uma torre misteriosa no norte do continente, antiga morada de um poderoso mago negro.
-tags: ['local', 'dungeon', 'importante', 'mago']
-image: ''
+name: "Torre do Mago Sombrio"
+slug: "torre-do-mago-sombrio"
+date: "30/06/2025"
+updated: "2025-06-30T18:21:59.502Z"
+tags: ["local", "dungeon", "importante", "mago"]
+description: "A torre dos magos sombrios, os causadores do fim de neverwinter"
 ---
 
 # Torre do Mago Sombrio
