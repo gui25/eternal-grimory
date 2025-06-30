@@ -406,6 +406,21 @@ export default function EditNotePage({ params }: { params: Promise<{ slug: strin
                           {formData.name || 'Nome da Anotação'}
                         </h1>
                         
+                        {/* Date */}
+                        {formData.date && (
+                          <div className="text-lg mb-3 text-gold-light">
+                            <Calendar className="inline-block mr-2 h-5 w-5" />
+                            {parseBRDate(formData.date) ? formatDateForMDX(parseBRDate(formData.date)!) : formData.date}
+                          </div>
+                        )}
+
+                        {/* Description */}
+                        {formData.description && (
+                          <div className="mb-3 italic text-gray-100">
+                            "{formData.description}"
+                          </div>
+                        )}
+
                         {/* Tags */}
                         {formData.tags && (
                           <div className="mb-3">
@@ -419,21 +434,6 @@ export default function EditNotePage({ params }: { params: Promise<{ slug: strin
                                 )
                               ))}
                             </div>
-                          </div>
-                        )}
-
-                        {/* Description */}
-                        {formData.description && (
-                          <div className="mb-3 italic text-gray-100">
-                            "{formData.description}"
-                          </div>
-                        )}
-
-                        {/* Date */}
-                        {formData.date && (
-                          <div className="text-lg text-gold-light">
-                            <Calendar className="inline-block mr-2 h-5 w-5" />
-                            {parseBRDate(formData.date) ? formatDateForMDX(parseBRDate(formData.date)!) : formData.date}
                           </div>
                         )}
                       </div>
