@@ -1,10 +1,11 @@
 ---
 slug: "sessao-24"
-updated: "2025-07-09T17:33:33.471Z"
+updated: "2025-07-09T21:41:43.322Z"
 title: "Sessão 24"
 date: "26 de junho de 2025"
 session_number: "24"
 players: ["Lirian", "Gorthak", "Sylva", "Vex"]
+image: "/temp-images/penumbra-eterna_session_sessao-24_1752097274610.png"
 ---
 
 # Sessão 24: A Queda de Eldoria

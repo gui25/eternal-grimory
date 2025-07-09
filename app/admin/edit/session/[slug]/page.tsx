@@ -55,8 +55,15 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
   useEffect(() => {
     const loadData = async () => {
       const resolvedParams = await params
-      setSlug(resolvedParams.slug)
-      setOriginalSlug(resolvedParams.slug)
+      const newSlug = resolvedParams.slug
+      
+      // Só carregar se o slug mudou ou é o primeiro carregamento
+      if (slug === newSlug && formData.session_number) {
+        return;
+      }
+      
+      setSlug(newSlug)
+      setOriginalSlug(newSlug)
       
       try {
         const response = await fetch(`/api/admin/get-content?type=session&slug=${resolvedParams.slug}`)
@@ -64,10 +71,23 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
           const result = await response.json()
           if (result.success) {
             const sessionData = result.data
-            setFormData({
-              ...sessionData,
-              // Manter o formato brasileiro para o novo componente
-              date: sessionData.date
+            
+            // Preservar mudanças locais do usuário (como imagens temporárias)
+            setFormData(prevData => {
+              const newData = {
+                ...sessionData,
+                // Manter o formato brasileiro para o novo componente
+                date: sessionData.date
+              };
+              
+              // Se já temos uma imagem temporária ou salva, preservá-la
+              if (prevData.image && 
+                  prevData.image !== '' && 
+                  !prevData.image.includes('placeholder.svg')) {
+                newData.image = prevData.image;
+              }
+              
+              return newData;
             })
           } else {
             toast.error('Erro ao carregar dados da sessão')
@@ -87,7 +107,7 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
     }
 
     loadData()
-  }, [params, router])
+  }, [params, slug, formData.session_number]) // Adicionadas dependências necessárias para comparação
 
   // Processar markdown para HTML quando o conteúdo mudar
   useEffect(() => {
