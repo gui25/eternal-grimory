@@ -1,13 +1,13 @@
 ---
 name: "Thorne Coração de Ferro TESTEE 2"
 slug: "thorne-coracao-de-ferro-testee-2"
-updated: "2025-06-20T21:40:03.957Z"
+updated: "2025-07-09T19:01:22.690Z"
 player: "Mike"
 class: "Paladino"
 race: "Anão"
 level: "8"
 tags: ["Tank", "Healer", "Oath of the Ancients"]
-image: "/saved-images/penumbra-eterna_player_thorne-coracao-de-ferro-testee-2_1750455577788.jpg"
+image: "/saved-images/penumbra-eterna_player_thorne-coracao-de-ferro-testee-2_1752087674683.png"
 description: "Um paladino anão que jurou proteger a natureza."
 ---
 
