@@ -9,7 +9,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Save, Sparkles, Eye, Edit, AlertCircle, Loader2 } from 'lucide-react'
+import RarityBorder from '@/components/effects/rarity-border'
+import RunicGlow from '@/components/effects/runic-glow'
+import { ArrowLeft, Save, Sparkles, Eye, Edit, AlertCircle, Loader2, Shield, Sword, Zap, Heart } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import SmartImage from '@/components/ui/smart-image'
@@ -195,37 +197,89 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
     }
   }
 
-  // Get rarity badge classes for visual feedback
-  const getRarityBadgeClass = (rarity: string) => {
+  // Get rarity configuration - mesma função da página oficial
+  const getRarityConfig = (rarity: string) => {
     const rarityLower = rarity.toLowerCase()
     switch (rarityLower) {
       case 'lendário':
       case 'legendary':
-        return 'legendary-badge'
+        return {
+          type: 'legendary' as const,
+          color: 'gold' as const,
+          intensity: 'strong' as const,
+          bgGradient: 'from-orange-500/20 via-yellow-500/10 to-orange-500/20',
+          textColor: 'text-orange-400',
+          shadowColor: 'shadow-orange-500/50',
+          glowEffect: true
+        }
       case 'épico':
       case 'epic':
-        return 'epic-badge'
+        return {
+          type: 'epic' as const,
+          color: 'purple' as const,
+          intensity: 'strong' as const,
+          bgGradient: 'from-purple-500/20 via-violet-500/10 to-purple-500/20',
+          textColor: 'text-purple-400',
+          shadowColor: 'shadow-purple-500/30',
+          glowEffect: true
+        }
       case 'raro':
       case 'rare':
-        return 'rare-badge'
+        return {
+          type: 'rare' as const,
+          color: 'blue' as const,
+          intensity: 'medium' as const,
+          bgGradient: 'from-blue-500/15 via-cyan-500/5 to-blue-500/15',
+          textColor: 'text-blue-400',
+          shadowColor: 'shadow-blue-500/20',
+          glowEffect: true
+        }
       case 'incomum':
       case 'uncommon':
-        return 'uncommon-badge'
+        return {
+          type: 'uncommon' as const,
+          color: 'green' as const,
+          intensity: 'medium' as const,
+          bgGradient: 'from-green-500/15 via-emerald-500/5 to-green-500/15',
+          textColor: 'text-green-400',
+          shadowColor: 'shadow-green-500/20',
+          glowEffect: false
+        }
       case 'comum':
       case 'common':
       default:
-        return 'common-badge'
+        return {
+          type: 'common' as const,
+          color: 'gold' as const,
+          intensity: 'subtle' as const,
+          bgGradient: 'from-gray-500/10 via-slate-500/5 to-gray-500/10',
+          textColor: 'text-gray-300',
+          shadowColor: 'shadow-gray-500/10',
+          glowEffect: false
+        }
     }
+  }
+
+  // Get item type icon
+  const getItemIcon = (type: string) => {
+    const typeLower = type.toLowerCase()
+    if (typeLower.includes('weapon') || typeLower.includes('arma')) return Sword
+    if (typeLower.includes('armor') || typeLower.includes('armadura')) return Shield
+    if (typeLower.includes('potion') || typeLower.includes('poção')) return Heart
+    return Sparkles
   }
 
   const mockFrontmatter = {
     name: formData.name || 'Nome do Item',
-    type: formData.type,
-    rarity: formData.rarity,
+    type: formData.type || 'Item',
+    rarity: formData.rarity || 'Comum',
+    description: formData.description || '',
     tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-    image: formData.image,
-    description: formData.description
+    image: formData.image
   }
+
+  const rarityConfig = getRarityConfig(mockFrontmatter.rarity)
+  const ItemIcon = getItemIcon(mockFrontmatter.type)
 
   if (isLoadingData) {
     return (
@@ -419,57 +473,115 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="bg-background rounded-lg p-4 border min-h-[600px] overflow-auto">
+            <div className="bg-fantasy-dark rounded-lg p-4 border min-h-[600px] overflow-auto">
               <div className="max-w-3xl mx-auto">
-                <div className="mb-8 fantasy-card p-6">
-                  <div className="flex flex-col md:flex-row gap-6">
-                    <div className="w-full md:w-1/3 flex-shrink-0">
-                      <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-gold-dark">
-                        <SmartImage 
-                          src={mockFrontmatter.image} 
-                          alt={mockFrontmatter.name} 
-                          fill 
-                          className="object-cover" 
-                          placeholder={<Sparkles className="h-24 w-24 text-gold-light/40" />}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex-1">
-                      <h1 className="fantasy-heading mb-2">{mockFrontmatter.name}</h1>
-                      
-                      <div className="text-lg mb-3 text-gold-light">
-                        {mockFrontmatter.type || 'Item'} • {mockFrontmatter.rarity || 'Comum'}
-                      </div>
-
-                      {/* Description in italics */}
-                      {mockFrontmatter.description && (
-                        <div className="mb-3 italic text-gray-100">
-                          "{mockFrontmatter.description}"
-                        </div>
-                      )}
-                      
-                      {/* Tags section - igual à página oficial */}
-                      {mockFrontmatter.tags.length > 0 && (
-                        <div className="mb-3">
-                          <div className="text-sm text-muted-foreground mb-1">Tags:</div>
-                          <div className="flex flex-wrap gap-2">
-                            {mockFrontmatter.tags.map((tag, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
-                                {tag}
-                              </Badge>
-                            ))}
+                <RarityBorder 
+                  rarity={rarityConfig.type} 
+                  pulseIntensity={rarityConfig.intensity}
+                  className="mb-8"
+                >
+                  <div className={`fantasy-card p-6 bg-gradient-to-br ${rarityConfig.bgGradient} ${rarityConfig.shadowColor}`}>
+                    <div className="flex flex-col lg:flex-row gap-6">
+                      {/* Enhanced Image Section */}
+                      <div className="w-full lg:w-1/3 flex-shrink-0">
+                        <div className="relative">
+                          {rarityConfig.glowEffect ? (
+                            <RunicGlow 
+                              color={rarityConfig.color} 
+                              intensity={rarityConfig.intensity}
+                              runeCount={rarityConfig.type === 'legendary' ? 8 : 6}
+                            >
+                              <div className="relative aspect-square rounded-xl overflow-hidden border-2 border-gold-dark">
+                                <SmartImage 
+                                  src={mockFrontmatter.image} 
+                                  alt={mockFrontmatter.name} 
+                                  fill 
+                                  className="object-cover" 
+                                  placeholder={<ItemIcon className="h-24 w-24 text-gold-light/50" />}
+                                />
+                              </div>
+                            </RunicGlow>
+                          ) : (
+                            <div className="relative aspect-square rounded-xl overflow-hidden border-2 border-gold-dark">
+                              <SmartImage 
+                                src={mockFrontmatter.image} 
+                                alt={mockFrontmatter.name} 
+                                fill 
+                                className="object-cover" 
+                                placeholder={<ItemIcon className="h-24 w-24 text-gold-light/50" />}
+                              />
+                            </div>
+                          )}
+                          
+                          {/* Rarity Badge Overlay */}
+                          <div className="absolute -top-2 -right-2">
+                            <div className={`px-3 py-1 rounded-full text-xs font-bold ${rarityConfig.textColor} bg-fantasy-dark/90 border border-current shadow-lg`}>
+                              {mockFrontmatter.rarity}
+                            </div>
                           </div>
                         </div>
-                      )}
+                      </div>
+
+                      {/* Enhanced Content Section */}
+                      <div className="flex-1 space-y-4">
+                        {/* Title with Enhanced Styling */}
+                        <div className="space-y-2">
+                          <h1 className={`fantasy-heading text-3xl ${rarityConfig.textColor} drop-shadow-lg`}>
+                            {mockFrontmatter.name}
+                          </h1>
+                          
+                          {/* Type and Rarity with Icon */}
+                          <div className="flex items-center gap-3 text-lg text-gold-light">
+                            <ItemIcon className="h-5 w-5" />
+                            <span>{mockFrontmatter.type}</span>
+                            <span className="text-gold-dark">•</span>
+                            <span className={rarityConfig.textColor}>{mockFrontmatter.rarity}</span>
+                          </div>
+                        </div>
+
+                        {/* Enhanced Description */}
+                        {mockFrontmatter.description && (
+                          <div className="text-gray-100 italic text-base bg-fantasy-darker/50 rounded-lg p-3 border-l-4 border-gold-primary">
+                            <Zap className="inline-block w-4 h-4 mr-2 text-gold-light" />
+                            "{mockFrontmatter.description}"
+                          </div>
+                        )}
+
+                        {/* Enhanced Tags */}
+                        {mockFrontmatter.tags.length > 0 && (
+                          <div className="space-y-2">
+                            <div className="text-sm text-muted-foreground font-medium">Propriedades:</div>
+                            <div className="flex flex-wrap gap-2">
+                              {mockFrontmatter.tags.map((tag, index) => (
+                                <Badge 
+                                  key={index} 
+                                  variant="secondary" 
+                                  className={`text-xs border ${rarityConfig.textColor} bg-fantasy-darker/60 hover:bg-fantasy-darker/80 transition-colors`}
+                                >
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </RarityBorder>
 
-                <article 
-                  className="prose prose-slate dark:prose-invert max-w-none mdx-content"
-                  dangerouslySetInnerHTML={{ __html: htmlContent }}
-                />
+                <RarityBorder 
+                  rarity={rarityConfig.type} 
+                  pulseIntensity="subtle"
+                  interactive={false}
+                  className="mt-6"
+                >
+                  <div className="fantasy-card p-6">
+                    <article 
+                      className={`prose prose-slate dark:prose-invert max-w-none mdx-content prose-headings:${rarityConfig.textColor}`}
+                      dangerouslySetInnerHTML={{ __html: htmlContent }}
+                    />
+                  </div>
+                </RarityBorder>
               </div>
             </div>
           </CardContent>

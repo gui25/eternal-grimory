@@ -874,5 +874,52 @@
   animation: legendary-pulse 5s ease-in-out infinite;
 }
 
+/* Additional animations for RarityBorder component */
+@keyframes legendary-sparkle-1 {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(-45deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateX(200%) translateY(200%) rotate(-45deg); opacity: 0; }
+}
+
+@keyframes legendary-sparkle-2 {
+  0% { transform: translateX(200%) translateY(200%) rotate(45deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); opacity: 0; }
+}
+
+@keyframes legendary-sparkle-3 {
+  0% { transform: translateX(-100%) rotate(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateX(200%) rotate(0); opacity: 0; }
+}
+
+.animate-legendary-sparkle-1 {
+  animation: legendary-sparkle-1 3s linear infinite;
+}
+
+.animate-legendary-sparkle-2 {
+  animation: legendary-sparkle-2 3.5s linear infinite;
+}
+
+.animate-legendary-sparkle-3 {
+  animation: legendary-sparkle-3 2.8s linear infinite;
+}
+
+/* Enhanced background colors for fantasy theme */
+.bg-fantasy-dark {
+  background-color: hsl(var(--wine-dark));
+}
+
+.bg-fantasy-darker {
+  background-color: hsl(var(--wine-darker));
+}
+
+.text-gold-primary {
+  color: hsl(var(--gold-primary));
+}
+
 
 
