@@ -149,7 +149,7 @@ export default function PlayersPage() {
                 <Link href={`/characters/players/${player.slug}`} prefetch={true} className="block">
                   <h3 className="text-lg font-bold">{player.name}</h3>
                   {player.player && (
-                    <p className="text-sm text-muted-foreground">Jogado por: {player.player}</p>
+                    <p className="text-sm text-gold-light">Jogado por: {player.player}</p>
                   )}
                   <div className="text-sm mt-1">
                     <span className="font-medium">Nível {player.level}</span>

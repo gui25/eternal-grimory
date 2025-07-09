@@ -147,7 +147,7 @@ export default function NPCsPage() {
                 
                 <Link href={`/characters/npcs/${npc.slug}`} prefetch={true} className="block">
                   <h3 className="text-lg font-bold">{npc.name}</h3>
-                  <p className="text-sm text-gray-500">{npc.type}</p>
+                  <p className="text-sm text-gold-light">{npc.type}</p>
                   <div className="mt-2">
                     <span className="font-medium">Afiliação:</span> {npc.affiliation}
                   </div>

@@ -176,7 +176,7 @@ export default function NotesPage() {
                     </p>
 
                     {note.date && (
-                      <div className="text-sm text-muted-foreground flex items-center gap-1">
+                      <div className="text-sm text-gold-light flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         {parseBRDate(note.date) ? formatDateForMDX(parseBRDate(note.date)!) : note.date}
                       </div>

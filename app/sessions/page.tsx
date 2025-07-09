@@ -125,7 +125,7 @@ export default function SessionsPage() {
                       <div className="flex items-center gap-3">
                         <div>
                           <h2 className="text-lg font-semibold">SESSÃO {session.session_number}</h2>
-                          <div className="text-sm text-muted-foreground flex items-center gap-1">
+                          <div className="text-sm text-gold-light flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
                             {parseBRDate(session.date) ? formatDateForMDX(parseBRDate(session.date)!) : session.date}
                           </div>

@@ -146,7 +146,7 @@ export default function MonstersPage() {
                 
                 <Link href={`/characters/monsters/${monster.slug}`} prefetch={true} className="block">
                   <h3 className="font-bold text-lg mb-1">{monster.name}</h3>
-                  <div className="text-sm text-muted-foreground mb-2">{monster.type}</div>
+                  <div className="text-sm text-gold-light mb-2">{monster.type}</div>
                   <div className="text-sm mb-3">
                     <span className="font-medium">Desafio:</span> {monster.challenge}
                   </div>

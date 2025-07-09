@@ -553,13 +553,12 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
                             <div className="text-sm text-muted-foreground font-medium">Propriedades:</div>
                             <div className="flex flex-wrap gap-2">
                               {mockFrontmatter.tags.map((tag, index) => (
-                                <Badge 
+                                <span 
                                   key={index} 
-                                  variant="secondary" 
-                                  className={`text-xs border ${rarityConfig.textColor} bg-fantasy-darker/60 hover:bg-fantasy-darker/80 transition-colors`}
+                                  className="bg-red-600/80 text-white text-xs font-medium px-3 py-1 rounded-full hover:bg-red-600 transition-colors"
                                 >
                                   {tag}
-                                </Badge>
+                                </span>
                               ))}
                             </div>
                           </div>
