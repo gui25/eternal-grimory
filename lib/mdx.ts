@@ -3,6 +3,7 @@ import path from "path"
 import matter from "gray-matter"
 import { remark } from "remark"
 import html from "remark-html"
+import { compile, CompileOptions } from "@mdx-js/mdx"
 import { getCurrentCampaignId, getCampaignById, CAMPAIGNS } from "@/lib/campaign-config"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { notFound } from 'next/navigation'
@@ -62,6 +63,22 @@ export type CharacterMeta = {
 async function markdownToHtml(markdown: string) {
   const result = await remark().use(html).process(markdown)
   return result.toString()
+}
+
+// Process MDX content with React components
+export async function processMDX(content: string) {
+  try {
+    const compiled = await compile(content, {
+      outputFormat: 'function-body',
+      development: process.env.NODE_ENV === 'development'
+    } as CompileOptions)
+    
+    return compiled.toString()
+  } catch (error) {
+    console.error('Error processing MDX:', error)
+    // Fallback to regular markdown
+    return await markdownToHtml(content)
+  }
 }
 
 // Ensure directory exists
@@ -452,11 +469,12 @@ export async function getCharacter(
   // Use gray-matter to parse the frontmatter
   const { data, content } = matter(fileContent)
 
-  // Convert markdown to HTML
+  // Convert markdown to HTML for fallback
   const contentHtml = await markdownToHtml(content)
 
   return {
     contentHtml,
+    contentMdx: content, // Raw MDX content for proper processing
     meta: {
       ...data,
       slug,

@@ -50,7 +50,7 @@ export default async function PlayerPage({ params }: { params: Promise<{ slug: s
           Jogado por: {meta.player}
         </div>
       )}
-
+      
       {meta.description && (
         <div className="mb-3 italic text-gray-100">
           "{meta.description}"
@@ -61,12 +61,12 @@ export default async function PlayerPage({ params }: { params: Promise<{ slug: s
         <div className="mb-3">
           <div className="text-sm text-muted-foreground mb-1">Tags:</div>
           <div className="flex flex-wrap gap-2">
-            {meta.tags.map((tag: string) => (
+        {meta.tags.map((tag: string) => (
               <Badge key={tag} variant="secondary" className="text-xs">
-                {tag}
+            {tag}
               </Badge>
-            ))}
-          </div>
+        ))}
+      </div>
         </div>
       )}
     </>

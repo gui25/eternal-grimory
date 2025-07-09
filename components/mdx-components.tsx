@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import MDXLink from "./mdx-link"
 import SmartImage from "./ui/smart-image"
 import { ImageIcon } from "lucide-react"
+import SpoilerVault from "./ui/spoiler-vault"
 
 // Custom components for MDX content
 export const components = {
@@ -43,5 +44,6 @@ export const components = {
   strong: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
     <strong className={cn("font-bold", className)} {...props} />
   ),
+  SpoilerVault,
 }
 

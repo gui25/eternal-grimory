@@ -5,6 +5,7 @@ import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 import { AdminButton } from "@/components/ui/admin-button"
 import { DeleteButton } from "@/components/ui/delete-button"
 import { Badge } from "@/components/ui/badge"
+import { SimpleMDXRenderer } from "@/components/simple-mdx-renderer"
 import { Edit, User } from "lucide-react"
 
 export default async function NPCPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -14,7 +15,11 @@ export default async function NPCPage({ params }: { params: Promise<{ slug: stri
   const npc = await getCharacter(slug, "npc", campaignId || '')
   if (!npc) notFound()
 
-  const { contentHtml, meta } = npc as unknown as { contentHtml: string, meta: any }
+  const { contentHtml, contentMdx, meta } = npc as unknown as { 
+    contentHtml: string, 
+    contentMdx: string, 
+    meta: any 
+  }
 
   // Create metadata exactly like notes
   const npcMetadata = (
@@ -76,7 +81,7 @@ export default async function NPCPage({ params }: { params: Promise<{ slug: stri
           category: "npc"
         }} 
     >
-      <div className="mdx-content" dangerouslySetInnerHTML={{ __html: contentHtml }} />
+      <SimpleMDXRenderer content={contentMdx} htmlFallback={contentHtml} />
     </DetailPageLayout>
   )
 }

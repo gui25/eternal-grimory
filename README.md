@@ -157,6 +157,30 @@ title: "O Início da Jornada"
 Na primeira sessão, nossos heróis...
 ```
 
+## Protegendo Spoilers com Senha (SpoilerVault)
+
+Para proteger trechos de spoilers em arquivos MDX:
+
+1. Adicione ao frontmatter:
+
+```yaml
+spoiler_vault_password: "d0a708acc77636c85db9237234e420e61954efe511fbc96385a0c99198ce7360"
+```
+
+2. No corpo do MDX, importe e use:
+
+```mdx
+import SpoilerVault from '@/components/ui/spoiler-vault'
+
+<SpoilerVault hash="d0a708acc77636c85db9237234e420e61954efe511fbc96385a0c99198ce7360">
+  <!-- Conteúdo de spoiler aqui -->
+</SpoilerVault>
+```
+
+- O conteúdo só será exibido se a senha correta for digitada.
+- O hash SHA-256 da senha deve ser gerado previamente.
+- O input e botão somem ao acertar a senha.
+
 ## 🎨 Customização
 
 ### Temas
