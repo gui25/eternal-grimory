@@ -1,10 +1,11 @@
 ---
 name: "Dracolich"
 slug: "dracolich"
-updated: "2025-06-20T22:28:29.151Z"
+updated: "2025-07-09T17:54:52.220Z"
 type: "Dragão Morto-vivo"
 challenge: "Legendary"
 tags: ["Undead", "Dragon", "Spellcaster"]
+description: "Teste"
 ---
 
 # Dracolich

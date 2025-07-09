@@ -125,7 +125,8 @@ function createFrontmatter(type: string, name: string, metadata: any): string {
         type: metadata.type || 'Monstro',
         challenge: metadata.challenge || '1',
         tags: metadata.tags || [],
-        image: metadata.image || ''
+        image: metadata.image || '',
+        description: metadata.description || ''
       }
       break
     

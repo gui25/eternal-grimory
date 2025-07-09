@@ -3,6 +3,7 @@ name: "Sylva"
 type: "Patrulheira Élfica"
 affiliation: "Conclave Esmeralda"
 tags: ["Ranger", "Ally", "Elf"]
+description: "Uma graciosa patrulheira élfica com um conhecimento incomparável sobre a natureza selvagem."
 ---
 
 # Sylva

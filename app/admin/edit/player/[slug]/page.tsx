@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft, Save, User, Eye, Edit } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { Badge } from '@/components/ui/badge'
 import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
@@ -419,12 +420,13 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
                       </div>
                     </div>
 
-                    <div className="flex-1">
-                      <h1 className="fantasy-heading mb-2">{mockFrontmatter.name}</h1>
-                      <div className="flex items-center text-lg mb-2 text-gold-light">
-                        <span>Nível {mockFrontmatter.level}</span>
-                        <span className="mx-2">•</span>
-                        <span>{mockFrontmatter.race} {mockFrontmatter.class}</span>
+                    <div className="flex-1 flex flex-col">
+                      {/* Title */}
+                      <h1 className="fantasy-heading text-3xl mb-4">{mockFrontmatter.name}</h1>
+                      
+                      {/* Metadata */}
+                      <div className="text-lg text-gold-light font-medium mb-2">
+                        {`Nível ${mockFrontmatter.level} • ${mockFrontmatter.race} ${mockFrontmatter.class}`}
                       </div>
                       {mockFrontmatter.player && (
                         <div className="text-sm text-muted-foreground mb-4">
@@ -432,26 +434,36 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
                         </div>
                       )}
                       
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {mockFrontmatter.tags.map((tag, index) => (
-                          <span key={index} className="bg-secondary px-3 py-1 rounded-full text-xs">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                      {/* Description in italics */}
+                      {mockFrontmatter.description && (
+                        <p className="text-sm text-gold-light/80 italic mb-4 flex-grow">
+                          "{mockFrontmatter.description}"
+                        </p>
+                      )}
+                      
+
                     </div>
                   </div>
-
-                  {/* Descrição opcional */}
-                  {mockFrontmatter.description && (
-                    <div className="mt-4 italic text-gray-300">"{mockFrontmatter.description}"</div>
-                  )}
                 </div>
 
                 <article 
                   className="prose prose-slate dark:prose-invert max-w-none mdx-content"
                   dangerouslySetInnerHTML={{ __html: htmlContent }}
                 />
+                
+                {/* Tags section */}
+                {mockFrontmatter.tags.length > 0 && (
+                  <div className="mt-8 fantasy-card p-6">
+                    <h3 className="text-lg font-semibold mb-3 text-gold-light">Tags</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {mockFrontmatter.tags.map((tag, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>

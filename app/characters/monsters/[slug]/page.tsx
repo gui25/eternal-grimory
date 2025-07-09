@@ -5,7 +5,7 @@ import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 import { AdminButton } from "@/components/ui/admin-button"
 import { DeleteButton } from "@/components/ui/delete-button"
-import { getCurrentCampaignId } from "@/lib/campaign-config"
+import { Badge } from "@/components/ui/badge"
 
 export default async function MonsterPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -13,11 +13,39 @@ export default async function MonsterPage({ params }: { params: Promise<{ slug: 
   
   console.log(`Página de monstro: Carregando ${slug} da campanha: ${campaignId || 'padrão'}`)
   
-  const monster = await getCharacter(slug, "monster", campaignId)
+  const monster = await getCharacter(slug, "monster", campaignId || '')
   if (!monster) notFound()
 
   // Use type assertion para evitar erro de tipo
   const { contentHtml, meta } = monster as unknown as { contentHtml: string, meta: CharacterMeta }
+
+  // Create a metadata section exactly like notes
+  const monsterMetadata = (
+    <>
+      <div className="text-lg mb-3 text-gold-light">
+        {meta.type} • Desafio {meta.challenge}
+      </div>
+
+      {meta.description && (
+        <div className="mb-3 italic text-gray-100">
+          "{meta.description}"
+        </div>
+      )}
+
+      {meta.tags && meta.tags.length > 0 && (
+        <div className="mb-3">
+          <div className="text-sm text-muted-foreground mb-1">Tags:</div>
+          <div className="flex flex-wrap gap-2">
+            {meta.tags.map((tag: string) => (
+              <Badge key={tag} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  )
 
   return (
     <DetailPageLayout
@@ -27,6 +55,7 @@ export default async function MonsterPage({ params }: { params: Promise<{ slug: 
       image={meta.image}
       imageAlt={meta.name}
       imagePlaceholder={<Skull className="h-24 w-24 text-red-accent/40" />}
+      metadata={monsterMetadata}
       actionButtons={
         <>
           <AdminButton href={`/admin/edit/monster/${slug}`} variant="outline" size="sm">
@@ -37,30 +66,12 @@ export default async function MonsterPage({ params }: { params: Promise<{ slug: 
             type="monster"
             slug={slug}
             name={meta.name}
-            campaignId={getCurrentCampaignId()}
+            campaignId={campaignId || ''}
             className="hidden sm:flex"
             size="sm"
           />
         </>
       }
-      metadata={
-        <>
-          <div className="flex items-center text-lg mb-4 text-gold-light">
-            <span>{meta.type}</span>
-            <span className="mx-2">•</span>
-            <span>Desafio {meta.challenge}</span>
-          </div>
-          
-          <div className="flex flex-wrap gap-2 mb-6">
-            {meta.tags.map(tag => (
-              <span key={tag} className="bg-secondary px-3 py-1 rounded-full text-xs">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </>
-      }
-      description={meta.description}
       trackViewItem={{
         slug: meta.slug,
         name: meta.name,

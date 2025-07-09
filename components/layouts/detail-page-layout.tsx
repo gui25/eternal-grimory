@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Calendar } from "lucide-react";
 import { PageContainer } from "@/components/ui/page-container";
 import TrackView from "@/components/track-view";
 import SmartBackButton from "@/components/smart-back-button";
@@ -18,6 +18,8 @@ interface DetailPageLayoutProps {
   imagePlaceholder?: React.ReactNode;
   metadata?: React.ReactNode;
   description?: string;
+  date?: string;
+  tags?: string[];
   actionButtons?: React.ReactNode;
   trackViewItem: {
     slug: string;
@@ -45,6 +47,8 @@ export function DetailPageLayout({
   imagePlaceholder,
   metadata,
   description,
+  date,
+  tags,
   actionButtons,
   trackViewItem,
   className,
@@ -86,16 +90,31 @@ export function DetailPageLayout({
           </div>
 
           {/* Title and metadata section */}
-          <div className="flex-1">
-            <h1 className="fantasy-heading mb-2">{title}</h1>
-            {metadata && <div className="mb-3">{metadata}</div>}
+          <div className="flex-1 flex flex-col">
+            {/* Title */}
+            <h1 className="fantasy-heading text-3xl mb-4">{title}</h1>
+            
+            {/* Date */}
+            {date && (
+              <div className="text-lg mb-4 text-gold-light flex items-center">
+                <Calendar className="inline-block mr-2 h-5 w-5" />
+                {date}
+              </div>
+            )}
+            
+            {/* Additional metadata (for backwards compatibility) */}
+            {metadata && <div className="mb-4">{metadata}</div>}
+            
+            {/* Description in italics */}
+            {description && (
+              <p className="text-sm text-gold-light/80 italic mb-4 flex-grow">
+                "{description}"
+              </p>
+            )}
+            
+
           </div>
         </div>
-
-        {/* Optional description */}
-        {description && (
-          <div className="mt-4 italic text-gray-300">"{description}"</div>
-        )}
       </div>
 
       {/* Main content */}

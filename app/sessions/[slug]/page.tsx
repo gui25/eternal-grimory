@@ -8,6 +8,7 @@ import { AdminButton } from "@/components/ui/admin-button"
 import { DeleteButton } from "@/components/ui/delete-button"
 import { getCurrentCampaignId } from "@/lib/campaign-config"
 import { formatDateBR, formatDateForMDX, parseBRDate } from "@/utils/date-utils"
+import { Badge } from "@/components/ui/badge"
 
 // Generate metadata for this page
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -43,10 +44,16 @@ export default async function SessionPage({ params }: { params: Promise<{ slug: 
   // Render session metadata
   const sessionMetadata = (
     <>
-      <div className="text-lg mb-4 text-gold-light">
+      <div className="text-lg mb-3 text-gold-light">
         <Calendar className="inline-block mr-2 h-5 w-5" />
         {parseBRDate(meta.date) ? formatDateForMDX(parseBRDate(meta.date)!) : meta.date}
       </div>
+
+      {meta.description && (
+        <div className="mb-3 italic text-gray-100">
+          "{meta.description}"
+        </div>
+      )}
 
       {meta.players && meta.players.length > 0 && (
         <div className="mb-3">
@@ -56,6 +63,19 @@ export default async function SessionPage({ params }: { params: Promise<{ slug: 
               <span key={player} className="bg-secondary px-3 py-1 rounded-full text-xs text-foreground">
                 {player}
               </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {meta.tags && meta.tags.length > 0 && (
+        <div className="mb-3">
+          <div className="text-sm text-muted-foreground mb-1">Tags:</div>
+          <div className="flex flex-wrap gap-2">
+            {meta.tags.map((tag: string) => (
+              <Badge key={tag} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
             ))}
           </div>
         </div>
@@ -88,7 +108,6 @@ export default async function SessionPage({ params }: { params: Promise<{ slug: 
         </>
       }
       metadata={sessionMetadata}
-      description={meta.description}
       trackViewItem={{
         slug: meta.slug,
         name: `SESSÃO ${meta.session_number}`,

@@ -1,40 +1,15 @@
 import { notFound } from "next/navigation"
-import { getItem, ItemMeta } from "@/lib/mdx"
-import { Edit, Sparkles } from "lucide-react"
-import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
-import { createItemMetadata } from "@/lib/metadata"
+import { getItem } from "@/lib/mdx"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
+import type { ItemMeta } from "@/lib/mdx"
+import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 import { AdminButton } from "@/components/ui/admin-button"
 import { DeleteButton } from "@/components/ui/delete-button"
-import { getCurrentCampaignId } from "@/lib/campaign-config"
+import { Badge } from "@/components/ui/badge"
+import { Edit, Sparkles } from "lucide-react"
 
-// Generate metadata for this page
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
-  const campaignId = await getCurrentCampaignIdFromCookies()
-  
-  const item = await getItem(slug, campaignId)
-  if (!item) return {}
-  
-  // Use type assertion para evitar erro de tipo
-  const { meta } = item as unknown as { contentHtml: string, meta: ItemMeta }
-  
-  return {
-    title: `${meta.name} | Grimório Eterno`,
-    description: meta.description || `${meta.name} - ${meta.type} (${meta.rarity})`,
-    openGraph: {
-      title: meta.name,
-      description: meta.description || `${meta.name} - ${meta.type} (${meta.rarity})`,
-      images: [
-        {
-          url: meta.image || "/default-item.jpg",
-          width: 1200,
-          height: 630,
-          alt: meta.name,
-        },
-      ],
-    },
-  }
+interface ItemPageProps {
+  params: Promise<{ slug: string }>
 }
 
 export default async function ItemPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -72,24 +47,31 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
     }
   }
 
-  // Render item metadata
+  // Create metadata exactly like notes
   const itemMetadata = (
     <>
-      <div className={`text-sm inline-block px-3 py-1 rounded-full mb-3 font-medium ${getRarityBadgeClass(meta.rarity || 'Common')}`}>
-        {meta.rarity || 'Comum'}
+      <div className="text-lg mb-3 text-gold-light">
+        {meta.type || 'Item'} • {meta.rarity || 'Comum'}
       </div>
 
-      <div className="text-lg mb-3 text-gold-light font-medium">
-        {meta.type}
-      </div>
-      
-      <div className="flex flex-wrap gap-2">
-        {meta.tags.map((tag: string) => (
-          <span key={tag} className="bg-secondary/80 px-3 py-1 rounded-full text-xs ">
-            {tag}
-          </span>
-        ))}
-      </div>
+      {meta.description && (
+        <div className="mb-3 italic text-gray-100">
+          "{meta.description}"
+        </div>
+      )}
+
+      {meta.tags && meta.tags.length > 0 && (
+        <div className="mb-3">
+          <div className="text-sm text-muted-foreground mb-1">Tags:</div>
+          <div className="flex flex-wrap gap-2">
+            {meta.tags.map((tag: string) => (
+              <Badge key={tag} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   )
 
@@ -101,6 +83,7 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
       image={meta.image}
       imageAlt={meta.name}
       imagePlaceholder={<Sparkles className="h-24 w-24 text-gold-light/50" />}
+      metadata={itemMetadata}
       actionButtons={
         <>
           <AdminButton href={`/admin/edit/item/${slug}`} variant="outline" size="sm">
@@ -111,14 +94,12 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
             type="item"
             slug={slug}
             name={meta.name}
-            campaignId={getCurrentCampaignId()}
+            campaignId={campaignId || ''}
             className="hidden sm:flex"
             size="sm"
           />
         </>
       }
-      metadata={itemMetadata}
-      description={meta.description}
       trackViewItem={{
         slug: meta.slug,
         name: meta.name,

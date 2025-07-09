@@ -3,6 +3,7 @@ name: "Armadura de Escamas de Dragão"
 rarity: "Epic"
 type: "Armor"
 tags: ["Heavy", "Fire Resistance"]
+description: "Armadura forjada a partir das escamas de um dragão vermelho."
 ---
 
 # Armadura de Escamas de Dragão

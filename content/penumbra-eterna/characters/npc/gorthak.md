@@ -3,6 +3,7 @@ name: "Gorthak"
 type: "Meio-Orc Guerreiro"
 affiliation: "Guilda dos Mercenários"
 tags: ["Warrior", "Ally", "Mercenary"]
+description: "Um meio-orc guerreiro endurecido por batalhas com um exterior rude, mas coração leal."
 ---
 
 # Gorthak

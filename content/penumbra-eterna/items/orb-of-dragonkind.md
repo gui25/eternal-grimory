@@ -5,6 +5,7 @@ updated: "2025-06-16T02:12:37.289Z"
 type: "Artifact"
 rarity: "Lendário"
 tags: ["Cursed", "Dragon Magic"]
+description: "Uma esfera de cristal contendo a essência de um dragão ancestral."
 ---
 
 # Orbe do Tipo Dragão

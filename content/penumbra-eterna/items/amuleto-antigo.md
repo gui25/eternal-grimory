@@ -1,8 +1,11 @@
 ---
 name: "Amuleto Antigo"
-rarity: "Rare"
-type: "Artifact"
+slug: "amuleto-antigo"
+updated: "2025-07-09T17:34:25.265Z"
+type: "Artefato"
+rarity: "Incomum"
 tags: ["Magic", "Protection"]
+description: "Teste"
 ---
 
 # Amuleto Antigo

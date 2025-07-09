@@ -1,23 +1,48 @@
 import { notFound } from "next/navigation"
-import { getCharacter, CharacterMeta } from "@/lib/mdx"
+import { getCharacter } from "@/lib/mdx"
 import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
-import { User, Edit } from "lucide-react"
 import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 import { AdminButton } from "@/components/ui/admin-button"
 import { DeleteButton } from "@/components/ui/delete-button"
-import { getCurrentCampaignId } from "@/lib/campaign-config"
+import { Badge } from "@/components/ui/badge"
+import { Edit, User } from "lucide-react"
 
 export default async function NPCPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const campaignId = await getCurrentCampaignIdFromCookies()
   
-  console.log(`Página de NPC: Carregando ${slug} da campanha: ${campaignId || 'padrão'}`)
-  
-  const npc = await getCharacter(slug, "npc", campaignId)
+  const npc = await getCharacter(slug, "npc", campaignId || '')
   if (!npc) notFound()
 
-  // Use type assertion para evitar erro de tipo
-  const { contentHtml, meta } = npc as unknown as { contentHtml: string, meta: CharacterMeta }
+  const { contentHtml, meta } = npc as unknown as { contentHtml: string, meta: any }
+
+  // Create metadata exactly like notes
+  const npcMetadata = (
+    <>
+      <div className="text-lg mb-3 text-gold-light">
+        {meta.affiliation ? `${meta.type} • ${meta.affiliation}` : meta.type}
+      </div>
+
+      {meta.description && (
+        <div className="mb-3 italic text-gray-100">
+          "{meta.description}"
+        </div>
+      )}
+
+      {meta.tags && meta.tags.length > 0 && (
+        <div className="mb-3">
+          <div className="text-sm text-muted-foreground mb-1">Tags:</div>
+          <div className="flex flex-wrap gap-2">
+            {meta.tags.map((tag: string) => (
+              <Badge key={tag} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  )
 
   return (
     <DetailPageLayout
@@ -27,6 +52,7 @@ export default async function NPCPage({ params }: { params: Promise<{ slug: stri
       image={meta.image}
       imageAlt={meta.name}
       imagePlaceholder={<User className="h-24 w-24 text-gold-light/50" />}
+      metadata={npcMetadata}
       actionButtons={
         <>
           <AdminButton href={`/admin/edit/npc/${slug}`} variant="outline" size="sm">
@@ -37,36 +63,12 @@ export default async function NPCPage({ params }: { params: Promise<{ slug: stri
             type="npc"
             slug={slug}
             name={meta.name}
-            campaignId={getCurrentCampaignId()}
+            campaignId={campaignId || ''}
             className="hidden sm:flex"
             size="sm"
           />
         </>
       }
-      metadata={
-        <>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4 text-gold-light">
-          <div className="flex items-center">
-            <span className="text-lg">{meta.type}</span>
-          </div>
-          {meta.affiliation && (
-            <>
-              <span className="hidden sm:inline">•</span>
-              <span>{meta.affiliation}</span>
-            </>
-          )}
-        </div>
-
-        <div className="flex flex-wrap gap-2 mb-6">
-          {meta.tags.map(tag => (
-            <span key={tag} className="bg-secondary px-3 py-1 rounded-full text-xs">
-              {tag}
-            </span>
-          ))}
-        </div>
-        </>
-      }
-      description={meta.description}
       trackViewItem={{
           slug: meta.slug,
           name: meta.name,

@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft, Save, Package, Eye, Edit, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { Badge } from '@/components/ui/badge'
 import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
@@ -417,30 +418,25 @@ Use este item para criar tensão em encontros com orcs. A luz de aviso pode tant
                     </div>
 
                     {/* Title and metadata section */}
-                    <div className="flex-1">
-                      <h1 className="fantasy-heading mb-2">{mockFrontmatter.name}</h1>
-                      <div className="flex items-center text-lg mb-4 text-gold-light">
-                        <span>{mockFrontmatter.type}</span>
-                        <span className="mx-2">•</span>
-                        <span className={`px-2 py-1 rounded text-xs ${getRarityColor(mockFrontmatter.rarity)}`}>
-                          {mockFrontmatter.rarity}
-                        </span>
+                    <div className="flex-1 flex flex-col">
+                      {/* Title */}
+                      <h1 className="fantasy-heading text-3xl mb-4">{mockFrontmatter.name}</h1>
+                      
+                      {/* Metadata */}
+                      <div className="text-lg text-gold-light font-medium mb-4">
+                        {`${mockFrontmatter.type || 'Item'} • ${mockFrontmatter.rarity || 'Comum'}`}
                       </div>
                       
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {mockFrontmatter.tags.map((tag, index) => (
-                          <span key={index} className="bg-secondary px-3 py-1 rounded-full text-xs">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                      {/* Description in italics */}
+                      {mockFrontmatter.description && (
+                        <p className="text-sm text-gold-light/80 italic mb-4 flex-grow">
+                          "{mockFrontmatter.description}"
+                        </p>
+                      )}
+                      
+
                     </div>
                   </div>
-
-                  {/* Descrição opcional */}
-                  {mockFrontmatter.description && (
-                    <div className="mt-4 italic text-gray-300">"{mockFrontmatter.description}"</div>
-                  )}
                 </div>
 
                 {/* Main content com as mesmas classes da página real */}
@@ -448,6 +444,20 @@ Use este item para criar tensão em encontros com orcs. A luz de aviso pode tant
                   className="prose prose-slate dark:prose-invert max-w-none mdx-content"
                   dangerouslySetInnerHTML={{ __html: htmlContent }}
                 />
+                
+                {/* Tags section */}
+                {mockFrontmatter.tags.length > 0 && (
+                  <div className="mt-8 fantasy-card p-6">
+                    <h3 className="text-lg font-semibold mb-3 text-gold-light">Tags</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {mockFrontmatter.tags.map((tag, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>

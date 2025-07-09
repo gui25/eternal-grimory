@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft, Save, User, Eye, Edit, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { Badge } from '@/components/ui/badge'
 import SmartImage from '@/components/ui/smart-image'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
@@ -483,6 +484,20 @@ Prefere soluções diretas e honestas. Não gosta de subterfúgios, mas respeita
                   className="prose prose-slate dark:prose-invert max-w-none mdx-content"
                   dangerouslySetInnerHTML={{ __html: htmlContent }}
                 />
+                
+                {/* Tags section */}
+                {mockFrontmatter.tags.length > 0 && (
+                  <div className="mt-8 fantasy-card p-6">
+                    <h3 className="text-lg font-semibold mb-3 text-gold-light">Tags</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {mockFrontmatter.tags.map((tag, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>

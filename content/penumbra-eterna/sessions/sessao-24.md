@@ -1,6 +1,6 @@
 ---
 slug: "sessao-24"
-updated: "2025-06-20T22:21:50.316Z"
+updated: "2025-07-09T17:33:33.471Z"
 title: "Sessão 24"
 date: "26 de junho de 2025"
 session_number: "24"

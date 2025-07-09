@@ -24,6 +24,7 @@ export type SessionMeta = {
   date: string
   session_number: number
   players: string[]
+  tags: string[]
   slug: string
   image?: string
   description?: string

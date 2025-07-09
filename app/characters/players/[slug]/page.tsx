@@ -11,7 +11,7 @@ import { getCurrentCampaignIdFromCookies } from "@/lib/campaign-utils"
 import { DetailPageLayout } from "@/components/layouts/detail-page-layout"
 import { AdminButton } from "@/components/ui/admin-button"
 import { DeleteButton } from "@/components/ui/delete-button"
-import { getCurrentCampaignId } from "@/lib/campaign-config"
+import { Badge } from "@/components/ui/badge"
 
 // Define a interface localmente
 interface PlayerCharacterMeta {
@@ -32,33 +32,43 @@ export default async function PlayerPage({ params }: { params: Promise<{ slug: s
   
   console.log(`Página de jogador: Carregando ${slug} da campanha: ${campaignId || 'padrão'}`)
   
-  const player = await getCharacter(slug, "player", campaignId)
+  const player = await getCharacter(slug, "player", campaignId || '')
   if (!player) notFound()
 
   // Use type assertion para evitar erro de tipo
   const { contentHtml, meta } = player as unknown as { contentHtml: string, meta: CharacterMeta }
 
-  // Render player metadata
+  // Create metadata exactly like notes
   const playerMetadata = (
     <>
-      <div className="flex items-center text-lg mb-2 text-gold-light">
-        <span>Nível {meta.level}</span>
-        <span className="mx-2">•</span>
-        <span>{meta.race} {meta.class}</span>
+      <div className="text-lg mb-3 text-gold-light">
+        Nível {meta.level} • {meta.race} {meta.class}
       </div>
+
       {meta.player && (
-        <div className="text-sm text-muted-foreground mb-4">
+        <div className="text-sm text-muted-foreground mb-3">
           Jogado por: {meta.player}
         </div>
       )}
-      
-      <div className="flex flex-wrap gap-2 mb-6">
-        {meta.tags.map((tag: string) => (
-          <span key={tag} className="bg-secondary px-3 py-1 rounded-full text-xs">
-            {tag}
-          </span>
-        ))}
-      </div>
+
+      {meta.description && (
+        <div className="mb-3 italic text-gray-100">
+          "{meta.description}"
+        </div>
+      )}
+
+      {meta.tags && meta.tags.length > 0 && (
+        <div className="mb-3">
+          <div className="text-sm text-muted-foreground mb-1">Tags:</div>
+          <div className="flex flex-wrap gap-2">
+            {meta.tags.map((tag: string) => (
+              <Badge key={tag} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   )
 
@@ -70,6 +80,7 @@ export default async function PlayerPage({ params }: { params: Promise<{ slug: s
       image={meta.image}
       imageAlt={meta.name}
       imagePlaceholder={<User className="h-24 w-24 text-blue-accent/50" />}
+      metadata={playerMetadata}
       actionButtons={
         <>
           <AdminButton href={`/admin/edit/player/${slug}`} variant="outline" size="sm">
@@ -80,14 +91,12 @@ export default async function PlayerPage({ params }: { params: Promise<{ slug: s
             type="player"
             slug={slug}
             name={meta.name}
-            campaignId={getCurrentCampaignId()}
+            campaignId={campaignId || ''}
             className="hidden sm:flex"
             size="sm"
           />
         </>
       }
-      metadata={playerMetadata}
-      description={meta.description}
       trackViewItem={{
         slug: meta.slug,
         name: meta.name,
