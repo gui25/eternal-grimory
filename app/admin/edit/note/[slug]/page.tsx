@@ -54,8 +54,14 @@ export default function EditNotePage({ params }: { params: Promise<{ slug: strin
   useEffect(() => {
     const loadData = async () => {
       const resolvedParams = await params
-      setSlug(resolvedParams.slug)
-      setOriginalSlug(resolvedParams.slug)
+      const newSlug = resolvedParams.slug
+      
+      // Só carregar se o slug mudou ou é o primeiro carregamento
+      if (slug === newSlug && formData.name) {
+        return;
+      }
+      setSlug(newSlug)
+      setOriginalSlug(newSlug)
       
       try {
         const response = await fetch(`/api/admin/get-content?type=note&slug=${resolvedParams.slug}`)
@@ -72,9 +78,20 @@ export default function EditNotePage({ params }: { params: Promise<{ slug: strin
               tagsString = noteData.tags
             }
             
-            setFormData({
-              ...noteData,
-              tags: tagsString
+            // Preservar mudanças locais do usuário (como imagens temporárias)
+            setFormData(prevData => {
+              const newData = {
+                ...noteData,
+                tags: tagsString
+              };
+              
+              // Se já temos uma imagem temporária ou salva, preservá-la
+              if (prevData.image && 
+                  prevData.image !== '' && 
+                  !prevData.image.includes('placeholder.svg')) {
+                newData.image = prevData.image;
+              }
+              return newData;
             })
           } else {
             toast.error('Erro ao carregar dados da anotação')
@@ -94,7 +111,7 @@ export default function EditNotePage({ params }: { params: Promise<{ slug: strin
     }
 
     loadData()
-  }, [params, router])
+  }, [params, slug, formData.name]) // Adicionadas dependências necessárias para comparação
 
   // Processar markdown para HTML quando o conteúdo mudar
   useEffect(() => {

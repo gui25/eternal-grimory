@@ -1,9 +1,10 @@
 ---
 name: "Torre do Mago Sombrio"
 slug: "torre-do-mago-sombrio"
+updated: "2025-07-09T21:37:12.486Z"
 date: "30/06/2025"
-updated: "2025-06-30T18:21:59.502Z"
 tags: ["local", "dungeon", "importante", "mago"]
+image: "/temp-images/penumbra-eterna_note_torre-do-mago-sombrio_1752096995556.png"
 description: "A torre dos magos sombrios, os causadores do fim de neverwinter"
 ---
 

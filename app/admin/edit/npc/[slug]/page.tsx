@@ -44,11 +44,8 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
       
       // Só carregar se o slug mudou ou é o primeiro carregamento
       if (slug === newSlug && formData.name) {
-        console.log('[EDIT-NPC] Dados já carregados, pulando...');
         return;
       }
-      
-      console.log('[EDIT-NPC] Carregando dados para slug:', newSlug);
       setSlug(newSlug)
       setOriginalSlug(newSlug)
       
@@ -57,9 +54,6 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
         if (response.ok) {
           const result = await response.json()
           if (result.success) {
-            console.log('[EDIT-NPC] Dados carregados da API:', result.data);
-            console.log('[EDIT-NPC] Imagem carregada:', result.data.image);
-            
             // Preservar mudanças locais do usuário (como imagens temporárias)
             setFormData(prevData => {
               const newData = result.data;
@@ -68,11 +62,9 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
               if (prevData.image && 
                   prevData.image !== '' && 
                   !prevData.image.includes('placeholder.svg')) {
-                console.log('[EDIT-NPC] Preservando imagem local:', prevData.image);
                 newData.image = prevData.image;
               }
               
-              console.log('[EDIT-NPC] Dados finais após merge:', newData);
               return newData;
             })
           } else {
@@ -307,10 +299,7 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
               <div className="space-y-2">
                 <ImageUpload
                   value={formData.image}
-                  onChange={(value) => {
-                    console.log('[EDIT-NPC] Imagem alterada para:', value);
-                    setFormData(prev => ({ ...prev, image: value }))
-                  }}
+                  onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
                   type="npc"
                   slug={formData.slug || 'npc'}
                   label="Imagem do NPC"

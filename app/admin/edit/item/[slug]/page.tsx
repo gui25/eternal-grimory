@@ -72,7 +72,6 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
               if (prevData.image && 
                   prevData.image !== '' && 
                   !prevData.image.includes('placeholder.svg')) {
-                console.log('[EDIT-ITEM] Preservando imagem local:', prevData.image);
                 newData.image = prevData.image;
               }
               

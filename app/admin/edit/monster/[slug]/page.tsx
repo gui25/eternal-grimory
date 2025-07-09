@@ -69,7 +69,6 @@ export default function EditMonsterPage({ params }: { params: Promise<{ slug: st
               if (prevData.image && 
                   prevData.image !== '' && 
                   !prevData.image.includes('placeholder.svg')) {
-                console.log('[EDIT-MONSTER] Preservando imagem local:', prevData.image);
                 newData.image = prevData.image;
               }
               
