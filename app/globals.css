@@ -54,7 +54,7 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(45deg, hsl(var(--gold-primary)), hsl(var(--red-accent)));
+    background: linear-gradient(45deg, hsl(var(--gold-primary)), hsl(var(--gold-light)));
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;

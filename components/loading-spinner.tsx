@@ -55,17 +55,17 @@ export default function LoadingSpinner({ message = "Carregando..." }: { message?
         <div className="absolute top-4 left-4 w-32 h-32 rounded-full border-4 border-transparent border-t-gold-dark border-r-gold-primary border-b-gold-light animate-spin-reverse"></div>
 
         {/* Anel interno girando mais rápido */}
-        <div className="absolute top-8 left-8 w-24 h-24 rounded-full border-4 border-transparent border-t-red-accent border-r-gold-primary border-b-red-accent animate-spin-fast"></div>
+        <div className="absolute top-8 left-8 w-24 h-24 rounded-full border-4 border-transparent border-t-gold-light border-r-gold-primary border-b-gold-dark animate-spin-fast"></div>
 
         {/* Círculo central com emblema */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-wine-darker rounded-full flex items-center justify-center shadow-lg overflow-hidden">
           {/* Efeito de brilho interno */}
-          <div className="absolute inset-0 bg-gradient-to-br from-gold-primary/20 to-red-accent/20 animate-pulse-slow"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-gold-primary/20 to-gold-light/20 animate-pulse-slow"></div>
 
           {/* Ícone central */}
           <div className="relative">
             <Sparkles className="h-10 w-10 text-gold-primary animate-pulse" />
-            <Flame className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-red-accent animate-pulse-slow" />
+            <Flame className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-gold-light animate-pulse-slow" />
           </div>
         </div>
 

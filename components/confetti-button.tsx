@@ -23,14 +23,14 @@ export default function ConfettiButton({ children, className, onClick }: Confett
       const centerX = rect.left + rect.width / 2
       const centerY = rect.top + rect.height / 2
 
-      // Cores dos confetes: dourado, vermelho e preto
+      // Cores dos confetes: dourado e preto
       const colors = [
         "#FFD700", // Dourado
         "#FFC107", // Dourado mais claro
         "#E6B800", // Dourado mais escuro
-        "#FF0000", // Vermelho
-        "#D32F2F", // Vermelho mais escuro
-        "#FF5252", // Vermelho mais claro
+        "#F4E04D", // Dourado mais suave
+        "#D4AF37", // Dourado antigo
+        "#B8860B", // Dourado escuro
         "#000000", // Preto
         "#212121", // Preto mais claro
       ]
