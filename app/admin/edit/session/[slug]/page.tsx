@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Save, Calendar, Eye, Edit, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -44,6 +45,7 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
     slug: '',
     date: '',
     players: '',
+    tags: '',
     image: '',
     description: '',
     content: ''
@@ -142,6 +144,7 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
 
     try {
       const players = formData.players.split(',').map(player => player.trim()).filter(Boolean)
+      const tags = formData.tags.split(',').map(tag => tag.trim()).filter(Boolean)
       
       const response = await fetch('/api/admin/edit', {
         method: 'PUT',
@@ -158,6 +161,7 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
             session_number: formData.session_number,
             date: formData.date, // Já está no formato brasileiro correto
             players,
+            tags,
             image: formData.image,
             description: formData.description
           }
@@ -184,6 +188,7 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
     session_number: formData.session_number,
     date: formData.date || '',
     players: formData.players.split(',').map(player => player.trim()).filter(Boolean),
+    tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
     image: formData.image,
     description: formData.description
   }
@@ -292,6 +297,16 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="tags">Tags</Label>
+                <Input
+                  id="tags"
+                  value={formData.tags}
+                  onChange={(e) => setFormData(prev => ({ ...prev, tags: e.target.value }))}
+                  placeholder="Ex: combate, exploração, cidade (separadas por vírgula)"
+                />
+              </div>
+
+              <div className="space-y-2">
                 <ImageUpload
                   value={formData.image}
                   onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
@@ -376,7 +391,7 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
                           alt={`Sessão ${mockFrontmatter.session_number}`} 
                           fill 
                           className="object-cover" 
-                          placeholder={<Calendar className="h-24 w-24 text-blue-accent/40" />}
+                          placeholder={<Calendar className="h-24 w-24 text-gold-light/50" />}
                         />
                       </div>
                     </div>
@@ -384,19 +399,40 @@ export default function EditSessionPage({ params }: { params: Promise<{ slug: st
                     <div className="flex-1">
                       <h1 className="fantasy-heading mb-2">Sessão {mockFrontmatter.session_number}</h1>
                       
-                      <div className="text-lg mb-4 text-gold-light">
+                      <div className="text-lg mb-3 text-gold-light">
                         <Calendar className="inline-block mr-2 h-5 w-5" />
                         {mockFrontmatter.date}
                       </div>
+
+                      {/* Description in italics */}
+                      {mockFrontmatter.description && (
+                        <div className="mb-3 italic text-gray-100">
+                          "{mockFrontmatter.description}"
+                        </div>
+                      )}
+
+                      {/* Tags section - igual à página oficial */}
+                      {mockFrontmatter.tags.length > 0 && (
+                        <div className="mb-3">
+                          <div className="text-sm text-muted-foreground mb-1">Tags:</div>
+                          <div className="flex flex-wrap gap-2">
+                            {mockFrontmatter.tags.map((tag, index) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
                       {mockFrontmatter.players && mockFrontmatter.players.length > 0 && (
                         <div className="mb-3">
                           <div className="text-sm text-muted-foreground mb-1">Jogadores presentes:</div>
                           <div className="flex flex-wrap gap-2">
                             {mockFrontmatter.players.map((player, index) => (
-                              <span key={index} className="bg-secondary px-3 py-1 rounded-full text-xs text-foreground">
+                              <Badge key={`player-${index}`} variant="outline" className="text-xs">
                                 {player}
-                              </span>
+                              </Badge>
                             ))}
                           </div>
                         </div>

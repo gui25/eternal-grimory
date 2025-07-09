@@ -35,6 +35,9 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   const onChangeRef = useRef(onChange)
   const hasNotifiedRef = useRef<string | null>(null)
   
+  // Debug: log do valor atual
+  console.log('[IMAGE-UPLOAD] Componente renderizado com value:', value, 'para type:', type, 'slug:', slug);
+  
   // Update ref when onChange changes
   useEffect(() => {
     onChangeRef.current = onChange
@@ -42,11 +45,14 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   
   // Simplified - just notify parent once when temp image is ready
   useEffect(() => {
+    console.log('[IMAGE-UPLOAD] useEffect triggered with value:', value);
     if (value && value.startsWith('/temp-images/') && onTempImageReady && hasNotifiedRef.current !== value) {
+      console.log('[IMAGE-UPLOAD] Processando imagem temporária:', value);
       hasNotifiedRef.current = value
       
       const moveToSaved = async () => {
         try {
+          console.log('[IMAGE-UPLOAD] Movendo imagem temporária:', value);
           const response = await fetch('/api/move-temp-image', {
             method: 'POST',
             headers: {
@@ -58,13 +64,13 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           const result = await response.json()
 
           if (result.success) {
+            console.log('[IMAGE-UPLOAD] Imagem movida com sucesso:', result.imageUrl);
             onChangeRef.current?.(result.imageUrl)
-            console.log('Imagem movida para pasta definitiva:', result.imageUrl)
           } else {
-            console.error('Erro ao mover imagem:', result.error)
+            console.error('[IMAGE-UPLOAD] Erro ao mover imagem:', result.error)
           }
         } catch (error) {
-          console.error('Erro ao mover imagem:', error)
+          console.error('[IMAGE-UPLOAD] Erro ao mover imagem:', error)
         }
       }
       
@@ -188,6 +194,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   }, [handleFileSelect])
 
   const handleUrlChange = (url: string) => {
+    console.log('[IMAGE-UPLOAD] URL mudou para:', url);
     onChange?.(url)
   }
 

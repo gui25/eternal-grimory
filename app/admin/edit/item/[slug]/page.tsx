@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Save, Sparkles, Eye, Edit, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -61,7 +62,20 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
         if (response.ok) {
           const result = await response.json()
           if (result.success) {
-            setFormData(result.data)
+            // Preservar mudanças locais do usuário (como imagens temporárias)
+            setFormData(prevData => {
+              const newData = result.data;
+              
+              // Se já temos uma imagem temporária ou salva, preservá-la
+              if (prevData.image && 
+                  prevData.image !== '' && 
+                  !prevData.image.includes('placeholder.svg')) {
+                console.log('[EDIT-ITEM] Preservando imagem local:', prevData.image);
+                newData.image = prevData.image;
+              }
+              
+              return newData;
+            })
           } else {
             toast.error('Erro ao carregar dados do item')
             router.push('/items')
@@ -424,28 +438,32 @@ export default function EditItemPage({ params }: { params: Promise<{ slug: strin
                     <div className="flex-1">
                       <h1 className="fantasy-heading mb-2">{mockFrontmatter.name}</h1>
                       
-                      <div className={`text-sm inline-block px-3 py-1 rounded-full mb-3 font-medium ${getRarityBadgeClass(mockFrontmatter.rarity)}`}>
-                        {mockFrontmatter.rarity}
+                      <div className="text-lg mb-3 text-gold-light">
+                        {mockFrontmatter.type || 'Item'} • {mockFrontmatter.rarity || 'Comum'}
                       </div>
 
-                      <div className="text-lg mb-3 text-gold-light font-medium">
-                        {mockFrontmatter.type}
-                      </div>
+                      {/* Description in italics */}
+                      {mockFrontmatter.description && (
+                        <div className="mb-3 italic text-gray-100">
+                          "{mockFrontmatter.description}"
+                        </div>
+                      )}
                       
-                      <div className="flex flex-wrap gap-2">
-                        {mockFrontmatter.tags.map((tag, index) => (
-                          <span key={index} className="bg-secondary/80 px-3 py-1 rounded-full text-xs">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                      {/* Tags section - igual à página oficial */}
+                      {mockFrontmatter.tags.length > 0 && (
+                        <div className="mb-3">
+                          <div className="text-sm text-muted-foreground mb-1">Tags:</div>
+                          <div className="flex flex-wrap gap-2">
+                            {mockFrontmatter.tags.map((tag, index) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
-
-                  {/* Descrição opcional */}
-                  {mockFrontmatter.description && (
-                    <div className="mt-4 italic text-gray-300">"{mockFrontmatter.description}"</div>
-                  )}
                 </div>
 
                 <article 

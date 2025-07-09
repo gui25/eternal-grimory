@@ -1,11 +1,11 @@
 ---
 name: "Eldrin, o Exilado"
 slug: "eldrin-o-exilado"
-updated: "2025-06-20T22:20:57.412Z"
+updated: "2025-07-09T18:27:01.782Z"
 type: "Elfo Feiticeiro"
 affiliation: "A Ordem dos Renegados"
 tags: ["Elf", "Sorcerer", "Villain"]
-image: "/placeholder.svg?height=400&width=400"
+image: "/temp-images/penumbra-eterna_npc_eldrin-o-exilado_1752085618422.jpg"
 description: "Um poderoso feiticeiro élfico que traiu seu povo por magia proibida."
 ---
 

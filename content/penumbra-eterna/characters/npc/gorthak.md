@@ -1,8 +1,11 @@
 ---
 name: "Gorthak"
+slug: "gorthak"
+updated: "2025-07-09T18:20:45.728Z"
 type: "Meio-Orc Guerreiro"
 affiliation: "Guilda dos Mercenários"
 tags: ["Warrior", "Ally", "Mercenary"]
+image: "/temp-images/penumbra-eterna_npc_gorthak_1752085242470.jpg"
 description: "Um meio-orc guerreiro endurecido por batalhas com um exterior rude, mas coração leal."
 ---
 

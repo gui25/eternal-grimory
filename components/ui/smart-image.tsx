@@ -43,8 +43,17 @@ export default function SmartImage({
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Check if we should show placeholder
-  const shouldShowPlaceholder = !src || imageError || src.includes('/placeholder.svg');
+  // Check if we should show placeholder (no src, image failed, or src is a placeholder URL)
+  const shouldShowPlaceholder = !src || imageError || (src && src.includes('/placeholder.svg'));
+  
+  // Debug logs
+  console.log('[SMART-IMAGE] Debug info:', {
+    src,
+    imageError,
+    shouldShowPlaceholder,
+    hasPlaceholderInSrc: src ? src.includes('/placeholder.svg') : false,
+    alt
+  });
 
   const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement>) => {
     setImageLoaded(true);
@@ -60,6 +69,7 @@ export default function SmartImage({
 
   // If we should show placeholder, render it
   if (shouldShowPlaceholder) {
+    console.log('[SMART-IMAGE] Renderizando placeholder para:', alt, 'src:', src);
     return (
       <div 
         className={cn(
@@ -77,6 +87,8 @@ export default function SmartImage({
 
   // Check if it's a local image that might have issues with Next/Image optimization
   const isLocalImage = src && (src.startsWith('/saved-images/') || src.startsWith('/temp-images/'));
+  
+  console.log('[SMART-IMAGE] Renderizando imagem real para:', alt, 'src:', src, 'isLocalImage:', isLocalImage);
   
   // For local images, use a regular img tag to avoid Next.js optimization issues
   if (isLocalImage) {

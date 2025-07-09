@@ -40,15 +40,41 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
   useEffect(() => {
     const loadData = async () => {
       const resolvedParams = await params
-      setSlug(resolvedParams.slug)
-      setOriginalSlug(resolvedParams.slug)
+      const newSlug = resolvedParams.slug
+      
+      // Só carregar se o slug mudou ou é o primeiro carregamento
+      if (slug === newSlug && formData.name) {
+        console.log('[EDIT-NPC] Dados já carregados, pulando...');
+        return;
+      }
+      
+      console.log('[EDIT-NPC] Carregando dados para slug:', newSlug);
+      setSlug(newSlug)
+      setOriginalSlug(newSlug)
       
       try {
         const response = await fetch(`/api/admin/get-content?type=npc&slug=${resolvedParams.slug}`)
         if (response.ok) {
           const result = await response.json()
           if (result.success) {
-            setFormData(result.data)
+            console.log('[EDIT-NPC] Dados carregados da API:', result.data);
+            console.log('[EDIT-NPC] Imagem carregada:', result.data.image);
+            
+            // Preservar mudanças locais do usuário (como imagens temporárias)
+            setFormData(prevData => {
+              const newData = result.data;
+              
+              // Se já temos uma imagem temporária ou salva, preservá-la
+              if (prevData.image && 
+                  prevData.image !== '' && 
+                  !prevData.image.includes('placeholder.svg')) {
+                console.log('[EDIT-NPC] Preservando imagem local:', prevData.image);
+                newData.image = prevData.image;
+              }
+              
+              console.log('[EDIT-NPC] Dados finais após merge:', newData);
+              return newData;
+            })
           } else {
             toast.error('Erro ao carregar dados do NPC')
             router.push('/characters/npcs')
@@ -67,7 +93,7 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
     }
 
     loadData()
-  }, [params, router])
+  }, [params, slug, formData.name]) // Adicionadas dependências necessárias para comparação
 
   // Processar markdown para HTML quando o conteúdo mudar
   useEffect(() => {
@@ -281,7 +307,10 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
               <div className="space-y-2">
                 <ImageUpload
                   value={formData.image}
-                  onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
+                  onChange={(value) => {
+                    console.log('[EDIT-NPC] Imagem alterada para:', value);
+                    setFormData(prev => ({ ...prev, image: value }))
+                  }}
                   type="npc"
                   slug={formData.slug || 'npc'}
                   label="Imagem do NPC"
@@ -351,7 +380,7 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
                           alt={mockFrontmatter.name} 
                           fill 
                           className="object-cover" 
-                          placeholder={<User className="h-24 w-24 text-gold-light/40" />}
+                          placeholder={<User className="h-24 w-24 text-gold-light/50" />}
                         />
                       </div>
                     </div>
@@ -360,8 +389,8 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
                       {/* Title */}
                       <h1 className="fantasy-heading text-3xl mb-4">{mockFrontmatter.name}</h1>
                       
-                      {/* Metadata */}
-                      <div className="text-lg text-gold-light font-medium mb-4">
+                      {/* Metadata - exatamente como na página oficial */}
+                      <div className="text-lg mb-3 text-gold-light">
                         {mockFrontmatter.affiliation ? 
                           `${mockFrontmatter.type} • ${mockFrontmatter.affiliation}` : 
                           mockFrontmatter.type
@@ -370,12 +399,24 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
                       
                       {/* Description in italics */}
                       {mockFrontmatter.description && (
-                        <p className="text-sm text-gold-light/80 italic mb-4 flex-grow">
+                        <div className="mb-3 italic text-gray-100">
                           "{mockFrontmatter.description}"
-                        </p>
+                        </div>
                       )}
-                      
 
+                      {/* Tags section - igual à página oficial */}
+                      {mockFrontmatter.tags.length > 0 && (
+                        <div className="mb-3">
+                          <div className="text-sm text-muted-foreground mb-1">Tags:</div>
+                          <div className="flex flex-wrap gap-2">
+                            {mockFrontmatter.tags.map((tag, index) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -384,20 +425,6 @@ export default function EditNPCPage({ params }: { params: Promise<{ slug: string
                   className="prose prose-slate dark:prose-invert max-w-none mdx-content"
                   dangerouslySetInnerHTML={{ __html: htmlContent }}
                 />
-                
-                {/* Tags section */}
-                {mockFrontmatter.tags.length > 0 && (
-                  <div className="mt-8 fantasy-card p-6">
-                    <h3 className="text-lg font-semibold mb-3 text-gold-light">Tags</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {mockFrontmatter.tags.map((tag, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </CardContent>

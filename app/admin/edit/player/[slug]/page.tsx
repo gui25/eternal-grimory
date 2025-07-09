@@ -415,7 +415,7 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
                           alt={mockFrontmatter.name} 
                           fill 
                           className="object-cover" 
-                          placeholder={<User className="h-24 w-24 text-blue-accent/40" />}
+                          placeholder={<User className="h-24 w-24 text-blue-accent/50" />}
                         />
                       </div>
                     </div>
@@ -424,24 +424,36 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
                       {/* Title */}
                       <h1 className="fantasy-heading text-3xl mb-4">{mockFrontmatter.name}</h1>
                       
-                      {/* Metadata */}
-                      <div className="text-lg text-gold-light font-medium mb-2">
+                      {/* Metadata - exatamente como na página oficial */}
+                      <div className="text-lg mb-3 text-gold-light">
                         {`Nível ${mockFrontmatter.level} • ${mockFrontmatter.race} ${mockFrontmatter.class}`}
                       </div>
                       {mockFrontmatter.player && (
-                        <div className="text-sm text-muted-foreground mb-4">
+                        <div className="text-sm text-muted-foreground mb-3">
                           Jogado por: {mockFrontmatter.player}
                         </div>
                       )}
                       
                       {/* Description in italics */}
                       {mockFrontmatter.description && (
-                        <p className="text-sm text-gold-light/80 italic mb-4 flex-grow">
+                        <div className="mb-3 italic text-gray-100">
                           "{mockFrontmatter.description}"
-                        </p>
+                        </div>
                       )}
-                      
 
+                      {/* Tags section - igual à página oficial */}
+                      {mockFrontmatter.tags.length > 0 && (
+                        <div className="mb-3">
+                          <div className="text-sm text-muted-foreground mb-1">Tags:</div>
+                          <div className="flex flex-wrap gap-2">
+                            {mockFrontmatter.tags.map((tag, index) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -450,20 +462,6 @@ export default function EditPlayerPage({ params }: { params: Promise<{ slug: str
                   className="prose prose-slate dark:prose-invert max-w-none mdx-content"
                   dangerouslySetInnerHTML={{ __html: htmlContent }}
                 />
-                
-                {/* Tags section */}
-                {mockFrontmatter.tags.length > 0 && (
-                  <div className="mt-8 fantasy-card p-6">
-                    <h3 className="text-lg font-semibold mb-3 text-gold-light">Tags</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {mockFrontmatter.tags.map((tag, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </CardContent>
