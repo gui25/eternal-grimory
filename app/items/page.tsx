@@ -31,7 +31,7 @@ export default function ItemsPage() {
     refreshData,
     currentCampaignId,
   } = useFilteredData<Item>(
-    "/api/v2/content/item",
+    "/api/items",
     (item, { search, filters }) => {
       const matchesSearch =
         search === "" ||

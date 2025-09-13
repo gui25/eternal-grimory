@@ -35,9 +35,9 @@ export default function PlayersPage() {
     
     const fetchPlayers = async () => {
       try {
-        const response = await fetch("/api/v2/content/player")
+        const response = await fetch("/api/characters/players")
         const result = await response.json()
-        setPlayers(result.success ? result.data : [])
+        setPlayers(result)
       } catch (error) {
         console.error("Erro ao buscar jogadores:", error)
       } finally {

@@ -33,9 +33,9 @@ export default function NPCsPage() {
     
     const fetchNPCs = async () => {
       try {
-        const response = await fetch("/api/v2/content/npc")
+        const response = await fetch("/api/characters/npcs")
         const result = await response.json()
-        setNPCs(result.success ? result.data : [])
+        setNPCs(result)
       } catch (error) {
         console.error("Erro ao buscar NPCs:", error)
       } finally {

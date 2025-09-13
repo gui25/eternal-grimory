@@ -31,9 +31,9 @@ export default function SessionsPage() {
     
     const fetchSessions = async () => {
       try {
-        const response = await fetch("/api/v2/content/session")
+        const response = await fetch("/api/sessions")
         const result = await response.json()
-        setSessions(result.success ? result.data : [])
+        setSessions(result)
       } catch (error) {
         console.error("Erro ao buscar sessões:", error)
       } finally {

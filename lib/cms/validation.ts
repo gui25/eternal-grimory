@@ -222,50 +222,18 @@ export async function validateUniqueSlug(
   campaignId?: string,
   excludeSlug?: string
 ): Promise<boolean> {
-  // Esta função seria implementada para verificar se o slug já existe
-  // Por enquanto retorna true como placeholder
-  
-  // TODO: Implementar verificação real no sistema de arquivos
-  try {
-    const fs = await import('fs/promises')
-    const path = await import('path')
-    
-    // Construir caminho do arquivo
-    let contentTypePath = ''
-    switch (contentType) {
-      case 'npc':
-        contentTypePath = 'characters/npc'
-        break
-      case 'monster':
-        contentTypePath = 'characters/monster'
-        break
-      case 'player':
-        contentTypePath = 'characters/player'
-        break
-      case 'item':
-        contentTypePath = 'items'
-        break
-      case 'session':
-        contentTypePath = 'sessions'
-        break
-      case 'note':
-        contentTypePath = 'notes'
-        break
-      default:
-        return true
-    }
-    
-    // Verificar se é o mesmo slug (para edição)
-    if (excludeSlug && excludeSlug === slug) {
-      return true
-    }
-    
-    // Verificar se arquivo existe (implementação simplificada)
-    // Em produção, deveria usar o sistema de campanhas adequadamente
+  // Esta função deve ser usada apenas no servidor
+  // Para o lado cliente, sempre retorna true
+  if (typeof window !== 'undefined') {
     return true
-    
-  } catch (error) {
-    console.error('Error validating slug uniqueness:', error)
-    return true // Em caso de erro, permitir
   }
+  
+  // Verificar se é o mesmo slug (para edição)
+  if (excludeSlug && excludeSlug === slug) {
+    return true
+  }
+  
+  // TODO: Implementar verificação real via API no futuro
+  // Por enquanto sempre retorna true para evitar problemas de build
+  return true
 }

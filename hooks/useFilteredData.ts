@@ -91,15 +91,8 @@ export function useFilteredData<T>(
     
     const jsonData = await response.json();
     
-    // Check if it's the new API v2 format with success/data structure
-    if (jsonData.success && jsonData.data) {
-      console.log(`Dados recebidos (API v2): ${jsonData.data.length} itens`);
-      return jsonData.data;
-    } else {
-      // Legacy API format
-      console.log(`Dados recebidos (API v1): ${jsonData.length} itens`);
-      return jsonData;
-    }
+    console.log(`Dados recebidos: ${jsonData.length} itens`);
+    return jsonData;
   }, {
     revalidateOnFocus: false,
     revalidateIfStale: false,
