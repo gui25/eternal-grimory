@@ -1,8 +1,11 @@
 ---
 name: "Jarl Gigante do Gelo"
+slug: "jarl-gigante-do-gelo"
+updated: "2025-09-13T23:00:55.663Z"
 type: "Gigante"
 challenge: "Rare"
 tags: ["Giant", "Ice", "Leader"]
+image: "/temp-images/penumbra-eterna_monster_frost-giant-jarl_1757804453001.jpg"
 ---
 
 # Jarl Gigante do Gelo
