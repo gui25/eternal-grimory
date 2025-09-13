@@ -34,9 +34,9 @@ export default function NotesPage() {
     
     const fetchNotes = async () => {
       try {
-        const response = await fetch("/api/notes")
-        const data = await response.json()
-        setNotes(data)
+        const response = await fetch("/api/v2/content/note")
+        const result = await response.json()
+        setNotes(result.success ? result.data : [])
       } catch (error) {
         console.error("Erro ao buscar anotações:", error)
       } finally {

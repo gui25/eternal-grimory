@@ -6,7 +6,7 @@ import ItemList from "@/components/item-list"
 import { type FilterOption } from "@/components/ui/filter-select"
 import { useFilteredData } from "@/hooks/useFilteredData"
 import { ErrorMessage } from "@/components/ui/error-message"
-import { translateItemType, translateRarity } from "@/utils/translations"
+import { translateItemType, translateRarity, areRaritiesEquivalent } from "@/utils/translations"
 import { Item } from "@/types"
 import { PREDEFINED_ITEM_TYPES } from "@/constants/items"
 import { Button } from "@/components/ui/button"
@@ -31,14 +31,14 @@ export default function ItemsPage() {
     refreshData,
     currentCampaignId,
   } = useFilteredData<Item>(
-    "/api/items",
+    "/api/v2/content/item",
     (item, { search, filters }) => {
       const matchesSearch =
         search === "" ||
         item.name.toLowerCase().includes(search.toLowerCase()) ||
         item.tags.some((tag) => tag.toLowerCase().includes(search.toLowerCase()));
 
-      const matchesRarity = !filters.rarity || item.rarity.toLowerCase() === filters.rarity.toLowerCase();
+      const matchesRarity = !filters.rarity || areRaritiesEquivalent(item.rarity, filters.rarity);
       const matchesType = !filters.type || item.type.toLowerCase() === filters.type.toLowerCase();
 
       return matchesSearch && matchesRarity && matchesType;
@@ -47,13 +47,17 @@ export default function ItemsPage() {
 
   const types = Array.from(new Set((items || []).map((item) => item.type)));
   
-  const rarityOptions: FilterOption[] = [
-    { value: "Common", label: translateRarity("Common") },
-    { value: "Uncommon", label: translateRarity("Uncommon") },
-    { value: "Rare", label: translateRarity("Rare") },
-    { value: "Epic", label: translateRarity("Epic") },
-    { value: "Legendary", label: translateRarity("Legendary") },
-  ];
+  // Create rarity options from both actual data and predefined values
+  const allRarities = Array.from(new Set([
+    ...(items || []).map(item => item.rarity),
+    "Common", "Uncommon", "Rare", "Epic", "Legendary",
+    "Comum", "Incomum", "Raro", "Épico", "Lendário"
+  ]));
+
+  const rarityOptions: FilterOption[] = allRarities.map(rarity => ({
+    value: rarity,
+    label: translateRarity(rarity) || rarity
+  }));
 
   const sortedTypes = types?.length > 0 ? types.sort((a, b) => {
     const aIndex = PREDEFINED_ITEM_TYPES.indexOf(a);

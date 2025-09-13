@@ -33,9 +33,9 @@ export default function MonstersPage() {
     
     const fetchMonsters = async () => {
       try {
-        const response = await fetch("/api/characters/monsters")
-        const data = await response.json()
-        setMonsters(data)
+        const response = await fetch("/api/v2/content/monster")
+        const result = await response.json()
+        setMonsters(result.success ? result.data : [])
       } catch (error) {
         console.error("Erro ao buscar monstros:", error)
       } finally {

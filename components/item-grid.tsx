@@ -59,21 +59,38 @@ export default function ItemGrid({ items }: { items: ItemMeta[] }) {
   // Map rarity string to component prop type
   const getRarityType = (rarity: string): "common" | "uncommon" | "rare" | "epic" | "legendary" => {
     const normalized = rarity.toLowerCase();
-    if (["common", "uncommon", "rare", "epic", "legendary"].includes(normalized)) {
-      return normalized as "common" | "uncommon" | "rare" | "epic" | "legendary";
+    
+    // Map both English and Portuguese rarity names
+    switch (normalized) {
+      case "common":
+      case "comum":
+        return "common";
+      case "uncommon":
+      case "incomum":
+        return "uncommon";
+      case "rare":
+      case "raro":
+        return "rare";
+      case "epic":
+      case "épico":
+        return "epic";
+      case "legendary":
+      case "lendário":
+        return "legendary";
+      default:
+        return "common";
     }
-    return "common";
   }
   
   // Configure runic glow based on item type
   const getRunicConfig = (type: string, rarity: string) => {
     // More magical items get more intense runes
-    const isMagical = ["artifact", "magic item", "wand", "staff", "scroll"].includes(type.toLowerCase());
-    const isLegendary = rarity.toLowerCase() === "legendary";
+    const isMagical = ["artifact", "artefato", "magic item", "wand", "staff", "scroll"].includes(type.toLowerCase());
+    const isLegendary = rarity.toLowerCase() === "legendary" || rarity.toLowerCase() === "lendário";
     
     return {
       color: isLegendary ? "gold" : (
-        type.toLowerCase() === "potion" ? "purple" : 
+        type.toLowerCase() === "potion" || type.toLowerCase() === "poção" ? "purple" : 
         type.toLowerCase() === "scroll" ? "blue" : "gold"
       ) as "gold" | "blue" | "green" | "purple" | "red",
       intensity: isLegendary ? "strong" : (isMagical ? "medium" : "subtle") as "subtle" | "medium" | "strong",
@@ -106,7 +123,7 @@ export default function ItemGrid({ items }: { items: ItemMeta[] }) {
             <Link href={`/items/${item.slug}`} className="block h-full">
               <RarityBorder 
                 rarity={getRarityType(item.rarity)}
-                pulseIntensity={item.rarity.toLowerCase() === "legendary" ? "strong" : "medium"}
+                pulseIntensity={item.rarity.toLowerCase() === "legendary" || item.rarity.toLowerCase() === "lendário" ? "strong" : "medium"}
               >
                 <RunicGlow
                   {...getRunicConfig(item.type, item.rarity)}

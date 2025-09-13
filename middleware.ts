@@ -9,8 +9,10 @@ const CAMPAIGN_COOKIE_NAME = 'current-campaign'
 export function middleware(request: NextRequest) {
   console.log("[MIDDLEWARE] Iniciando processamento para:", request.url);
   
-  // Verificar se é uma rota de admin
-  if (request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname.startsWith('/api/admin')) {
+  // Verificar se é uma rota de admin (incluindo API v2)
+  if (request.nextUrl.pathname.startsWith('/admin') || 
+      request.nextUrl.pathname.startsWith('/api/admin') ||
+      request.nextUrl.pathname.startsWith('/api/v2')) {
     // Só permitir em desenvolvimento
     if (process.env.NODE_ENV !== 'development') {
       console.log("[MIDDLEWARE] Bloqueando acesso a rota de admin em produção");
@@ -72,10 +74,10 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * Include API routes so we can check admin access
      */
     '/((?!_next/static|_next/image|favicon.ico).*)',
   ],

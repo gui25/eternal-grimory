@@ -921,5 +921,53 @@
   color: hsl(var(--gold-primary));
 }
 
+/* Enhanced legendary item effects */
+.legendary-item {
+  position: relative !important;
+  border: 2px solid hsl(var(--gold-primary)) !important;
+  box-shadow: 0 0 20px hsl(var(--gold-primary) / 0.4) !important;
+  background: linear-gradient(135deg, 
+    hsl(var(--wine-darker)) 0%, 
+    hsl(var(--wine-dark) / 0.8) 50%, 
+    hsl(var(--wine-darker)) 100%) !important;
+}
 
+.legendary-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, 
+    transparent 30%, 
+    hsl(var(--gold-primary) / 0.1) 45%, 
+    hsl(var(--gold-light) / 0.2) 50%, 
+    hsl(var(--gold-primary) / 0.1) 55%, 
+    transparent 70%
+  );
+  animation: legendary-background-pulse 4s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Force border styles for legendary items */
+.border-gold {
+  border-color: hsl(var(--gold-primary)) !important;
+}
+
+.shadow-gold\/50 {
+  box-shadow: 0 0 15px hsl(var(--gold-primary) / 0.5) !important;
+}
+
+/* Glow animation for legendary items */
+.animate-glow {
+  animation: glow-legendary 2s ease-in-out infinite alternate !important;
+}
+
+@keyframes glow-legendary {
+  from {
+    box-shadow: 0 0 10px hsl(var(--gold-primary) / 0.3);
+  }
+  to {
+    box-shadow: 0 0 25px hsl(var(--gold-primary) / 0.6);
+  }
+}
 
