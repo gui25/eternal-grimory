@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import type { ItemMeta } from "@/lib/mdx"
-import { Shield, FlaskRoundIcon as Flask, Sword, Sparkles, Edit } from "lucide-react"
+import { Shield, FlaskRoundIcon as Flask, Sword, Sparkles, Edit, Package } from "lucide-react"
 import RunicGlow from "./effects/runic-glow"
 import RarityBorder from "./effects/rarity-border"
 import MagicReveal from "./effects/magic-reveal"
@@ -129,26 +129,48 @@ export default function ItemGrid({ items }: { items: ItemMeta[] }) {
                   {...getRunicConfig(item.type, item.rarity)}
                   className="h-full"
                 >
-                  <Card className="h-full bg-wine-darker/80 border-0 shadow-none">
-                    <CardContent className="p-6 min-h-[164px] flex flex-col">
-                      <h3 className="font-bold text-lg mb-2 line-clamp-2">{item.name}</h3>
-                      <div className={`text-sm font-medium mb-2 flex items-center ${getRarityTextClass(item.rarity)}`}>
-                        {getTypeIcon(item.type)}
-                        <span>
-                          {item.rarity} {item.type}
-                        </span>
+                  <Card className="h-full bg-wine-darker/80 border-0 shadow-none overflow-hidden">
+                    <CardContent className="p-0 h-full flex flex-col">
+                      {/* Header Section */}
+                      <div className="p-6 pb-3">
+                        <h3 className="font-bold text-lg mb-2 line-clamp-2">{item.name}</h3>
+                        <div className={`text-sm font-medium flex items-center ${getRarityTextClass(item.rarity)}`}>
+                          {getTypeIcon(item.type)}
+                          <span>
+                            {item.rarity} {item.type}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-1 mt-auto">
-                        {item.tags.slice(0, 3).map((tag) => (
-                          <span key={tag} className="bg-wine-dark px-2 py-1 rounded-md text-xs text-gold-light whitespace-nowrap mb-1">
-                            {tag}
-                          </span>
-                        ))}
-                        {item.tags.length > 3 && (
-                          <span className="bg-wine-dark px-2 py-1 rounded-md text-xs text-gold-light whitespace-nowrap mb-1">
-                            +{item.tags.length - 3}
-                          </span>
+
+                      {/* Image Section */}
+                      <div className="relative aspect-video mx-6 mb-3 overflow-hidden rounded bg-wine-dark/50 border border-gold-dark/30">
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Package className="h-8 w-8 text-gold/30" />
+                          </div>
                         )}
+                      </div>
+
+                      {/* Tags Section */}
+                      <div className="px-6 pb-6 mt-auto">
+                        <div className="flex flex-wrap gap-1">
+                          {item.tags.slice(0, 3).map((tag) => (
+                            <span key={tag} className="bg-wine-dark px-2 py-1 rounded-md text-xs text-gold-light whitespace-nowrap mb-1">
+                              {tag}
+                            </span>
+                          ))}
+                          {item.tags.length > 3 && (
+                            <span className="bg-wine-dark px-2 py-1 rounded-md text-xs text-gold-light whitespace-nowrap mb-1">
+                              +{item.tags.length - 3}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

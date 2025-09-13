@@ -1,11 +1,11 @@
 ---
 name: "Espada do Rei Esquecido"
 slug: "espada-do-rei-esquecido"
-updated: "2025-09-13T21:26:51.363Z"
+updated: "2025-09-13T22:14:46.212Z"
 type: "Weapon"
 rarity: "Lendário"
 tags: ["Cursed", "Two-Handed"]
-image: "/placeholder.svg?height=400&width=400"
+image: "/temp-images/penumbra-eterna_item_espada-do-rei-esquecido_1757801684090.jpg"
 description: "Uma lâmina lendária que contém a essência de um rei há muito esquecido, ele está furioso."
 ---
 

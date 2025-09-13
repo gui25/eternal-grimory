@@ -3,13 +3,14 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Search, Plus, Edit } from "lucide-react"
+import { Search, Plus, Edit, Users } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { FilterSelect, type FilterOption } from "@/components/ui/filter-select"
 import { PageContainer } from "@/components/ui/page-container"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { AdminSection, AdminButton } from "@/components/ui/admin-button"
+import { Badge } from "@/components/ui/badge"
 import { isAdminMode } from "@/lib/dev-utils"
 
 interface NPC {
@@ -18,6 +19,7 @@ interface NPC {
   affiliation: string
   tags: string[]
   slug: string
+  image?: string
 }
 
 export default function NPCsPage() {
@@ -125,12 +127,12 @@ export default function NPCsPage() {
       {isLoading ? (
         <LoadingSpinner message="Carregando NPCs..." />
       ) : filteredNPCs.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredNPCs.map((npc) => (
-            <Card key={npc.slug} className="relative group">
-              <CardContent className="p-6">
+            <Card key={npc.slug} className="relative group cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-105">
+              <CardContent className="p-0">
                 {showAdmin && (
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button
                       asChild
                       size="sm"
@@ -146,17 +148,51 @@ export default function NPCsPage() {
                 )}
                 
                 <Link href={`/characters/npcs/${npc.slug}`} prefetch={true} className="block">
-                  <h3 className="text-lg font-bold">{npc.name}</h3>
-                  <p className="text-sm text-gold-light">{npc.type}</p>
-                  <div className="mt-2">
-                    <span className="font-medium">Afiliação:</span> {npc.affiliation}
+                  {/* Image/Icon Section */}
+                  <div className="aspect-video relative overflow-hidden rounded-t-lg bg-background border-b border-gold-dark">
+                    {npc.image ? (
+                      <img
+                        src={npc.image}
+                        alt={npc.name}
+                        className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-wine-darker/50">
+                        <Users className="h-12 w-12 text-gold/50" />
+                      </div>
+                    )}
                   </div>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {npc.tags.map((tag) => (
-                      <span key={tag} className="bg-secondary px-2 py-1 rounded-md text-xs">
-                        {tag}
-                      </span>
-                    ))}
+
+                  {/* Content Section */}
+                  <div className="p-4 space-y-3">
+                    <h3 className="text-lg font-semibold text-foreground line-clamp-2 group-hover:text-gold-light transition-colors">
+                      {npc.name}
+                    </h3>
+                    
+                    <div className="space-y-1 text-sm">
+                      <p className="text-muted-foreground">{npc.type}</p>
+                      
+                      {npc.affiliation && (
+                        <p className="text-xs">
+                          <span className="text-gold font-medium">Afiliação:</span> {npc.affiliation}
+                        </p>
+                      )}
+                    </div>
+                    
+                    {npc.tags && npc.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {npc.tags.slice(0, 3).map((tag) => (
+                          <Badge key={tag} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                        {npc.tags.length > 3 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{npc.tags.length - 3}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </Link>
               </CardContent>
