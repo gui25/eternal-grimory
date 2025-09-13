@@ -1,8 +1,11 @@
 ---
 name: "Poção de Heroísmo"
-rarity: "Uncommon"
+slug: "pocao-de-heroismo"
+updated: "2025-09-13T21:39:35.041Z"
 type: "Potion"
+rarity: "Incomum"
 tags: ["Consumable", "Buff"]
+description: "Um líquido dourado que concede coragem e força temporárias."
 ---
 
 # Poção de Heroísmo
